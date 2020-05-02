@@ -86,7 +86,7 @@ class SourceFetcher:
                 for remote in remotes:
                     shell.run('git fetch -p --tags {}'.format(remote))
 
-                bare = bool(shell.output('git config --bool core.bare'))
+                bare = shell.output('git config --bool core.bare') == 'false'
                 if bare == 'false':
                     shell.run('git merge --ff-only')
             elif os.path.isdir('.hg'):
