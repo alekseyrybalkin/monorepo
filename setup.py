@@ -5,7 +5,6 @@ setup(
     version=__import__('addons').__version__,
     packages=['addons'],
     scripts=[
-        'fetch-videos',
         'gen',
         'github-2fa',
         'srcfetcher',
@@ -14,7 +13,7 @@ setup(
     entry_points={
         'console_scripts': [
             'compress-music = addons.audio:compress',
-            #'fetch-videos',
+            'fetch-videos = addons.youtube:fetch_videos',
             #'gen',
             #'github-2fa',
             #'srcfetcher',
