@@ -135,7 +135,18 @@ class SourceFetcher:
                 ),
             )
 
+    def parse_args(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('project', type=str, default='', nargs='?')
+        parser.add_argument('--quiet', action='store_true')
+        return parser.parse_args()
+
     def main(self):
+        os.environ['BRZ_LOG'] = '/dev/null'
+        os.environ['FOSSIL_HOME'] = os.path.expanduser(os.path.join('~{}'.format(getpass.getuser()), '.config'))
+
+        args = self.parse_args()
+
         project_names = list(name for name, _ in self.list_projects())
         if len(set(project_names)) != len(project_names):
             for name in set(project_names):
@@ -164,17 +175,6 @@ class SourceFetcher:
                     time.sleep(2.0)
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('project', type=str, default='', nargs='?')
-    parser.add_argument('--quiet', action='store_true')
-    return parser.parse_args()
-
-
 def main():
-    os.environ['BRZ_LOG'] = '/dev/null'
-    os.environ['FOSSIL_HOME'] = os.path.expanduser(os.path.join('~{}'.format(getpass.getuser()), '.config'))
-
-    args = parse_args()
     with addons.db.DB('srcfetcher') as db:
         SourceFetcher(db).main()
