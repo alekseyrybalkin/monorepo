@@ -22,5 +22,13 @@ def output(command):
     return subprocess.check_output(command).strip().decode()
 
 
+def copy_to_clipboard(value):
+    subprocess.run(
+        ['xclip', '-selection', 'clipboard'],
+        input=value,
+        encoding='UTF-8',
+    )
+
+
 class NonZeroReturnCode(Exception):
     pass

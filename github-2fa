@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+
+import getpass
+import os
+import subprocess
+
+import onetimepass
+
+import addons.shell as shell
+
+
+if __name__ == '__main__':
+    key_file = os.path.expanduser(os.path.join(
+        '~{}'.format(getpass.getuser()),
+        '.data',
+        'secrets',
+        'github-2fa.key',
+    ))
+    secret = open(key_file, 'r').read().strip()
+    token = onetimepass.get_totp(secret, as_string=True)
+    shell.copy_to_clipboard(token.decode("UTF-8"))
