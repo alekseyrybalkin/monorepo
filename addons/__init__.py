@@ -4,6 +4,7 @@ __all__ = [
     'gen',
     'github',
     'hckrnews',
+    'relmon',
     'screenshot',
     'shell',
     'srcfetcher',

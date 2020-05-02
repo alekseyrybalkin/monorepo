@@ -58,6 +58,20 @@ def hckrnews_init(cursor):
     cursor.execute('create index day_last_updated_idx on day(last_updated)')
 
 
+def relmon_test(cursor):
+    cursor.execute('select 1 from package')
+
+
+def relmon_init(cursor):
+    cursor.execute('''
+        create table package(
+            id integer primary key,
+            info text,
+            updated date
+        )''')
+    cursor.execute('create index package_updated_idx on package(updated)')
+
+
 db_configs = {
     'srcfetcher': {
         'test': srcfetcher_test,
@@ -79,6 +93,10 @@ db_configs = {
                 'hckrnews.db',
             ),
         ),
+    },
+    'relmon': {
+        'test': relmon_test,
+        'init': relmon_init,
     },
 }
 

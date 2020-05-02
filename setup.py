@@ -13,6 +13,7 @@ setup(
             'srcfetcher = addons.srcfetcher:main',
             'take-screenshot = addons.screenshot:main',
             'hckrnews = addons.hckrnews:main',
+            'relmon = addons.relmon:main',
         ],
     },
     include_package_data=True,
