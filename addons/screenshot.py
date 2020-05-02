@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os.path
 import subprocess
 import time
@@ -7,7 +5,7 @@ import time
 import addons.shell as shell
 
 
-if __name__ == '__main__':
+def main():
     timestamp = str(int(time.time()))
     file_path = os.path.join(os.path.expanduser('~'), '{}.png'.format(timestamp))
     try:

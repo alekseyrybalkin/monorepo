@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import argparse
 import datetime
 import getpass
@@ -173,7 +171,7 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+def main():
     os.environ['BRZ_LOG'] = '/dev/null'
     os.environ['FOSSIL_HOME'] = os.path.expanduser(os.path.join('~{}'.format(getpass.getuser()), '.config'))
 

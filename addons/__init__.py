@@ -1,4 +1,13 @@
-__all__ = ['audio', 'db', 'shell', 'youtube']
+__all__ = [
+    'audio',
+    'db',
+    'gen',
+    'github',
+    'screenshot',
+    'shell',
+    'srcfetcher',
+    'youtube',
+]
 
 
 __version__ = '1'

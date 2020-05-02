@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import getpass
 import os
 import subprocess
@@ -9,7 +7,7 @@ import onetimepass
 import addons.shell as shell
 
 
-if __name__ == '__main__':
+def genpass():
     key_file = os.path.expanduser(os.path.join(
         '~{}'.format(getpass.getuser()),
         '.data',
