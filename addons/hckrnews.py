@@ -116,10 +116,10 @@ class HackerNews:
             except ValueError:
                 continue
 
-            if get_article(a['id']) is None:
-                insert_article(a['id'], a['link'], a['link_text'], day, a['points'], a['comments'])
+            if self.get_article(a['id']) is None:
+                self.insert_article(a['id'], a['link'], a['link_text'], day, a['points'], a['comments'])
             else:
-                update_article(a['id'], a['points'], a['comments'])
+                self.update_article(a['id'], a['points'], a['comments'])
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
