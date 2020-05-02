@@ -12,6 +12,7 @@ setup(
             'github-2fa = addons.github:genpass',
             'srcfetcher = addons.srcfetcher:main',
             'take-screenshot = addons.screenshot:main',
+            'hckrnews = addons.hckrnews:main',
         ],
     },
     include_package_data=True,

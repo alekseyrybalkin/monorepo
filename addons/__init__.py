@@ -3,6 +3,7 @@ __all__ = [
     'db',
     'gen',
     'github',
+    'hckrnews',
     'screenshot',
     'shell',
     'srcfetcher',

@@ -35,6 +35,29 @@ def youtube_init(cursor):
     cursor.execute('create index video_url on video(url)')
 
 
+def hckrnews_test(cursor):
+    cursor.execute('select 1 from day')
+
+
+def hckrnews_init(cursor):
+    cursor.execute('''
+        create table day(
+            id text primary key,
+            last_updated text
+        )''')
+    cursor.execute('''
+        create table article(
+            id integer primary key,
+            link text,
+            desc text,
+            day text,
+            points integer,
+            comments integer
+        )''')
+    cursor.execute('create index article_day_idx on article(day)')
+    cursor.execute('create index day_last_updated_idx on day(last_updated)')
+
+
 db_configs = {
     'srcfetcher': {
         'test': srcfetcher_test,
@@ -43,6 +66,19 @@ db_configs = {
     'youtube': {
         'test': youtube_test,
         'init': youtube_init,
+    },
+    'hckrnews': {
+        'test': hckrnews_test,
+        'init': hckrnews_init,
+        'path': os.path.expanduser(
+            os.path.join(
+                '~{}'.format(getpass.getuser()),
+                '.data',
+                'databases',
+                'large',
+                'hckrnews.db',
+            ),
+        ),
     },
 }
 
@@ -53,9 +89,13 @@ class DB:
         self.test = db_configs[name]['test']
         self.init = db_configs[name]['init']
         self.conn = None
+        if 'path' in db_configs[name]:
+            self.db = db_configs[name]['path']
+        else:
+            self.db = self.get_default_db()
 
-    def __enter__(self):
-        db = os.path.expanduser(
+    def get_default_db(self):
+        return os.path.expanduser(
             os.path.join(
                 '~{}'.format(getpass.getuser()),
                 '.data',
@@ -63,7 +103,9 @@ class DB:
                 '{}.db'.format(self.name),
             ),
         )
-        self.conn = sqlite3.connect(db)
+
+    def __enter__(self):
+        self.conn = sqlite3.connect(self.db)
         self.conn.row_factory = sqlite3.Row
 
         cursor = self.conn.cursor()
@@ -81,7 +123,7 @@ class DB:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.conn.close()
 
-    def select_one(self, sql, params=None):
+    def select_one(self, sql, params=None, model=None):
         cursor = self.conn.cursor()
 
         if params:
@@ -93,9 +135,11 @@ class DB:
         self.conn.commit()
         cursor.close()
 
+        if model is not None:
+            return model(*row) if row is not None else None
         return row
 
-    def select_many(self, sql, params=None):
+    def select_many(self, sql, params=None, model=None):
         cursor = self.conn.cursor()
 
         if params:
@@ -107,6 +151,8 @@ class DB:
         self.conn.commit()
         cursor.close()
 
+        if model is not None and rows:
+            return [model(*row) for row in rows]
         return rows
 
     def execute(self, sql, params=None):
