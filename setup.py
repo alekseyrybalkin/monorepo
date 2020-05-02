@@ -5,12 +5,12 @@ setup(
     version=__import__('addons').__version__,
     packages=['addons'],
     scripts=[
-        'networth',
-        'exercise',
-        'things',
-        'kopass',
-        'srcfetcher',
         'compress-music',
+        'fetch-videos',
+        'gen',
+        'github-2fa',
+        'srcfetcher',
+        'take-screenshot',
     ],
     include_package_data=True,
 )
