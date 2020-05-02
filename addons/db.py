@@ -22,11 +22,28 @@ def srcfetcher_init(cursor):
     cursor.execute('create index project_last_success_idx on project(last_success)')
 
 
+def youtube_test(cursor):
+    cursor.execute('select 1 from video')
+
+
+def youtube_init(cursor):
+    cursor.execute('''
+        create table video(
+            id integer primary key,
+            url text
+        )''')
+    cursor.execute('create index video_url on video(url)')
+
+
 db_configs = {
     'srcfetcher': {
         'test': srcfetcher_test,
         'init': srcfetcher_init,
-    }
+    },
+    'youtube': {
+        'test': youtube_test,
+        'init': youtube_init,
+    },
 }
 
 

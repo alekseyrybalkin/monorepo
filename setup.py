@@ -10,6 +10,7 @@ setup(
         'things',
         'kopass',
         'srcfetcher',
+        'compress-music',
     ],
     include_package_data=True,
 )
