@@ -52,7 +52,13 @@ class HackerNews:
         )
 
     def insert_article(self, article_id, link, desc, day, points, comments):
-        self.db.execute('insert into article(id, link, desc, day, points, comments) values (?, ?, ?, ?, ?, ?)', (article_id, link, desc, day, points, comments))
+        self.db.execute(
+            '''
+                insert into article(id, link, desc, day, points, comments)
+                    values (?, ?, ?, ?, ?, ?)
+            ''',
+            (article_id, link, desc, day, points, comments),
+        )
 
     def update_article(self, article_id, points, comments):
         self.db.execute('update article set points=?, comments=? where id=?', (points, comments, article_id))
