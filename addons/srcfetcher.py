@@ -124,7 +124,7 @@ class SourceFetcher:
                 (now, project_name),
             )
 
-        if not args.quiet:
+        if not self.args.quiet:
             sys.stdout.write(
                 self.colorize(
                     '{}: {}\n'.format(
@@ -145,7 +145,7 @@ class SourceFetcher:
         os.environ['BRZ_LOG'] = '/dev/null'
         os.environ['FOSSIL_HOME'] = os.path.expanduser(os.path.join('~{}'.format(getpass.getuser()), '.config'))
 
-        args = self.parse_args()
+        self.args = self.parse_args()
 
         project_names = list(name for name, _ in self.list_projects())
         if len(set(project_names)) != len(project_names):
@@ -165,8 +165,8 @@ class SourceFetcher:
         for project in db_projects:
             self.delete_project(project)
 
-        if args.project:
-            self.fetch(args.project)
+        if self.args.project:
+            self.fetch(self.args.project)
         else:
             for i in range(3):
                 project = self.get_oldest_expired()
