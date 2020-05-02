@@ -1,4 +1,4 @@
-__all__ = ['db', 'shell']
+__all__ = ['audio', 'db', 'shell']
 
 
 __version__ = '1'
