@@ -1,4 +1,4 @@
-__all__ = ['db']
+__all__ = ['db', 'shell']
 
 
 __version__ = '1'
