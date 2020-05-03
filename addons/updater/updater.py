@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 
+import addons.db
 import addons.updater.relmon as relmon
 import addons.updater.arch as arch
 import addons.updater.repo as repo
@@ -130,6 +131,9 @@ class Package:
 
 
 class Updater:
+    def __init__(self, db):
+        self.relmon_checker = relmon.RelmonChecker(db)
+
     def update_pkgver(self, pkgbuild, old_pkgver, new_pkgver):
         with open(pkgbuild, 'r') as inf, open(pkgbuild + '.NEW', 'w') as outf:
             for line in inf.readlines():
@@ -148,18 +152,31 @@ class Updater:
             return
 
         arch_version = None
-        if not pkg.pkgname in arch_skips:
+        if pkg.pkgname not in arch_skips:
             arch_name = pkg.pkgname if not arch_names.get(pkg.pkgname) else arch_names.get(pkg.pkgname)
             arch_version = arch.get_arch_version(arch_name)
 
         relmon_version = None
         if pkg.relmon_id:
-            relmon_version = relmon.get_relmon_version(pkg.relmon_id, pkg.updater_rules, relmon_ignores.get(pkg.pkgname, []), series.get(pkg.pkgname))
+            relmon_version = self.relmon_checker.get_relmon_version(
+                pkg.relmon_id,
+                pkg.updater_rules,
+                relmon_ignores.get(pkg.pkgname, []),
+                series.get(pkg.pkgname),
+            )
 
         repo_version = None
 
         dirname = pkg.pkgname if not pkg.vcs_pkgname else pkg.vcs_pkgname
-        repo_version = repo.get_repo_version(pkg.pkgname, dirname, pkg.vcs, pkg.updater_rules, repo_ignores.get(pkg.pkgname, []), series.get(pkg.pkgname), self.verbose)
+        repo_version = repo.get_repo_version(
+            pkg.pkgname,
+            dirname,
+            pkg.vcs,
+            pkg.updater_rules,
+            repo_ignores.get(pkg.pkgname, []),
+            series.get(pkg.pkgname),
+            self.verbose,
+        )
         if repo_postprocessing.get(pkg.pkgname):
             repo_version = repo_version.replace(repo_postprocessing[pkg.pkgname], '')
 
@@ -169,9 +186,9 @@ class Updater:
         repo_parsed = repo.Tag(repo_version) if repo_version else None
 
         arch_diff = arch_parsed \
-                and ver_parsed < arch_parsed \
-                and (not arch_ignores.get(pkg.pkgname) or arch_version not in arch_ignores.get(pkg.pkgname)) \
-                and (not series.get(pkg.pkgname) or arch_parsed.check_series(repo.Tag(series.get(pkg.pkgname))))
+            and ver_parsed < arch_parsed \
+            and (not arch_ignores.get(pkg.pkgname) or arch_version not in arch_ignores.get(pkg.pkgname)) \
+            and (not series.get(pkg.pkgname) or arch_parsed.check_series(repo.Tag(series.get(pkg.pkgname))))
 
         relmon_diff = relmon_parsed and ver_parsed < relmon_parsed
 
@@ -244,7 +261,8 @@ class Updater:
 
 
 def main():
-    Updater().main()
+    with addons.db.DB('relmon') as db:
+        Updater(db).main()
 
 
 if __name__ == '__main__':

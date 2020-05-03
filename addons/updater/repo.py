@@ -3,6 +3,7 @@ import os
 import re
 import subprocess
 
+import addons.shell as shell
 import addons.updater.versions as versions
 
 
@@ -161,12 +162,30 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
         command = ['brz', 'tags']
         preprocessing = ['bzr_cleanup']
 
-    tags = [Tag(v.strip().lower(), pkgname=pkgname, dirname=dirname) for v in subprocess.check_output(command).decode().split('\n')[:-1]]
+    tags = [
+        Tag(
+            v.strip().lower(),
+            pkgname=pkgname,
+            dirname=dirname,
+        ) for v in shell.output(command).split('\n')
+    ]
 
     if preprocessing:
-        tags = [Tag(versions.apply_rules(tag.to_version(), preprocessing), pkgname=pkgname, dirname=dirname) for tag in tags if versions.check_rules(tag.to_version(), preprocessing)]
+        tags = [
+            Tag(
+                versions.apply_rules(tag.to_version(), preprocessing),
+                pkgname=pkgname,
+                dirname=dirname,
+            ) for tag in tags if versions.check_rules(tag.to_version(), preprocessing)
+        ]
 
-    tags = [Tag(versions.apply_rules(tag.to_version(), rules), pkgname=pkgname, dirname=dirname) for tag in tags if versions.check_rules(tag.to_version(), rules)]
+    tags = [
+        Tag(
+            versions.apply_rules(tag.to_version(), rules),
+            pkgname=pkgname,
+            dirname=dirname,
+        ) for tag in tags if versions.check_rules(tag.to_version(), rules)
+    ]
 
     tags = [tag for tag in tags if tag.to_version() not in ignores]
 

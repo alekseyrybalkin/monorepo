@@ -55,7 +55,10 @@ class Relmon:
 
     def get_oldest_expired(self):
         prev_date = datetime.datetime.now() - datetime.timedelta(days=2)
-        return self.db.select_one('select id from package where updated <= ? order by updated asc limit 1', (prev_date,))
+        return self.db.select_one(
+            'select id from package where updated <= ? order by updated asc limit 1',
+            (prev_date,),
+        )
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
@@ -65,6 +68,9 @@ class Relmon:
         args = parser.parse_args()
 
         return args.query, args.cached, args.update
+
+    def get_all_packages(self):
+        return self.db.select_many('select * from package')
 
     def main(self):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)

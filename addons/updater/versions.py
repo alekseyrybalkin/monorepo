@@ -61,12 +61,6 @@ def check_rules(version, rules):
 
 
 def apply_rules(version, rules):
-    #if 'no_alpha_skips' not in rules:
-    #    index = 0
-    #    while len(version) > index and version[index] not in string.digits:
-    #        index += 1
-    #    version = version[index:]
-
     for rule in rules:
         if rule == 'repl_underscore_dot':
             version = version.replace('_', '.')

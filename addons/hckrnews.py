@@ -4,11 +4,8 @@ import datetime as dt
 import sys
 import argparse
 import json
-import os
 import signal
 import time
-import sqlite3
-import getpass
 
 import requests
 
