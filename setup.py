@@ -14,6 +14,7 @@ setup(
             'take-screenshot = addons.screenshot:main',
             'hckrnews = addons.hckrnews:main',
             'relmon = addons.relmon:main',
+            'updater = addons.updater.updater:main',
         ],
     },
     include_package_data=True,
