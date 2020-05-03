@@ -1,5 +1,4 @@
 import os.path
-import subprocess
 import time
 
 import addons.shell as shell

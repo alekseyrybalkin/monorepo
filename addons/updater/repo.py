@@ -1,7 +1,6 @@
 import itertools
 import os
 import re
-import subprocess
 
 import addons.shell as shell
 import addons.updater.versions as versions

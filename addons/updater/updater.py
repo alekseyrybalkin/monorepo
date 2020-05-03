@@ -1,10 +1,10 @@
 import argparse
 import os
 import shutil
-import subprocess
 import sys
 
 import addons.db
+import addons.shell
 import addons.updater.relmon as relmon
 import addons.updater.arch as arch
 import addons.updater.repo as repo
@@ -125,7 +125,7 @@ class Package:
         command = 'source {}; '.format(path)
         for field in pkgbuild_fields:
             command += 'echo ${}; '.format(field)
-        values = [v.strip() for v in subprocess.check_output(command, shell=True).decode().split('\n')[:-1]]
+        values = [v.strip() for v in addons.shell.output([command], shell=True, strip=False).split('\n')[:-1]]
 
         return cls(**{k: v for k, v in zip(pkgbuild_fields, values)})
 

@@ -15,11 +15,14 @@ def run(command):
         raise NonZeroReturnCode()
 
 
-def output(command):
+def output(command, shell=False, strip=True):
     if isinstance(command, str):
         command = command.split(' ')
 
-    return subprocess.check_output(command).strip().decode()
+    if strip:
+        return subprocess.check_output(command, shell=shell).strip().decode()
+    else:
+        return subprocess.check_output(command, shell=shell).decode()
 
 
 def copy_to_clipboard(value):
