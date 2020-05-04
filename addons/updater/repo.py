@@ -64,15 +64,15 @@ class Tag:
             tag = re.sub('^{}'.format(dirname), '', tag)
 
         self.tag = tag
-        raw_parts = tag.replace('_', '.').replace('-', '.').split('.')
+        self.raw_parts = [t for t in tag.replace('_', '.').replace('-', '.').split('.') if t]
         self.parts = []
-        for part in raw_parts:
+        for part in self.raw_parts:
             if part:
                 subparts = alphanum_split(part)
                 self.parts.append(subparts)
 
     def to_version(self):
-        return '.'.join(''.join(str(subpart) for subpart in part) for part in self.parts)
+        return '.'.join(self.raw_parts)
 
     def __repr__(self):
         return "'{}'".format(self.to_version())
