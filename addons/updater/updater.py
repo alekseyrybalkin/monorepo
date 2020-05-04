@@ -30,6 +30,7 @@ arch_ignores = {
     'fontconfig': {'2.13.91+24+g75eadca'},
     'linux-firmware': {'20200421.78c0348'},
     'gtk': {'3.24.17+22+g99bae0fb5f'},
+    'shared-mime-info': {'1.15+43+gd23e9fa'},
 }
 
 arch_skips = {
@@ -74,6 +75,7 @@ relmon_ignores = {
     'python': {'3.9.0'},
     'colm': {'0.14.1'},
     'mesa': {'20.1.0'},
+    'python': {'3.8.3'},
 }
 
 repo_ignores = {
