@@ -5,6 +5,7 @@ import sys
 
 import addons.db
 import addons.shell
+import addons.srcfetcher as srcfetcher
 import addons.updater.relmon as relmon
 import addons.updater.arch as arch
 import addons.updater.repo as repo
@@ -133,8 +134,9 @@ class Package:
 
 
 class Updater:
-    def __init__(self, db):
-        self.relmon_checker = relmon.RelmonChecker(db)
+    def __init__(self, relmon_db, srcfetcher_db):
+        self.relmon_checker = relmon.RelmonChecker(relmon_db)
+        self.source_fetcher = srcfetcher.SourceFetcher(srcfetcher_db)
 
     def update_pkgver(self, pkgbuild, old_pkgver, new_pkgver):
         with open(pkgbuild, 'r') as inf, open(pkgbuild + '.NEW', 'w') as outf:
@@ -232,6 +234,14 @@ class Updater:
         return text
 
     def check_all(self):
+        failed = self.source_fetcher.get_all_failed()
+        if failed:
+            sys.stdout.write('Projects failed to update: ')
+            sys.stdout.write(self.colorize(
+                '{}\n'.format(' '.join(project['name'] for project in failed)),
+                color=1,
+            ))
+            sys.stdout.write('\n')
         sys.stdout.write(self.colorize('{:<30}{:<25}{:<25}{:<25}{}\n'.format(
             '[PACKAGE]',
             '[VERSION]',
@@ -263,8 +273,8 @@ class Updater:
 
 
 def main():
-    with addons.db.DB('relmon') as db:
-        Updater(db).main()
+    with addons.db.DB('relmon') as relmon_db, addons.db.DB('srcfetcher') as srcfetcher_db:
+        Updater(relmon_db, srcfetcher_db).main()
 
 
 if __name__ == '__main__':

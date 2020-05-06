@@ -44,6 +44,9 @@ class SourceFetcher:
             (prev_date,),
         )
 
+    def get_all_failed(self):
+        return self.db.select_many('select name from project where last_success <> last_attempt')
+
     def list_projects(self):
         for group in (g for g in os.scandir('/home/rybalkin/.data/sources') if g.is_dir() and g.name != '_ignore'):
             yield from ((project.name, project.path) for project in os.scandir(group) if project.is_dir())
