@@ -30,8 +30,7 @@ arch_ignores = {
     'cairo': {'1.17.2+17+g52a7c79fd'},
     'fontconfig': {'2.13.91+24+g75eadca'},
     'linux-firmware': {'20200421.78c0348'},
-    'gtk': {'3.24.17+22+g99bae0fb5f'},
-    'shared-mime-info': {'1.15+43+gd23e9fa'},
+    'shared-mime-info': {'2.0+1+g6bf9e4f'},
 }
 
 arch_skips = {
@@ -72,7 +71,6 @@ arch_names = {
 relmon_ignores = {
     'python-backcall': {'0.1.0'},
     'fossil': {'2.11'},
-    'inkscape': {'1.0beta', '1.0rc1'},
     'python': {'3.9.0'},
     'colm': {'0.14.1'},
     'mesa': {'20.1.0'},
@@ -94,7 +92,6 @@ series = {
     'coffeescript': '1',
     'librsvg': '2.40',
     'mypaint-brushes': '1',
-    'librevenge': '0.0',
     'libpipeline': '1',
     'python-sphinx': '2',
 }
