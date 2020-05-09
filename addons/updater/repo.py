@@ -80,8 +80,12 @@ class Tag:
     def __lt__(self, other):
         for px, py in itertools.zip_longest(self.parts, other.parts):
             if px is None:
+                if py and ''.join(str(subpart) for subpart in py) == '0':
+                    continue
                 return True
             if py is None:
+                if px and ''.join(str(subpart) for subpart in px) == '0':
+                    continue
                 return False
             for x, y in itertools.zip_longest(px, py):
                 if x is None:

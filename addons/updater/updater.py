@@ -21,7 +21,6 @@ special_ones = {
 }
 
 arch_ignores = {
-    'python-backcall': {'0.1.0'},
     'miniupnpc': {'2.1.20190408'},
     'runc': {'1.0.0rc10'},
     'libtool': {'2.4.6+42+gb88cebd5'},
@@ -69,7 +68,6 @@ arch_names = {
 }
 
 relmon_ignores = {
-    'python-backcall': {'0.1.0'},
     'fossil': {'2.11'},
     'python': {'3.9.0'},
     'colm': {'0.14.1'},
