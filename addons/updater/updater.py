@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import os
 import shutil
 import sys
@@ -229,6 +230,8 @@ class Updater:
         return text
 
     def check_all(self):
+        problems = False
+
         failed = self.source_fetcher.get_all_failed()
         if failed:
             sys.stdout.write('Projects failed to update: ')
@@ -236,7 +239,20 @@ class Updater:
                 '{}\n'.format(' '.join(project['name'] for project in failed)),
                 color=1,
             ))
+            problems = True
+
+        last_attempt = self.source_fetcher.get_oldest_attempt_date()['time']
+        last_attempt = datetime.datetime.strptime(last_attempt, '%Y-%m-%d %H:%M:%S.%f')
+        hours = (datetime.datetime.now() - last_attempt).total_seconds() / 3600
+        if hours >= 50:
+            sys.stdout.write('Oldest fetch attempt:      {} hours ago\n'.format(
+                self.colorize('{:.1f}'.format(hours), color=1),
+            ))
+            problems = True
+
+        if problems:
             sys.stdout.write('\n')
+
         sys.stdout.write(self.colorize('{:<30}{:<25}{:<25}{:<25}{}\n'.format(
             '[PACKAGE]',
             '[VERSION]',
