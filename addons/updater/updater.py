@@ -73,7 +73,6 @@ relmon_ignores = {
     'python': {'3.9.0'},
     'colm': {'0.14.1'},
     'mesa': {'20.1.0'},
-    'python': {'3.8.3', '3.9.0'},
 }
 
 repo_ignores = {
