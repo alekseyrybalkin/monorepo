@@ -13,19 +13,19 @@ def alphanum_split(part):
     is_alpha = False
     subpart = ''
 
-    for l in part:
-        if l.isnumeric():
+    for letter in part:
+        if letter.isnumeric():
             if not subpart or subpart.isnumeric():
-                subpart += l
+                subpart += letter
             else:
                 raw_subparts.append(subpart)
-                subpart = l
+                subpart = letter
         else:
             if not subpart or not subpart.isnumeric():
-                subpart += l
+                subpart += letter
             else:
                 raw_subparts.append(subpart)
-                subpart = l
+                subpart = letter
 
     raw_subparts.append(subpart)
 
