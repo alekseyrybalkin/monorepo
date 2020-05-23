@@ -27,9 +27,8 @@ arch_ignores = {
     'libtool': {'2.4.6+42+gb88cebd5'},
     'gtk-doc': {'1.32+37+gefc3644'},
     'pango': {'1.44.7+11+g73b46b04'},
-    'cairo': {'1.17.2+17+g52a7c79fd'},
+    'cairo': {'1.17.2+25+gaee96d175'},
     'fontconfig': {'2.13.91+24+g75eadca'},
-    'linux-firmware': {'20200421.78c0348'},
     'shared-mime-info': {'2.0+1+g6bf9e4f'},
 }
 
