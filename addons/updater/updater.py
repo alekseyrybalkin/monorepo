@@ -29,6 +29,7 @@ arch_ignores = {
     'pango': {'1.44.7+11+g73b46b04'},
     'cairo': {'1.17.2+25+gaee96d175'},
     'fontconfig': {'2.13.91+24+g75eadca'},
+    'linux-firmware': {'20200519.8ba6fa6'},
     'shared-mime-info': {'2.0+1+g6bf9e4f'},
 }
 
@@ -68,7 +69,7 @@ arch_names = {
 }
 
 relmon_ignores = {
-    'fossil': {'2.11'},
+    'fossil': {'2.12'},
     'python': {'3.9.0'},
     'colm': {'0.14.1'},
     'mesa': {'20.1.0'},
