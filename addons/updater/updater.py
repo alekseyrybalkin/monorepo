@@ -112,6 +112,31 @@ pkgbuild_fields = [
     'updater_rules',
 ]
 
+custom = [
+    'addons',
+    'python-addons',
+    'configs',
+    'filesystem',
+    'which',
+    'initramfs',
+    'lfs-book',
+    'blfs-book',
+    'opengl-docs',
+    'lightlang',
+    'ji',
+    'telenoti',
+    'syncema',
+    'ttf-fonts',
+]
+
+one_check_ok = [
+    'cpp-docs',
+    'python-mwparserfromhell',
+    'python-onetimepass',
+    'vimium',
+    'potrace',
+]
+
 
 class Package:
     def __init__(self, **kwargs):
@@ -132,6 +157,9 @@ class Updater:
     def __init__(self, relmon_db, srcfetcher_db):
         self.relmon_checker = relmon.RelmonChecker(relmon_db)
         self.source_fetcher = srcfetcher.SourceFetcher(srcfetcher_db)
+
+        self.no_checks = []
+        self.one_check = []
 
     def update_pkgver(self, pkgbuild, old_pkgver, new_pkgver):
         with open(pkgbuild, 'r') as inf, open(pkgbuild + '.NEW', 'w') as outf:
@@ -174,7 +202,7 @@ class Updater:
             pkg.updater_rules,
             repo_ignores.get(pkg.pkgname, []),
             series.get(pkg.pkgname),
-            self.verbose,
+            self.verbose and self.package,
         )
         if repo_postprocessing.get(pkg.pkgname):
             repo_version = repo_version.replace(repo_postprocessing[pkg.pkgname], '')
@@ -201,32 +229,49 @@ class Updater:
                     break
 
         if arch_diff or relmon_diff or repo_diff or self.verbose or self.package:
+            diff_versions = []
+            if arch_diff:
+                diff_versions.append((arch_parsed, arch_version))
+            if relmon_diff:
+                diff_versions.append((relmon_parsed, relmon_version))
+            if repo_diff:
+                diff_versions.append((repo_parsed, repo_version))
+
+            best_version = pkg.pkgver
+            if diff_versions:
+                best_version = sorted(diff_versions)[-1][1]
+
+            if best_version != pkg.pkgver and self.in_place and can_change:
+                self.update_pkgver(pkgbuild, pkg.pkgver, best_version)
+
             print('{:<30}{:<25}{:<25}{:<25}{}'.format(
                 pkg.pkgname,
-                pkg.pkgver,
-                arch_version or 'N/A',
-                relmon_version or 'N/A',
-                repo_version or 'N/A',
+                self.colorize(pkg.pkgver, color=2) + ' ' * (25 - len(pkg.pkgver)) if pkg.pkgver == best_version else pkg.pkgver,
+                self.colorize(arch_version, color=2) + ' ' * (25 - len(arch_version)) if arch_version == best_version else (arch_version or 'N/A'),
+                self.colorize(relmon_version, color=2) + ' ' * (25 - len(relmon_version))if relmon_version == best_version else (relmon_version or 'N/A'),
+                self.colorize(repo_version, color=2) if repo_version == best_version else (repo_version or 'N/A'),
             ))
 
-            if self.in_place and can_change:
-                diff_versions = []
-                if arch_diff:
-                    diff_versions.append((arch_parsed, arch_version))
-                if relmon_diff:
-                    diff_versions.append((relmon_parsed, relmon_version))
-                if repo_diff:
-                    diff_versions.append((repo_parsed, repo_version))
+        checks = sum(1 if parsed else 0 for parsed in [arch_parsed, relmon_parsed, repo_parsed])
 
-                if diff_versions:
-                    best_version = sorted(diff_versions)[-1][1]
-                    self.update_pkgver(pkgbuild, pkg.pkgver, best_version)
+        if checks == 0 and not pkg.pkgname in custom:
+            self.no_checks.append(pkg.pkgname)
+        if checks == 1 and not pkg.pkgname in custom and not pkg.pkgname in one_check_ok:
+            self.one_check.append(pkg.pkgname)
 
     def colorize(self, text, color=7):
         if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
             seq = "\x1b[1;{}m".format(30 + color) + text + "\x1b[0m"
             return seq
         return text
+
+    def list_all_projects(self):
+        projects = []
+        for group in os.scandir('/home/rybalkin/projects/jinni-repo'):
+            if group.is_dir():
+                for project in os.scandir(group.path):
+                    projects.append(project)
+        return sorted(projects, key=lambda p: p.name)
 
     def check_all(self):
         problems = False
@@ -259,13 +304,26 @@ class Updater:
             '[RELMON]',
             '[REPOSITORY]',
         ), color=8))
-        for group in os.scandir('/home/rybalkin/projects/jinni-repo'):
-            if group.is_dir():
-                for project in os.scandir(group.path):
-                    pkgbuild = os.path.join(project.path, 'PKGBUILD')
-                    if project.is_dir() and os.path.exists(pkgbuild):
-                        if not self.package or project.name == self.package:
-                            self.process(pkgbuild)
+        for project in self.list_all_projects():
+            pkgbuild = os.path.join(project.path, 'PKGBUILD')
+            if project.is_dir() and os.path.exists(pkgbuild):
+                if not self.package or project.name == self.package:
+                    self.process(pkgbuild)
+
+        if self.no_checks or self.one_check:
+            sys.stdout.write('\n')
+        if self.no_checks:
+            sys.stdout.write('Projects with no checks: ')
+            sys.stdout.write(self.colorize(
+                '{}\n'.format(' '.join(project for project in self.no_checks)),
+                color=1,
+            ))
+        if self.one_check:
+            sys.stdout.write('Projects with only one check: ')
+            sys.stdout.write(self.colorize(
+                '{}\n'.format(' '.join(project for project in self.one_check)),
+                color=6,
+            ))
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
