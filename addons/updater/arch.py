@@ -6,9 +6,13 @@ def get_arch_version(pkgname):
 
     arch_packages = '/home/rybalkin/.data/sources/external-repos/arch-packages'
     arch_community = '/home/rybalkin/.data/sources/external-repos/arch-community'
+    aur = '/home/rybalkin/.data/sources/aur'
 
-    for repo in [arch_packages, arch_community]:
-        arch_pkgbuild = '{}/{}/trunk/PKGBUILD'.format(repo, pkgname)
+    for repo in [arch_packages, arch_community, aur]:
+        if repo != aur:
+            arch_pkgbuild = '{}/{}/trunk/PKGBUILD'.format(repo, pkgname)
+        else:
+            arch_pkgbuild = '{}/aur-{}/PKGBUILD'.format(repo, pkgname)
         if os.path.exists(arch_pkgbuild):
             pkgver = None
             _pkgmajor = None
