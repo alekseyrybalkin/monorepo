@@ -31,6 +31,7 @@ arch_ignores = {
     'fontconfig': {'2.13.91+24+g75eadca'},
     'linux-firmware': {'20200519.8ba6fa6'},
     'shared-mime-info': {'2.0+1+g6bf9e4f'},
+    'openjdk': {'14.0.1.u7'},
 }
 
 arch_skips = {
@@ -66,6 +67,7 @@ arch_names = {
     'freetype': 'freetype2',
     'lcms': 'lcms2',
     'python-opengl': 'pyopengl',
+    'openjdk': 'java-openjdk',
 }
 
 relmon_ignores = {
@@ -140,6 +142,11 @@ one_check_ok = [
     'zoom',
 ]
 
+extra_repos = {
+    'openjdk': ['openjdk'],
+    'gmp': ['gmp'],
+}
+
 
 class Package:
     def __init__(self, **kwargs):
@@ -197,16 +204,20 @@ class Updater:
 
         repo_version = None
 
-        dirname = pkg.pkgname if not pkg.vcs_pkgname else pkg.vcs_pkgname
-        repo_version = repo.get_repo_version(
-            pkg.pkgname,
-            dirname,
-            pkg.vcs,
-            pkg.updater_rules,
-            repo_ignores.get(pkg.pkgname, []),
-            series.get(pkg.pkgname),
-            self.verbose and self.package,
-        )
+        dirnames = [pkg.pkgname if not pkg.vcs_pkgname else pkg.vcs_pkgname]
+        dirnames.extend(extra_repos.get(pkg.pkgname, []))
+        for dirname in dirnames:
+            version = repo.get_repo_version(
+                pkg.pkgname,
+                dirname,
+                pkg.vcs,
+                pkg.updater_rules,
+                repo_ignores.get(pkg.pkgname, []),
+                series.get(pkg.pkgname),
+                self.verbose and self.package,
+            )
+            if repo_version is None or (version is not None and repo_version < version):
+                repo_version = version
         repo_version_jinni = False
         if repo_version:
             repo_version_jinni = repo_version.jinni
