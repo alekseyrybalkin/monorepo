@@ -135,6 +135,8 @@ one_check_ok = [
     'python-onetimepass',
     'vimium',
     'potrace',
+    'gn',
+    'pd',
 ]
 
 
@@ -204,6 +206,11 @@ class Updater:
             series.get(pkg.pkgname),
             self.verbose and self.package,
         )
+        repo_version_jinni = False
+        if repo_version:
+            repo_version_jinni = repo_version.jinni
+            repo_version = repo_version.to_version()
+
         if repo_postprocessing.get(pkg.pkgname):
             repo_version = repo_version.replace(repo_postprocessing[pkg.pkgname], '')
 
@@ -252,7 +259,7 @@ class Updater:
                 self.colorize(repo_version, color=2) if repo_version == best_version else (repo_version or 'N/A'),
             ))
 
-        checks = sum(1 if parsed else 0 for parsed in [arch_parsed, relmon_parsed, repo_parsed])
+        checks = sum(1 if parsed else 0 for parsed in [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)])
 
         if checks == 0 and not pkg.pkgname in custom:
             self.no_checks.append(pkg.pkgname)

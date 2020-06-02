@@ -40,7 +40,7 @@ def alphanum_split(part):
 
 
 class Tag:
-    def __init__(self, tag, pkgname=None, dirname=None):
+    def __init__(self, tag, pkgname=None, dirname=None, is_jinni=None):
         tag = re.sub('^release-', '', tag)
         tag = re.sub('^release_', '', tag)
         tag = re.sub('^release\\.', '', tag)
@@ -48,7 +48,6 @@ class Tag:
         tag = re.sub('^releases/', '', tag)
         tag = re.sub('^rel-', '', tag)
         tag = re.sub('^rel_', '', tag)
-        tag = re.sub('^jinni-', '', tag)
         tag = re.sub('^version-', '', tag)
         tag = re.sub('^version_', '', tag)
         tag = re.sub('^ver-', '', tag)
@@ -56,6 +55,13 @@ class Tag:
         tag = re.sub('^tag-', '', tag)
         tag = re.sub('^v', '', tag)
         tag = re.sub('^v_', '', tag)
+
+        if is_jinni is not None:
+            self.jinni = is_jinni
+        else:
+            self.jinni = tag.startswith('jinni-')
+        tag = re.sub('^jinni-', '', tag)
+
         if pkgname and '+' not in pkgname:
             tag = re.sub('^{}-'.format(pkgname), '', tag)
             tag = re.sub('^{}'.format(pkgname), '', tag)
@@ -179,6 +185,7 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
                 versions.apply_rules(tag.to_version(), preprocessing),
                 pkgname=pkgname,
                 dirname=dirname,
+                is_jinni=tag.jinni,
             ) for tag in tags if versions.check_rules(tag.to_version(), preprocessing)
         ]
 
@@ -187,6 +194,7 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
             versions.apply_rules(tag.to_version(), rules),
             pkgname=pkgname,
             dirname=dirname,
+            is_jinni=tag.jinni,
         ) for tag in tags if versions.check_rules(tag.to_version(), rules)
     ]
 
@@ -198,4 +206,4 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
     if verbose:
         print(sorted(tags))
 
-    return sorted(tags)[-1].to_version() if tags else None
+    return sorted(tags)[-1] if tags else None
