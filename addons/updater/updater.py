@@ -251,19 +251,24 @@ class Updater:
             if best_version != pkg.pkgver and self.in_place and can_change:
                 self.update_pkgver(pkgbuild, pkg.pkgver, best_version)
 
+            versions_to_print = []
+            for version in [pkg.pkgver, arch_version, relmon_version, repo_version]:
+                formatted = version or 'N/A'
+                if version == best_version:
+                    formatted = self.colorize(version, color=2) + ' ' * (25 - len(version))
+                versions_to_print.append(formatted)
+
             print('{:<30}{:<25}{:<25}{:<25}{}'.format(
                 pkg.pkgname,
-                self.colorize(pkg.pkgver, color=2) + ' ' * (25 - len(pkg.pkgver)) if pkg.pkgver == best_version else pkg.pkgver,
-                self.colorize(arch_version, color=2) + ' ' * (25 - len(arch_version)) if arch_version == best_version else (arch_version or 'N/A'),
-                self.colorize(relmon_version, color=2) + ' ' * (25 - len(relmon_version))if relmon_version == best_version else (relmon_version or 'N/A'),
-                self.colorize(repo_version, color=2) if repo_version == best_version else (repo_version or 'N/A'),
+                *versions_to_print,
             ))
 
-        checks = sum(1 if parsed else 0 for parsed in [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)])
+        parsed_list = [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)]
+        checks = sum(1 if parsed else 0 for parsed in parsed_list)
 
-        if checks == 0 and not pkg.pkgname in custom:
+        if checks == 0 and pkg.pkgname not in custom:
             self.no_checks.append(pkg.pkgname)
-        if checks == 1 and not pkg.pkgname in custom and not pkg.pkgname in one_check_ok:
+        if checks == 1 and pkg.pkgname not in custom and pkg.pkgname not in one_check_ok:
             self.one_check.append(pkg.pkgname)
 
     def colorize(self, text, color=7):
