@@ -172,12 +172,12 @@ class Updater:
         self.one_check = []
 
     def update_pkgver(self, pkgbuild, old_pkgver, new_pkgver):
-        with open(pkgbuild, 'r') as inf, open(pkgbuild + '.NEW', 'w') as outf:
-            for line in inf.readlines():
+        with open(pkgbuild, 'r') as input_file, open(pkgbuild + '.NEW', 'w') as output_file:
+            for line in input_file:
                 if line.strip() == 'pkgver={}'.format(old_pkgver):
-                    outf.write('pkgver={}\n'.format(new_pkgver))
+                    output_file.write('pkgver={}\n'.format(new_pkgver))
                 else:
-                    outf.write(line)
+                    output_file.write(line)
         shutil.move(pkgbuild + '.NEW', pkgbuild)
 
     def process(self, pkgbuild):
@@ -241,8 +241,8 @@ class Updater:
         repo_diff = repo_parsed and ver_parsed < repo_parsed
 
         can_change = False
-        with open(pkgbuild, 'r') as f:
-            for line in f.readlines():
+        with open(pkgbuild, 'r') as pkgbuild_file:
+            for line in pkgbuild_file:
                 if line.strip() == 'pkgver={}'.format(pkg.pkgver):
                     can_change = True
                     break
