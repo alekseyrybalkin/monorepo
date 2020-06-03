@@ -264,15 +264,20 @@ class Updater:
                 self.update_pkgver(pkgbuild, pkg.pkgver, best_version)
 
             versions_to_print = []
-            for version in [pkg.pkgver, arch_version, relmon_version, repo_version]:
+            vers = [pkg.pkgver, arch_version, relmon_version, repo_version]
+            for index, version in enumerate(vers):
                 formatted = version or 'N/A'
                 if version == best_version:
-                    formatted = self.colorize(version, color=2) + ' ' * (25 - len(version))
+                    spaces = ''
+                    if index < len(vers) - 1:
+                        spaces = ' ' * (25 - len(version))
+                    formatted = self.colorize(version, color=2) + spaces
                 versions_to_print.append(formatted)
 
+            jinni_tag = self.colorize('  [jinni]' if repo_version_jinni else '', color=1)
             print('{:<30}{:<25}{:<25}{:<25}{}'.format(
                 pkg.pkgname,
-                *versions_to_print,
+                *versions_to_print[:-1], '{}{}'.format(versions_to_print[-1], jinni_tag)
             ))
 
         parsed_list = [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)]
