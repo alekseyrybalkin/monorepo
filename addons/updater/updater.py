@@ -193,6 +193,9 @@ class Updater:
             arch_name = pkg.pkgname if not arch_names.get(pkg.pkgname) else arch_names.get(pkg.pkgname)
             arch_version = arch.get_arch_version(arch_name)
 
+        if arch_version and any(char in arch_version for char in '${}'):
+            arch_version = None
+
         relmon_version = None
         if pkg.relmon_id:
             relmon_version = self.relmon_checker.get_relmon_version(
