@@ -135,6 +135,9 @@ class HackerNews:
     def main(self):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
+        # don't die when stopped, try to finish your job first
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+
         articles = []
 
         action, param, quiet, show_all = self.parse_args()
