@@ -74,7 +74,6 @@ relmon_ignores = {
     'fossil': {'2.12'},
     'python': {'3.9.0'},
     'colm': {'0.14.1'},
-    'mesa': {'20.1.0'},
 }
 
 repo_ignores = {
