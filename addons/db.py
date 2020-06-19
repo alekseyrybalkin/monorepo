@@ -54,9 +54,11 @@ def relmon_init(cursor):
         create table package(
             id integer primary key,
             info text,
-            updated date
+            last_attempt date,
+            last_success date
         )''')
-    cursor.execute('create index package_updated_idx on package(updated)')
+    cursor.execute('create index package_last_attempt_idx on package(last_attempt)')
+    cursor.execute('create index package_last_success_idx on package(last_success)')
 
 
 db_configs = {

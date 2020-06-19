@@ -3,6 +3,7 @@
 import argparse
 import datetime
 import json
+import logging
 import signal
 import time
 
@@ -29,34 +30,51 @@ class Relmon:
             return None
         return json.loads(row['info'])
 
-    def update_cached(self, package_id, info):
+    def update_cached(self, package_id, info, success=True):
         now = datetime.datetime.now()
-        self.db.execute(
-            '''
-                insert into package(id, info, updated)
-                    values (?, ?, ?)
-                    on conflict(id) do
-                    update set info = ?, updated = ?
-            ''',
-            (int(package_id), json.dumps(info), now, json.dumps(info), now),
-        )
+        if success:
+            self.db.execute(
+                '''
+                    insert into package(id, info, last_attempt, last_success)
+                        values (?, ?, ?, ?)
+                        on conflict(id) do
+                        update set info = ?, last_attempt = ?, last_success = ?
+                ''',
+                (int(package_id), json.dumps(info), now, now, json.dumps(info), now, now),
+            )
+        else:
+            old_date = datetime.datetime(1970, 1, 1)
+            self.db.execute(
+                '''
+                    insert into package(id, last_attempt, last_success)
+                        values (?, ?, ?)
+                        on conflict(id) do
+                        update set last_attempt = ?
+                ''',
+                (int(package_id), now, old_date, now),
+            )
 
     def add_cached_placeholder(self, package_id):
         old_date = datetime.datetime(1970, 1, 1)
         self.db.execute(
             '''
-                insert into package(id, info, updated)
-                    values (?, ?, ?)
+                insert into package(id, info, last_attempt, last_success)
+                    values (?, ?, ?, ?)
                     on conflict(id) do
-                    update set updated = ?
+                    update set last_attempt = ?, last_success = ?
             ''',
-            (int(package_id), None, old_date, old_date),
+            (int(package_id), None, old_date, old_date, old_date, old_date),
         )
 
     def get_oldest_expired(self):
         prev_date = datetime.datetime.now() - datetime.timedelta(days=2)
         return self.db.select_one(
-            'select id from package where updated <= ? order by updated asc limit 1',
+            '''
+                select id from package
+                    where last_attempt is null or last_attempt <= ?
+                    order by last_attempt asc
+                    limit 1
+            ''',
             (prev_date,),
         )
 
@@ -115,8 +133,14 @@ class Relmon:
                 for i in range(3):
                     package = self.get_oldest_expired()
                     if package:
-                        info = self.get_by_id(package['id'])
-                        self.update_cached(package['id'], info)
+                        success = True
+                        info = None
+                        try:
+                            info = self.get_by_id(package['id'])
+                        except Exception as e:
+                            success = False
+                            logging.error(str(e))
+                        self.update_cached(package['id'], info, success)
                         time.sleep(2.0)
 
 
