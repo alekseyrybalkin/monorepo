@@ -5,6 +5,7 @@ import shutil
 import sys
 
 import addons.db
+import addons.relmon
 import addons.shell
 import addons.srcfetcher as srcfetcher
 import addons.updater.relmon as relmon
@@ -166,6 +167,7 @@ class Updater:
     def __init__(self, relmon_db, srcfetcher_db):
         self.relmon_checker = relmon.RelmonChecker(relmon_db)
         self.source_fetcher = srcfetcher.SourceFetcher(srcfetcher_db)
+        self.relmon = addons.relmon.Relmon(relmon_db)
 
         self.no_checks = []
         self.one_check = []
@@ -312,6 +314,15 @@ class Updater:
             sys.stdout.write('Projects failed to update: ')
             sys.stdout.write(self.colorize(
                 '{}\n'.format(' '.join(project['name'] for project in failed)),
+                color=1,
+            ))
+            problems = True
+
+        failed = self.relmon.get_all_failed()
+        if failed:
+            sys.stdout.write('Relmon ID update failures: ')
+            sys.stdout.write(self.colorize(
+                '{}\n'.format(str(len(failed))),
                 color=1,
             ))
             problems = True

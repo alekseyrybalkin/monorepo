@@ -78,6 +78,9 @@ class Relmon:
             (prev_date,),
         )
 
+    def get_all_failed(self):
+        return self.db.select_many('select id from package where last_success <> last_attempt')
+
     def parse_args(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('query', type=str, nargs='?')
