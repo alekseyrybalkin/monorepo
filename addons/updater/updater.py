@@ -94,6 +94,7 @@ series = {
     'mypaint-brushes': '1',
     'libpipeline': '1',
     'python-sphinx': '2',
+    'python-sphinx_rtd_theme': '0.4',
 }
 
 repo_postprocessing = {
