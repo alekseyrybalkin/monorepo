@@ -29,7 +29,7 @@ arch_ignores = {
     'gtk-doc': {'1.32+37+gefc3644'},
     'pango': {'1.44.7+11+g73b46b04'},
     'cairo': {'1.17.2+25+gaee96d175'},
-    'fontconfig': {'2.13.91+24+g75eadca'},
+    'fontconfig': {'2.13.91+48+gfcb0420'},
     'linux-firmware': {'20200519.8ba6fa6'},
     'shared-mime-info': {'2.0+1+g6bf9e4f'},
     'openjdk': {'14.0.1.u7'},
