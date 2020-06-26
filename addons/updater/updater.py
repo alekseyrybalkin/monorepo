@@ -62,7 +62,6 @@ arch_names = {
     'imlib': 'imlib2',
     'gtk': 'gtk3',
     'gdk-pixbuf': 'gdk-pixbuf2',
-    'libldap': 'openldap',
     'mypaint-brushes': 'mypaint-brushes1',
     'libxtrans': 'xtrans',
     'freetype': 'freetype2',
