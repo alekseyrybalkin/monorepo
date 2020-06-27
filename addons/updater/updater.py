@@ -80,7 +80,12 @@ repo_ignores = {
     'gnome-common': {'06.0293'},
     'libxcomposite': {'0.6.1'},
     'colm': {'0.14.1'},
-    'openssl': {'3.0.0.alpha1', '3.0.0.alpha2', '3.0.0.alpha3'},
+    'openssl': {
+        '3.0.0.alpha1',
+        '3.0.0.alpha2',
+        '3.0.0.alpha3',
+        '3.0.0.alpha4',
+    },
 }
 
 series = {
