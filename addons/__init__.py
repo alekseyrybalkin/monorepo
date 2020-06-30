@@ -1,6 +1,7 @@
 __all__ = [
     'audio',
     'db',
+    'flags',
     'gen',
     'github',
     'hckrnews',
