@@ -1,6 +1,7 @@
 import argparse
 import getpass
 import os
+import re
 
 flagsrc = os.path.expanduser(
     os.path.join(
@@ -33,6 +34,8 @@ class Flags:
             with open(flagsrc, 'tr') as f:
                 for flag_def in f:
                     flag, value = (v.strip() for v in flag_def.split('='))
+                    assert flag.startswith('flag_')
+                    flag = re.sub('^flag_', '', flag)
                     assert flag in default_flags
                     assert value in ('on', 'off')
                     rc_flags[flag] = (value == 'on')
@@ -41,7 +44,7 @@ class Flags:
     def write_rc_flags(self, rc_flags):
         with open(flagsrc, 'tw') as f:
             for flag, value in rc_flags.items():
-                f.write('{}={}\n'.format(flag, 'on' if value else 'off'))
+                f.write('flag_{}={}\n'.format(flag, 'on' if value else 'off'))
 
     def main(self):
         name, state = self.parse_args()
