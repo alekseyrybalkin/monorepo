@@ -19,14 +19,18 @@ default_flags = {
 class Flags:
     def parse_args(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('-n', type=str, required=True, help='flag name')
-        parser.add_argument('-s', type=str, required=True, help='state: on/off')
+        parser.add_argument('-n', type=str, help='flag name')
+        parser.add_argument('-s', type=str, help='state: on/off')
         args = parser.parse_args()
 
-        assert args.n in default_flags, 'unknown flag {}'.format(args.n)
-        assert args.s in ('on', 'off'), 'unknown state {}, should be on/off'.format(args.s)
+        if args.n or args.s:
+            assert args.n in default_flags, 'unknown flag {}'.format(args.n)
+            assert args.s in ('on', 'off'), 'unknown state {}, should be on/off'.format(args.s)
+            change = True
+        else:
+            change = False
 
-        return args.n, args.s == 'on'
+        return change, args.n, args.s == 'on'
 
     def read_rc_flags(self):
         rc_flags = {}
@@ -47,13 +51,18 @@ class Flags:
                 f.write('flag_{}={}\n'.format(flag, 'on' if value else 'off'))
 
     def main(self):
-        name, state = self.parse_args()
+        change, name, state = self.parse_args()
 
         flags = default_flags
         flags.update(self.read_rc_flags())
-        flags[name] = state
 
-        self.write_rc_flags(flags)
+        if change:
+            flags[name] = state
+            self.write_rc_flags(flags)
+            print('{}={}'.format(name, state))
+        else:
+            for flag, value in flags.items():
+                print('{}={}'.format(flag, value))
 
 
 def main():
