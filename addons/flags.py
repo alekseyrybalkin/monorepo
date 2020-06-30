@@ -59,10 +59,10 @@ class Flags:
         if change:
             flags[name] = state
             self.write_rc_flags(flags)
-            print('{}={}'.format(name, state))
+            print('{}={}'.format(name, 'on' if state else 'off'))
         else:
             for flag, value in flags.items():
-                print('{}={}'.format(flag, value))
+                print('{}={}'.format(flag, 'on' if value else 'off'))
 
 
 def main():
