@@ -71,8 +71,6 @@ class SourceFetcher:
             # pre-processing
             if project_name == 'chromium-glslang':
                 shell.run('git tag -d master-tot')
-            if project_name == 'tmux':
-                shell.run('git tag -d 3.2')
             if project_name == 'compton':
                 shell.run('git tag -d vNext')
 
