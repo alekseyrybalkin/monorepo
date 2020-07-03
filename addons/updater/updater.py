@@ -89,8 +89,8 @@ repo_ignores = {
 }
 
 series = {
-    'linux': '5.4',
-    'linux-api-headers': '5.4',
+    'linux': '5.7',
+    'linux-api-headers': '5.7',
     'libsigc++': '2',
     'chromium': '81',
     'coffeescript': '1',
