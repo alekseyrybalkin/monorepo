@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import os
+import re
 import shutil
 import sys
 
@@ -110,6 +111,10 @@ repo_postprocessing = {
     'openjdk': '.ga',
 }
 
+arch_postprocessing = {
+    'linux': '.arch.',
+}
+
 pkgbuild_fields = [
     'pkgname',
     'pkgver',
@@ -202,6 +207,9 @@ class Updater:
         if arch_version and any(char in arch_version for char in '${}'):
             arch_version = None
 
+        if arch_version and arch_postprocessing.get(pkg.pkgname):
+            arch_version = re.sub(arch_postprocessing[pkg.pkgname], '', arch_version)
+
         relmon_version = None
         if pkg.relmon_id:
             relmon_version = self.relmon_checker.get_relmon_version(
@@ -232,8 +240,8 @@ class Updater:
             repo_version_jinni = repo_version.jinni
             repo_version = repo_version.to_version()
 
-        if repo_postprocessing.get(pkg.pkgname):
-            repo_version = repo_version.replace(repo_postprocessing[pkg.pkgname], '')
+        if repo_version and repo_postprocessing.get(pkg.pkgname):
+            repo_version = re.sub(repo_postprocessing[pkg.pkgname], '', repo_version)
 
         ver_parsed = repo.Tag(pkg.pkgver)
         arch_parsed = repo.Tag(arch_version) if arch_version else None
