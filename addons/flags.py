@@ -14,6 +14,7 @@ flagsrc = os.path.expanduser(
 default_flags = {
     'tmux_mail': True,
     'check_blacklist': True,
+    'check_sandbox': True,
 }
 
 
