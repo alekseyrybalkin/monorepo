@@ -10,13 +10,7 @@ import addons.db
 channels = [
     'UCDYZxJE8kLZ-o6nL8E1bXdQ',  # MATN
     'UCKab3hYnOoTZZbEUQBMx-ww',  # NerdCubed
-    'UCNUfNaego-snWXd8vygfpAg',  # sprEEEzy
     'UC7-E5xhZBZdW-8d7V80mzfg',  # JennyENicholson
-    'UC-lHJZR3Gqxm24_Vd_AJ5Yw',  # PewDiePie
-    'UCOpcACMWblDls9Z6GERVi1A',  # Screen Junkies
-    'UC1cVTv6C0Unv6TtadjBvYRA',  # Rapid Trailer
-    'UCf6J9yokPS0ys456jvjLBGQ',  # Fandom Games
-    'UCbiOAho0h23IMInURiESx1w',  # Dan Murrell
 ]
 
 
