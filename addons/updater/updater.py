@@ -24,7 +24,7 @@ special_ones = {
 }
 
 arch_ignores = {
-    'miniupnpc': {'2.1.20190408'},
+    'miniupnpc': {'2.1.20191224'},
     'runc': {'1.0.0rc91'},
     'libtool': {'2.4.6+42+gb88cebd5'},
     'gtk-doc': {'1.32+37+gefc3644'},
@@ -88,6 +88,7 @@ repo_ignores = {
         '3.0.0.alpha2',
         '3.0.0.alpha3',
         '3.0.0.alpha4',
+        '3.0.0.alpha5',
     },
 }
 
