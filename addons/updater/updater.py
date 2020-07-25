@@ -31,7 +31,7 @@ arch_ignores = {
     'pango': {'1.44.7+11+g73b46b04'},
     'cairo': {'1.17.2+25+gaee96d175'},
     'fontconfig': {'2.13.91+48+gfcb0420'},
-    'linux-firmware': {'20200619.e96c121'},
+    'linux-firmware': {'20200721.2b823fc'},
     'shared-mime-info': {'2.0+1+g6bf9e4f'},
     'openjdk': {'14.0.2.u12'},
     'gdk-pixbuf': {'2.40.0+6+g5432316df'},
