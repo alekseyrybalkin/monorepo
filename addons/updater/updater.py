@@ -144,6 +144,11 @@ custom = [
     'ttf-fonts',
 ]
 
+zero_checks_ok = [
+    'docbook-xml',
+    'python-docs-theme',
+]
+
 one_check_ok = [
     'cpp-docs',
     'python-mwparserfromhell',
@@ -303,7 +308,7 @@ class Updater:
         parsed_list = [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)]
         checks = sum(1 if parsed else 0 for parsed in parsed_list)
 
-        if checks == 0 and pkg.pkgname not in custom:
+        if checks == 0 and pkg.pkgname not in custom and pkg.pkgname not in zero_checks_ok:
             self.no_checks.append(pkg.pkgname)
         if checks == 1 and pkg.pkgname not in custom and pkg.pkgname not in one_check_ok:
             self.one_check.append(pkg.pkgname)
