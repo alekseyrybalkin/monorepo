@@ -74,7 +74,7 @@ arch_names = {
 
 relmon_ignores = {
     'fossil': {'2.12'},
-    'python': {'3.8.4', '3.9.0'},
+    'python': {'3.9.0'},
     'colm': {'0.14.1'},
     'tmux': {'3.2'},
 }
@@ -157,7 +157,6 @@ one_check_ok = [
     'potrace',
     'gn',
     'pd',
-    'zoom',
 ]
 
 extra_repos = {
