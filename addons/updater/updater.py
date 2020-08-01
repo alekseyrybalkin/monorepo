@@ -108,7 +108,7 @@ series = {
 repo_postprocessing = {
     'nspr': '.rtm',
     'nss': '.rtm',
-    'json-c': '.20200419',
+    'json-c': '.20200726',
     'mutt': '.rel',
     'libevent': '.stable',
     'openjdk': '.ga',
