@@ -7,7 +7,6 @@ setup(
     entry_points={
         'console_scripts': [
             'compress-music = addons.audio:compress',
-            'fetch-videos = addons.youtube:fetch_videos',
             'gen = addons.gen:gen',
             'github-2fa = addons.github:genpass',
             'srcfetcher = addons.srcfetcher:main',
