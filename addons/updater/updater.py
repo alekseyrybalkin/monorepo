@@ -94,6 +94,7 @@ repo_ignores = {
 }
 
 series = {
+    'bison': '3.6',
     'linux': '5.7',
     'linux-api-headers': '5.7',
     'libsigc++': '2',
