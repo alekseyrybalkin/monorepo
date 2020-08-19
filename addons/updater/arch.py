@@ -45,6 +45,7 @@ def get_arch_version(pkgname):
                                 pkgver = pkgver.replace('${}'.format(var), value)
                                 pkgver = pkgver.replace('${{{}}}'.format(var), value)
 
+            pkgver = pkgver.replace('"', '')
             arch_version = pkgver
 
     return arch_version
