@@ -70,6 +70,7 @@ arch_names = {
     'lcms': 'lcms2',
     'python-opengl': 'pyopengl',
     'openjdk': 'java-openjdk',
+    'xapian': 'xapian-core',
 }
 
 relmon_ignores = {
