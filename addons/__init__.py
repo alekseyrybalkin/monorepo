@@ -9,7 +9,6 @@ __all__ = [
     'shell',
     'srcfetcher',
     'updater',
-    'youtube',
 ]
 
 
