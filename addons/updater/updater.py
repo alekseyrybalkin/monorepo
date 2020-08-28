@@ -21,6 +21,7 @@ special_ones = {
     'binutils',
     'llvm',
     'lld',
+    'openmp',
 }
 
 arch_ignores = {
