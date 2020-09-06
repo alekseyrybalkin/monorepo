@@ -63,8 +63,10 @@ class Tag:
         tag = re.sub('^jinni-', '', tag)
 
         if pkgname and '+' not in pkgname:
-            tag = re.sub('^{}-'.format(pkgname), '', tag)
-            tag = re.sub('^{}'.format(pkgname), '', tag)
+            pkgname_variants = [pkgname.replace(a, b) for a in ['~', '_', '-', '.'] for b in ['~', '_', '-', '.']]
+            for pkgname_variant in pkgname_variants:
+                tag = re.sub('^{}-'.format(pkgname_variant), '', tag)
+                tag = re.sub('^{}'.format(pkgname_variant), '', tag)
         if dirname and '+' not in dirname:
             tag = re.sub('^{}-'.format(dirname), '', tag)
             tag = re.sub('^{}'.format(dirname), '', tag)

@@ -95,6 +95,7 @@ repo_ignores = {
         '3.0.0.alpha5',
         '3.0.0.alpha6',
     },
+    'at-spi2-core': {'3.6.3'},
 }
 
 series = {
