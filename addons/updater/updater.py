@@ -29,7 +29,6 @@ arch_ignores = {
     'runc': {'1.0.0rc92'},
     'libtool': {'2.4.6+42+gb88cebd5'},
     'gtk-doc': {'1.32+37+gefc3644'},
-    'pango': {'1.44.7+11+g73b46b04'},
     'cairo': {'1.17.2+25+gaee96d175'},
     'fontconfig': {'2.13.91+48+gfcb0420'},
     'linux-firmware': {'20200817.7a30af1'},
