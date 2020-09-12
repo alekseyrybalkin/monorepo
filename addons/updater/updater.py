@@ -164,6 +164,7 @@ one_check_ok = [
     'potrace',
     'gn',
     'pd',
+    'zoom',
 ]
 
 extra_repos = {
