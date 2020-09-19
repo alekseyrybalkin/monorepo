@@ -293,6 +293,8 @@ class Updater:
 
             if best_version != pkg.pkgver and self.in_place and can_change:
                 self.update_pkgver(pkgbuild, pkg.pkgver, best_version)
+            if best_version != pkg.pkgver and self.in_place and not can_change:
+                print(self.colorize('WARNING: can\'t change {}'.format(pkgbuild), color=3))
 
             versions_to_print = []
             vers = [pkg.pkgver, arch_version, relmon_version, repo_version]
