@@ -44,8 +44,9 @@ class VideosFetcher:
                 sys.stdout.flush()
         print()
 
+        videos = {}
         for fmt, channels in fmt_channels.items():
-            videos = []
+            videos[fmt] = []
             parser = lxml.etree.XMLParser(ns_clean=True, recover=True, encoding='utf-8')
             for channel in channels:
                 data = lxml.etree.fromstring(resps[channel].text.encode('utf-8'), parser=parser)
@@ -64,17 +65,18 @@ class VideosFetcher:
                     while user_said.lower() not in ['y', 'n', 'r']:
                         user_said = input('{}: {} [ {} ] (y/n/r)? '.format(author, title, url))
                     if user_said.lower() == 'y':
-                        videos.append(url)
+                        videos[fmt].append(url)
                     if user_said.lower() == 'r':
                         self.db.execute('insert into video(url) values (?)', (url,))
 
-            if videos:
+        for fmt in fmt_channels:
+            if videos[fmt]:
                 opts = {
                     'format': fmt,
                 }
                 with youtube_dl.YoutubeDL(opts) as ydl:
-                    ydl.download(videos)
-                for video in videos:
+                    ydl.download(videos[fmt])
+                for video in videos[fmt]:
                     self.db.execute('insert into video(url) values (?)', (video,))
 
 
