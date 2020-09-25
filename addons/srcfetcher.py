@@ -172,6 +172,7 @@ class SourceFetcher:
                 self.insert_project(project, path)
             db_projects.discard(project)
 
+        # FIXME does not handle projects moving from one folder to another (e.g. gaming/lc0 -> dev/lc0)
         for project in db_projects:
             self.delete_project(project)
 
@@ -188,3 +189,7 @@ class SourceFetcher:
 def main():
     with addons.db.DB('srcfetcher') as db:
         SourceFetcher(db).main()
+
+
+if __name__ == '__main__':
+    main()
