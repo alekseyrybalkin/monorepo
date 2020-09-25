@@ -25,7 +25,6 @@ special_ones = {
 }
 
 arch_ignores = {
-    'miniupnpc': {'2.1.20191224'},
     'runc': {'1.0.0rc92'},
     'libtool': {'2.4.6+42+gb88cebd5'},
     'gtk-doc': {'1.32+52+gb209222'},
