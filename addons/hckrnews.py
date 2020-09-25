@@ -6,6 +6,8 @@ import argparse
 import json
 import signal
 import time
+import os
+import stat
 
 import requests
 
@@ -124,13 +126,14 @@ class HackerNews:
         parser.add_argument('param', type=str, nargs='?', help='%Y.%m for month')
         parser.add_argument('--quiet', action='store_true')
         parser.add_argument('--all', action='store_true')
+        parser.add_argument('--html', action='store_true')
         args = parser.parse_args()
 
         if args.action != 'update' and args.action != 'full' and args.param is None:
             print('{} requires param'.format(args.action))
             sys.exit(0)
 
-        return args.action, args.param, args.quiet, args.all
+        return args.action, args.param, args.quiet, args.all, args.html
 
     def main(self):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
@@ -140,7 +143,7 @@ class HackerNews:
 
         articles = []
 
-        action, param, quiet, show_all = self.parse_args()
+        action, param, quiet, show_all, html = self.parse_args()
 
         if action == 'update':
             # hckrnews data starts from 2010.06.09, calc the max number like so:
@@ -167,12 +170,24 @@ class HackerNews:
                 date_to = dt.datetime(date_from.year + 1, 1, 1).date()
             articles = self.get_articles(date_from, date_to)
 
-        for article in sorted(articles, key=lambda x: (x.points or 0, x.comments or 0)):
-            if (show_all and (article.points or 0) >= 10) or (not show_all and (article.points or 0) >= 500):
-                print('{:<6}{:<150}'.format(article.points or '', article.desc[:150]))
-                print('          {}'.format(article.link))
-                print('          https://news.ycombinator.com/item?id={}'.format(article.article_id))
-                print('          comments: {}'.format(article.comments))
+        if html:
+            with open('/tmp/hckrnews.html', 'tw') as html_file:
+                html_file.write('<body style="margin: 30px;">')
+                for article in sorted(articles, key=lambda x: (x.points or 0, x.comments or 0)):
+                    if (show_all and (article.points or 0) >= 10) or (not show_all and (article.points or 0) >= 500):
+                        html_file.write('<h3><span style="color:blue; margin-right: 10px;">{:<6}</span>{:<150}</h3><div style="margin-left: 47px;">'.format(article.points or '', article.desc[:150]))
+                        html_file.write('          <a href="{link}">{link}</a><br/>'.format(link=article.link))
+                        html_file.write('          <a href="{link}">{link}</a><br/>'.format(link='https://news.ycombinator.com/item?id={}'.format(article.article_id)))
+                        html_file.write('          comments: {}</div><br/>'.format(article.comments))
+                html_file.write('</body>')
+            os.chmod('/tmp/hckrnews.html', stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+        else:
+            for article in sorted(articles, key=lambda x: (x.points or 0, x.comments or 0)):
+                if (show_all and (article.points or 0) >= 10) or (not show_all and (article.points or 0) >= 500):
+                    print('{:<6}{:<150}'.format(article.points or '', article.desc[:150]))
+                    print('          {}'.format(article.link))
+                    print('          https://news.ycombinator.com/item?id={}'.format(article.article_id))
+                    print('          comments: {}'.format(article.comments))
 
 
 def main():
