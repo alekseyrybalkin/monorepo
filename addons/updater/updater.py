@@ -100,7 +100,7 @@ series = {
     'linux': '5.8',
     'linux-api-headers': '5.8',
     'libsigc++': '2',
-    'chromium': '85',
+    'chromium': '83',
     'coffeescript': '1',
     'librsvg': '2.40',
     'mypaint-brushes': '1',
