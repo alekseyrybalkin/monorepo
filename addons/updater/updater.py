@@ -47,7 +47,6 @@ arch_names = {
     'python-docutils': 'docutils',
     'python-youtube-dl': 'youtube-dl',
     'python-pybind11': 'pybind11',
-    'python-ipython': 'ipython',
     'python-cython': 'cython',
     'python-alabaster': 'python-sphinx-alabaster-theme',
     'libreoffice': 'libreoffice-fresh',
