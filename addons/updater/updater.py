@@ -73,7 +73,7 @@ arch_names = {
 
 relmon_ignores = {
     'fossil': {'2.13'},
-    'python': {'3.8.6', '3.9.0'},
+    'python': {'3.8.7', '3.9.0'},
     'colm': {'0.14.1'},
     'tmux': {'3.2'},
     'mesa': {'20.2.0'},
