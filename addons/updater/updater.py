@@ -97,8 +97,8 @@ repo_ignores = {
 
 series = {
     'bison': '3.6',
-    'linux': '5.8',
-    'linux-api-headers': '5.8',
+    'linux': '5.4',
+    'linux-api-headers': '5.4',
     'libsigc++': '2',
     'chromium': '83',
     'coffeescript': '1',
