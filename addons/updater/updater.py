@@ -34,6 +34,8 @@ arch_ignores = {
     'shared-mime-info': {'2.0+1+g6bf9e4f'},
     'openjdk': {'14.0.2.u12'},
     'gdk-pixbuf': {'2.40.0+6+g5432316df'},
+    'evince': {'3.38.0+1+gffa3fd98'},
+    'libsoup': {'2.72.0+5+g0b094bff'},
 }
 
 arch_skips = {
