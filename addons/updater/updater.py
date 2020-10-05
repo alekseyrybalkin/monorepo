@@ -80,6 +80,7 @@ relmon_ignores = {
     'tmux': {'3.2'},
     'mesa': {'20.2.0'},
     'yelp-tools': {'3.37'},
+    'nmap': {'7.90'},
 }
 
 repo_ignores = {
