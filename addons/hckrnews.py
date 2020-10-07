@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import datetime as dt
 import sys
 import argparse
@@ -171,7 +169,7 @@ class HackerNews:
             articles = self.get_articles(date_from, date_to)
 
         if html:
-            #FIXME use templating, maybe?
+            # FIXME use templating, maybe?
             with open('/tmp/hckrnews.html', 'tw') as html_file:
                 html_file.write('<body style="margin: 30px;">')
                 for article in sorted(articles, key=lambda x: (x.points or 0, x.comments or 0)):

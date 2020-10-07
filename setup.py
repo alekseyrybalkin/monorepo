@@ -15,6 +15,7 @@ setup(
             'relmon = addons.relmon:main',
             'updater = addons.updater.updater:main',
             'valet = addons.valet:main',
+            'schedule = addons.schedule:main',
         ],
     },
     include_package_data=True,

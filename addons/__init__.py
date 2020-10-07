@@ -5,6 +5,7 @@ __all__ = [
     'github',
     'hckrnews',
     'relmon',
+    'schedule',
     'screenshot',
     'shell',
     'srcfetcher',
