@@ -1,13 +1,14 @@
+import argparse
 import datetime
 import functools
+import glob
 import json
+import os
 import signal
 import sys
-import os
-import argparse
-import glob
 import time
 
+import addons.config
 import addons.db
 
 
@@ -121,10 +122,9 @@ class Valet:
 
         routines = []
 
-        with open('/home/rybalkin/.config/private/valet.json', 'tr') as conffile:
-            config = json.loads(conffile.read())
-            for group in config['routines']:
-                routines.extend([Routine(**item) for item in config['routines'][group]])
+        config = addons.config.Config('valet').read()
+        for group in config['routines']:
+            routines.extend([Routine(**item) for item in config['routines'][group]])
 
         day, toggle_done, email = self.parse_args()
 

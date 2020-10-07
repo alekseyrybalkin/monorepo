@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='addons',
-    version=__import__('addons').__version__,
+    version=1,
     packages=['addons'],
     entry_points={
         'console_scripts': [
@@ -16,6 +16,7 @@ setup(
             'updater = addons.updater.updater:main',
             'valet = addons.valet:main',
             'schedule = addons.schedule:main',
+            'timers = addons.timers:main',
         ],
     },
     include_package_data=True,

@@ -1,6 +1,5 @@
 import argparse
 import datetime
-import getpass
 import os
 import signal
 import sys
@@ -172,7 +171,7 @@ class SourceFetcher:
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
         os.environ['BRZ_LOG'] = '/dev/null'
-        os.environ['FOSSIL_HOME'] = os.path.expanduser(os.path.join('~{}'.format(getpass.getuser()), '.config'))
+        os.environ['FOSSIL_HOME'] = os.path.join(shell.home(), '.config')
 
         self.args = self.parse_args()
 

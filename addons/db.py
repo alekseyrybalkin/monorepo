@@ -1,6 +1,7 @@
-import getpass
 import os
 import sqlite3
+
+import addons.shell as shell
 
 db_registry = {}
 
@@ -24,32 +25,14 @@ class Database:
         pass
 
     def get_path(self):
-        return os.path.expanduser(
-            os.path.join(
-                '~{}'.format(getpass.getuser()),
-                '.data',
-                'databases',
-                '{}.db'.format(self.name),
-            ),
-        )
+        return os.path.join(shell.home(), '.data', 'databases', '{}.db'.format(self.name))
 
 
 class DB:
     def __init__(self, name):
-        self.name = name
         self.db_manager = db_registry[name]()
-        self.conn = None
         self.db = self.db_manager.get_path()
-
-    def get_default_db(self):
-        return os.path.expanduser(
-            os.path.join(
-                '~{}'.format(getpass.getuser()),
-                '.data',
-                'databases',
-                '{}.db'.format(self.name),
-            ),
-        )
+        self.conn = None
 
     def __enter__(self):
         self.conn = sqlite3.connect(self.db)

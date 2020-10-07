@@ -1,3 +1,5 @@
+import getpass
+import os
 import subprocess
 
 
@@ -31,6 +33,10 @@ def copy_to_clipboard(value):
         input=value,
         encoding='UTF-8',
     )
+
+
+def home():
+    return os.path.expanduser('~{}'.format(getpass.getuser()))
 
 
 class NonZeroReturnCode(Exception):

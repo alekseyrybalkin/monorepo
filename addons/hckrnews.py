@@ -6,11 +6,11 @@ import signal
 import time
 import os
 import stat
-import getpass
 
 import requests
 
 import addons.db
+import addons.shell as shell
 
 today = dt.date.today() - dt.timedelta(days=2)
 tomorrow = dt.date.today() - dt.timedelta(days=1)
@@ -39,14 +39,12 @@ class HckrnewsDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
         cursor.execute('create index day_last_updated_idx on day(last_updated)')
 
     def get_path(self):
-        return os.path.expanduser(
-            os.path.join(
-                '~{}'.format(getpass.getuser()),
-                '.data',
-                'databases',
-                'large',
-                'hckrnews.db',
-            ),
+        return os.path.join(
+            shell.home(),
+            '.data',
+            'databases',
+            'large',
+            'hckrnews.db',
         )
 
 
