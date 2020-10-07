@@ -61,6 +61,20 @@ def relmon_init(cursor):
     cursor.execute('create index package_last_success_idx on package(last_success)')
 
 
+def valet_test(cursor):
+    cursor.execute('select 1 from done')
+
+
+def valet_init(cursor):
+    cursor.execute('''
+        create table done(
+            id integer primary key,
+            day text,
+            task text
+        )''')
+    cursor.execute('create index done_idx on done(day, task)')
+
+
 db_configs = {
     'srcfetcher': {
         'test': srcfetcher_test,
@@ -82,6 +96,10 @@ db_configs = {
     'relmon': {
         'test': relmon_test,
         'init': relmon_init,
+    },
+    'valet': {
+        'test': valet_test,
+        'init': valet_init,
     },
 }
 
