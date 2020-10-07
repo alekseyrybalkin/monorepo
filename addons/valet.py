@@ -123,14 +123,12 @@ class Valet:
         if toggle_done >= 0:
             task = tasks[toggle_done]
             item = self.db.select_one('select id from done where day = ? and task = ?', (day, task))
-            print(item)
             if self.db.select_one('select id from done where day = ? and task = ?', (day, task)):
                 self.db.execute('delete from done where day = ? and task = ?', (day, task))
             else:
                 self.db.execute('insert into done(day, task) values (?, ?)', (day, task))
 
         done = set(row['task'] for row in self.db.select_many('select task from done where day = ?', (day,)))
-        print(done)
 
         indent = '' if email else ' ' * 4
         if not email:
