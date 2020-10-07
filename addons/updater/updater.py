@@ -5,6 +5,7 @@ import re
 import shutil
 import sys
 
+import addons.config
 import addons.db
 import addons.relmon
 import addons.shell
@@ -13,164 +14,6 @@ import addons.updater.relmon as relmon
 import addons.updater.arch as arch
 import addons.updater.repo as repo
 
-special_ones = {
-    'chromium',
-    'libreoffice',
-    'glibc',
-    'gcc',
-    'binutils',
-    'llvm',
-    'lld',
-    'openmp',
-}
-
-arch_ignores = {
-    'runc': {'1.0.0rc92'},
-    'libtool': {'2.4.6+42+gb88cebd5'},
-    'gtk-doc': {'1.32+52+gb209222'},
-    'cairo': {'1.17.2+25+gaee96d175'},
-    'fontconfig': {'2.13.91+48+gfcb0420'},
-    'linux-firmware': {'20200817.7a30af1'},
-    'shared-mime-info': {'2.0+1+g6bf9e4f'},
-    'openjdk': {'14.0.2.u12'},
-    'gdk-pixbuf': {'2.40.0+6+g5432316df'},
-    'evince': {'3.38.0+1+gffa3fd98'},
-    'libsoup': {'2.72.0+5+g0b094bff'},
-}
-
-arch_skips = {
-    'filesystem',
-    'which',
-}
-
-arch_names = {
-    'nginx': 'nginx-mainline',
-    'python-gunicorn': 'gunicorn',
-    'python-docutils': 'docutils',
-    'python-youtube-dl': 'youtube-dl',
-    'python-pybind11': 'pybind11',
-    'python-cython': 'cython',
-    'python-alabaster': 'python-sphinx-alabaster-theme',
-    'libreoffice': 'libreoffice-fresh',
-    'device-mapper': 'lvm2',
-    'procps': 'procps-ng',
-    'mpc': 'libmpc',
-    'libxml': 'libxml2',
-    'glib': 'glib2',
-    'iproute': 'iproute2',
-    'tidy-html5': 'tidy',
-    'perl-ack': 'ack',
-    'ublock': 'firefox-ublock-origin',
-    'imlib': 'imlib2',
-    'gtk': 'gtk3',
-    'gdk-pixbuf': 'gdk-pixbuf2',
-    'mypaint-brushes': 'mypaint-brushes1',
-    'libxtrans': 'xtrans',
-    'freetype': 'freetype2',
-    'lcms': 'lcms2',
-    'python-opengl': 'pyopengl',
-    'openjdk': 'java-openjdk',
-    'xapian': 'xapian-core',
-}
-
-relmon_ignores = {
-    'fossil': {'2.13'},
-    'python': {'3.8.7', '3.9.0'},
-    'colm': {'0.14.1'},
-    'tmux': {'3.2'},
-    'mesa': {'20.2.0'},
-    'yelp-tools': {'3.37'},
-    'nmap': {'7.90'},
-}
-
-repo_ignores = {
-    'gnome-common': {'06.0293'},
-    'libxcomposite': {'0.6.1'},
-    'colm': {'0.14.1'},
-    'openssl': {
-        '3.0.0.alpha1',
-        '3.0.0.alpha2',
-        '3.0.0.alpha3',
-        '3.0.0.alpha4',
-        '3.0.0.alpha5',
-        '3.0.0.alpha6',
-    },
-    'at-spi2-core': {'3.6.3'},
-}
-
-series = {
-    'bison': '3.6',
-    'linux': '5.4',
-    'linux-api-headers': '5.4',
-    'libsigc++': '2',
-    'chromium': '83',
-    'coffeescript': '1',
-    'librsvg': '2.40',
-    'mypaint-brushes': '1',
-    'libpipeline': '1',
-    'python-sphinx': '2',
-    'python-sphinx_rtd_theme': '0.4',
-}
-
-repo_postprocessing = {
-    'nspr': '.rtm',
-    'nss': '.rtm',
-    'json-c': '.20200726',
-    'mutt': '.rel',
-    'libevent': '.stable',
-    'openjdk': '.ga',
-}
-
-arch_postprocessing = {
-    'linux': '.arch.',
-}
-
-pkgbuild_fields = [
-    'pkgname',
-    'pkgver',
-    'vcs',
-    'vcs_pkgname',
-    'relmon_id',
-    'updater_rules',
-]
-
-custom = [
-    'addons',
-    'python-addons',
-    'configs',
-    'filesystem',
-    'which',
-    'initramfs',
-    'lfs-book',
-    'blfs-book',
-    'opengl-docs',
-    'lightlang',
-    'ji',
-    'telenoti',
-    'syncema',
-    'ttf-fonts',
-]
-
-zero_checks_ok = [
-    'docbook-xml',
-    'python-docs-theme',
-]
-
-one_check_ok = [
-    'cpp-docs',
-    'python-mwparserfromhell',
-    'python-onetimepass',
-    'vimium',
-    'potrace',
-    'gn',
-    'pd',
-]
-
-extra_repos = {
-    'openjdk': ['openjdk'],
-    'gmp': ['gmp'],
-}
-
 
 class Package:
     def __init__(self, **kwargs):
@@ -178,7 +21,7 @@ class Package:
             self.__dict__[k] = v
 
     @classmethod
-    def from_pkgbuild(cls, path):
+    def from_pkgbuild(cls, path, pkgbuild_fields):
         command = 'source {}; '.format(path)
         for field in pkgbuild_fields:
             command += 'echo ${}; '.format(field)
@@ -192,6 +35,7 @@ class Updater:
         self.relmon_checker = relmon.RelmonChecker(relmon_db)
         self.source_fetcher = srcfetcher.SourceFetcher(srcfetcher_db)
         self.relmon = addons.relmon.Relmon(relmon_db)
+        self.config = addons.config.Config('updater').read()
 
         self.no_checks = []
         self.one_check = []
@@ -206,45 +50,48 @@ class Updater:
         shutil.move(pkgbuild + '.NEW', pkgbuild)
 
     def process(self, pkgbuild):
-        pkg = Package.from_pkgbuild(pkgbuild)
+        pkg = Package.from_pkgbuild(pkgbuild, self.config['pkgbuild_fields'])
 
-        if not self.special and pkg.pkgname in special_ones and not self.package:
+        if not self.special and pkg.pkgname in self.config['special_ones'] and not self.package:
             return
-        if self.special and pkg.pkgname not in special_ones and not self.package:
+        if self.special and pkg.pkgname not in self.config['special_ones'] and not self.package:
             return
 
         arch_version = None
-        if pkg.pkgname not in arch_skips:
-            arch_name = pkg.pkgname if not arch_names.get(pkg.pkgname) else arch_names.get(pkg.pkgname)
+        if pkg.pkgname not in self.config['arch_skips']:
+            if not self.config['arch_names'].get(pkg.pkgname):
+                arch_name = pkg.pkgname
+            else:
+                arch_name = self.config['arch_names'].get(pkg.pkgname)
             arch_version = arch.get_arch_version(arch_name)
 
         if arch_version and any(char in arch_version for char in '${}'):
             arch_version = None
 
-        if arch_version and arch_postprocessing.get(pkg.pkgname):
-            arch_version = re.sub(arch_postprocessing[pkg.pkgname], '', arch_version)
+        if arch_version and self.config['arch_postprocessing'].get(pkg.pkgname):
+            arch_version = re.sub(self.config['arch_postprocessing'][pkg.pkgname], '', arch_version)
 
         relmon_version = None
         if pkg.relmon_id:
             relmon_version = self.relmon_checker.get_relmon_version(
                 pkg.relmon_id,
                 pkg.updater_rules,
-                relmon_ignores.get(pkg.pkgname, []),
-                series.get(pkg.pkgname),
+                self.config['relmon_ignores'].get(pkg.pkgname, []),
+                self.config['series'].get(pkg.pkgname),
             )
 
         repo_version = None
 
         dirnames = [pkg.pkgname if not pkg.vcs_pkgname else pkg.vcs_pkgname]
-        dirnames.extend(extra_repos.get(pkg.pkgname, []))
+        dirnames.extend(self.config['extra_repos'].get(pkg.pkgname, []))
         for dirname in dirnames:
             version = repo.get_repo_version(
                 pkg.pkgname,
                 dirname,
                 pkg.vcs,
                 pkg.updater_rules,
-                repo_ignores.get(pkg.pkgname, []),
-                series.get(pkg.pkgname),
+                self.config['repo_ignores'].get(pkg.pkgname, []),
+                self.config['series'].get(pkg.pkgname),
                 self.verbose and self.package,
             )
             if repo_version is None or (version is not None and repo_version < version):
@@ -254,18 +101,19 @@ class Updater:
             repo_version_jinni = repo_version.jinni
             repo_version = repo_version.to_version()
 
-        if repo_version and repo_postprocessing.get(pkg.pkgname):
-            repo_version = re.sub(repo_postprocessing[pkg.pkgname], '', repo_version)
+        if repo_version and self.config['repo_postprocessing'].get(pkg.pkgname):
+            repo_version = re.sub(self.config['repo_postprocessing'][pkg.pkgname], '', repo_version)
 
         ver_parsed = repo.Tag(pkg.pkgver)
         arch_parsed = repo.Tag(arch_version) if arch_version else None
         relmon_parsed = repo.Tag(relmon_version) if relmon_version else None
         repo_parsed = repo.Tag(repo_version) if repo_version else None
 
-        arch_diff = arch_parsed \
-            and ver_parsed < arch_parsed \
-            and (not arch_ignores.get(pkg.pkgname) or arch_version not in arch_ignores.get(pkg.pkgname)) \
-            and (not series.get(pkg.pkgname) or arch_parsed.check_series(repo.Tag(series.get(pkg.pkgname))))
+        arch_version_ignored = arch_version in self.config['arch_ignores'].get(pkg.pkgname, [])
+        arch_version_from_series = not self.config['series'].get(pkg.pkgname) \
+            or arch_parsed.check_series(repo.Tag(self.config['series'].get(pkg.pkgname)))
+
+        arch_diff = arch_parsed and ver_parsed < arch_parsed and not arch_version_ignored and arch_version_from_series
 
         relmon_diff = relmon_parsed and ver_parsed < relmon_parsed
 
@@ -316,10 +164,12 @@ class Updater:
         parsed_list = [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)]
         checks = sum(1 if parsed else 0 for parsed in parsed_list)
 
-        if checks == 0 and pkg.pkgname not in custom and pkg.pkgname not in zero_checks_ok:
-            self.no_checks.append(pkg.pkgname)
-        if checks == 1 and pkg.pkgname not in custom and pkg.pkgname not in one_check_ok:
-            self.one_check.append(pkg.pkgname)
+        if checks == 0 and pkg.pkgname not in self.config['custom']:
+            if pkg.pkgname not in self.config['zero_checks_ok']:
+                self.no_checks.append(pkg.pkgname)
+        if checks == 1 and pkg.pkgname not in self.config['custom']:
+            if pkg.pkgname not in self.config['one_check_ok']:
+                self.one_check.append(pkg.pkgname)
 
     def colorize(self, text, color=7):
         if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
