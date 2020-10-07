@@ -10,6 +10,25 @@ import addons.db
 import addons.shell as shell
 
 
+class SrcfetcherDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
+    def exists(self, cursor):
+        cursor.execute('select 1 from project')
+
+    def create(self, cursor):
+        cursor.execute('''
+            create table project(
+                id integer primary key,
+                name text not null,
+                path text not null,
+                last_attempt date,
+                last_success date
+            )''')
+        cursor.execute('create unique index project_name_idx on project(name)')
+        cursor.execute('create unique index project_path_idx on project(path)')
+        cursor.execute('create index project_last_attempt_idx on project(last_attempt)')
+        cursor.execute('create index project_last_success_idx on project(last_success)')
+
+
 class SourceFetcher:
     def __init__(self, db):
         self.db = db

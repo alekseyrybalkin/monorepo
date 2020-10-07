@@ -6,6 +6,7 @@ import signal
 import time
 import os
 import stat
+import getpass
 
 import requests
 
@@ -13,6 +14,40 @@ import addons.db
 
 today = dt.date.today() - dt.timedelta(days=2)
 tomorrow = dt.date.today() - dt.timedelta(days=1)
+
+
+class HckrnewsDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
+    def exists(self, cursor):
+        cursor.execute('select 1 from day')
+
+    def create(self, cursor):
+        cursor.execute('''
+            create table day(
+                id text primary key,
+                last_updated text
+            )''')
+        cursor.execute('''
+            create table article(
+                id integer primary key,
+                link text,
+                desc text,
+                day text,
+                points integer,
+                comments integer
+            )''')
+        cursor.execute('create index article_day_idx on article(day)')
+        cursor.execute('create index day_last_updated_idx on day(last_updated)')
+
+    def get_path(self):
+        return os.path.expanduser(
+            os.path.join(
+                '~{}'.format(getpass.getuser()),
+                '.data',
+                'databases',
+                'large',
+                'hckrnews.db',
+            ),
+        )
 
 
 class Day:

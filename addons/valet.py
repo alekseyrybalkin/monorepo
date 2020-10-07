@@ -11,6 +11,20 @@ import time
 import addons.db
 
 
+class ValetDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
+    def exists(self, cursor):
+        cursor.execute('select 1 from done')
+
+    def create(self, cursor):
+        cursor.execute('''
+            create table done(
+                id integer primary key,
+                day text,
+                task text
+            )''')
+        cursor.execute('create index done_idx on done(day, task)')
+
+
 class Routine:
     def __init__(self, name, date=None, year=None, month=None, day_of_month=None, day_of_week=None,
                  day_mod=None, day_mod_shift=None, until=None, skip_weekends=False, day_of_week_in_a_month=None):

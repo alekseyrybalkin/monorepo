@@ -2,118 +2,44 @@ import getpass
 import os
 import sqlite3
 
-
-def srcfetcher_test(cursor):
-    cursor.execute('select 1 from project')
+db_registry = {}
 
 
-def srcfetcher_init(cursor):
-    cursor.execute('''
-        create table project(
-            id integer primary key,
-            name text not null,
-            path text not null,
-            last_attempt date,
-            last_success date
-        )''')
-    cursor.execute('create unique index project_name_idx on project(name)')
-    cursor.execute('create unique index project_path_idx on project(path)')
-    cursor.execute('create index project_last_attempt_idx on project(last_attempt)')
-    cursor.execute('create index project_last_success_idx on project(last_success)')
+class DatabaseMeta(type):
+    def __new__(meta, name, bases, class_dict):
+        cls = type.__new__(meta, name, bases, class_dict)
+        name = cls.__name__.replace('Database', '').lower()
+        cls.name = name
+        db_registry[name] = cls
+        return cls
 
 
-def hckrnews_test(cursor):
-    cursor.execute('select 1 from day')
+class Database:
+    name = 'default'
 
+    def exists(self, cursor):
+        return True
 
-def hckrnews_init(cursor):
-    cursor.execute('''
-        create table day(
-            id text primary key,
-            last_updated text
-        )''')
-    cursor.execute('''
-        create table article(
-            id integer primary key,
-            link text,
-            desc text,
-            day text,
-            points integer,
-            comments integer
-        )''')
-    cursor.execute('create index article_day_idx on article(day)')
-    cursor.execute('create index day_last_updated_idx on day(last_updated)')
+    def create(self, cursor):
+        pass
 
-
-def relmon_test(cursor):
-    cursor.execute('select 1 from package')
-
-
-def relmon_init(cursor):
-    cursor.execute('''
-        create table package(
-            id integer primary key,
-            info text,
-            last_attempt date,
-            last_success date
-        )''')
-    cursor.execute('create index package_last_attempt_idx on package(last_attempt)')
-    cursor.execute('create index package_last_success_idx on package(last_success)')
-
-
-def valet_test(cursor):
-    cursor.execute('select 1 from done')
-
-
-def valet_init(cursor):
-    cursor.execute('''
-        create table done(
-            id integer primary key,
-            day text,
-            task text
-        )''')
-    cursor.execute('create index done_idx on done(day, task)')
-
-
-db_configs = {
-    'srcfetcher': {
-        'test': srcfetcher_test,
-        'init': srcfetcher_init,
-    },
-    'hckrnews': {
-        'test': hckrnews_test,
-        'init': hckrnews_init,
-        'path': os.path.expanduser(
+    def get_path(self):
+        return os.path.expanduser(
             os.path.join(
                 '~{}'.format(getpass.getuser()),
                 '.data',
                 'databases',
-                'large',
-                'hckrnews.db',
+                '{}.db'.format(self.name),
             ),
-        ),
-    },
-    'relmon': {
-        'test': relmon_test,
-        'init': relmon_init,
-    },
-    'valet': {
-        'test': valet_test,
-        'init': valet_init,
-    },
-}
+        )
 
 
 class DB:
     def __init__(self, name):
         self.name = name
-        self.test = db_configs[name]['test']
-        self.init = db_configs[name]['init']
+        self.db_manager = db_registry[name]()
         self.conn = None
-        if 'path' in db_configs[name]:
-            self.db = db_configs[name]['path']
-        else:
-            self.db = self.get_default_db()
+        self.db = self.db_manager.get_path()
 
     def get_default_db(self):
         return os.path.expanduser(
@@ -132,9 +58,9 @@ class DB:
         cursor = self.conn.cursor()
 
         try:
-            self.test(cursor)
+            self.db_manager.exists(cursor)
         except sqlite3.OperationalError:
-            self.init(cursor)
+            self.db_manager.create(cursor)
 
         self.conn.commit()
         cursor.close()

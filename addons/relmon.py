@@ -10,6 +10,22 @@ import requests
 import addons.db
 
 
+class RelmonDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
+    def exists(self, cursor):
+        cursor.execute('select 1 from package')
+
+    def create(self, cursor):
+        cursor.execute('''
+            create table package(
+                id integer primary key,
+                info text,
+                last_attempt date,
+                last_success date
+            )''')
+        cursor.execute('create index package_last_attempt_idx on package(last_attempt)')
+        cursor.execute('create index package_last_success_idx on package(last_success)')
+
+
 class Relmon:
     def __init__(self, db):
         self.db = db
