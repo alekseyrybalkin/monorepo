@@ -28,13 +28,13 @@ class Config:
         os.makedirs(os.path.dirname(conffile_path), exist_ok=True)
 
         if not os.path.exists(conffile_path):
-            if defaults is None:
+            if self.defaults is None:
                 raise ValueError('Config file does not exist and no defaults were provided')
             with open(conffile_path, 'tw') as conffile:
-                if isinstance(defaults, str):
-                    conffile.write(defaults)
-                elif isinstance(defaults, dict):
-                    conffile.write(json.dumps(defaults))
+                if isinstance(self.defaults, str):
+                    conffile.write(self.defaults)
+                elif isinstance(self.defaults, dict):
+                    conffile.write(json.dumps(self.defaults))
                 else:
                     raise ValueError('Wrong default config format')
 
