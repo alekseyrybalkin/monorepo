@@ -11,7 +11,7 @@ setup(
             'github-2fa = addons.github:genpass',
             'srcfetcher = addons.srcfetcher:main',
             'take-screenshot = addons.screenshot:main',
-            'hckrnews = addons.hckrnews:main',
+            'hckrnews = addons.hckrnews.hckrnews:main',
             'relmon = addons.relmon:main',
             'updater = addons.updater.updater:main',
             'valet = addons.valet:main',

@@ -1,11 +1,12 @@
-import datetime as dt
-import sys
 import argparse
+import datetime as dt
 import json
-import signal
-import time
 import os
+import signal
 import stat
+import string
+import sys
+import time
 
 import requests
 
@@ -202,15 +203,19 @@ class HackerNews:
             articles = self.get_articles(date_from, date_to)
 
         if html:
-            # FIXME use templating, maybe?
+            template_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'newsitem.html')
+            template = string.Template(open(template_file, 'tr').read())
             with open('/tmp/hckrnews.html', 'tw') as html_file:
                 html_file.write('<body style="margin: 30px;">')
                 for article in sorted(articles, key=lambda x: (x.points or 0, x.comments or 0)):
                     if (show_all and (article.points or 0) >= 10) or (not show_all and (article.points or 0) >= 500):
-                        html_file.write('<h3><span style="color:blue; margin-right: 10px;">{:<6}</span>{:<150}</h3><div style="margin-left: 47px;">'.format(article.points or '', article.desc[:150]))
-                        html_file.write('          <a href="{link}">{link}</a><br/>'.format(link=article.link))
-                        html_file.write('          <a href="{link}">{link}</a><br/>'.format(link='https://news.ycombinator.com/item?id={}'.format(article.article_id)))
-                        html_file.write('          comments: {}</div><br/>'.format(article.comments))
+                        html_file.write(template.substitute(
+                            points=article.points or '',
+                            description=article.desc[:150],
+                            article_link=article.link,
+                            hn_link='https://news.ycombinator.com/item?id={}'.format(article.article_id),
+                            comments=article.comments,
+                        ))
                 html_file.write('</body>')
             os.chmod('/tmp/hckrnews.html', stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
         else:
