@@ -28,7 +28,7 @@ class Schedule:
 
         stamp = (int(today.strftime("%s")) - 1) // 86400
         shift = stamp % days
-        print("routines.append(Routine(name='', day_mod={}, day_mod_shift={}))".format(days, shift))
+        print('{{ "name": "", "day_mod": {}, "day_mod_shift": {} }}'.format(days, shift))
 
 
 def main():
