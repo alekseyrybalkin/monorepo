@@ -17,6 +17,7 @@ setup(
             'valet = addons.valet:main',
             'schedule = addons.util.schedule:main',
             'timers = addons.timers:main',
+            'fetch-videos = addons.youtube:fetch_videos',
         ],
     },
     include_package_data=True,
