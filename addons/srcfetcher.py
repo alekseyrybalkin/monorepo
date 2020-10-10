@@ -70,7 +70,8 @@ class SourceFetcher:
         return self.db.select_one('select min(last_attempt) as time from project')
 
     def list_projects(self):
-        for group in (g for g in os.scandir(os.path.join(shell.home(), '.data', 'sources')) if g.is_dir() and g.name != '_ignore'):
+        sources_dir = os.path.join(shell.home(), '.data', 'sources')
+        for group in (g for g in os.scandir(sources_dir) if g.is_dir() and g.name != '_ignore'):
             yield from ((project.name, project.path) for project in os.scandir(group) if project.is_dir())
 
     def colorize(self, text, color=7):
