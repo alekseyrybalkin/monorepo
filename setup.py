@@ -18,7 +18,7 @@ setup(
             'schedule = addons.util.schedule:main',
             'timers = addons.timers:main',
             'fetch-videos = addons.youtube:fetch_videos',
-            'heaven-timers = addons.heaven.timers:main',
+            'heaven-gentimers = addons.heaven.timers:main',
         ],
     },
     include_package_data=True,
