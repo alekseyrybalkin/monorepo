@@ -1,17 +1,78 @@
+import itertools
+import os
+import shutil
+import tempfile
+
 import addons.config
 import addons.heaven.util
+import addons.shell as shell
 
 
-class DomainsUpdater:
-    def main(self):
-        config = addons.config.Config('domains').read()
-        addons.heaven.util.remote_upload_json('domains', config)
-        addons.heaven.util.remote_run('sudo heaven-gendomains')
+def write_etc_hosts(conf_file_name, domains):
+    header = ''
+    with open(conf_file_name, 'tr') as conf_file:
+        for line in conf_file:
+            if not line.startswith('127.0.0.1        '):
+                header += line
+
+    with open(conf_file_name, 'tw') as conf_file:
+        conf_file.write(header)
+
+        for domain in domains:
+            conf_file.write('127.0.0.1        {}\n'.format(domain))
+            conf_file.write('127.0.0.1        www.{}\n'.format(domain))
 
 
-def main():
-    DomainsUpdater().main()
+def write_tinyproxy_conf(conf_file_name, domains):
+    header = ''
+    with open(conf_file_name, 'tr') as conf_file:
+        for line in conf_file:
+            if not line.startswith('upstream http'):
+                header += line
+
+    with open(conf_file_name, 'tw') as conf_file:
+        conf_file.write(header)
+
+        for domain in domains:
+            conf_file.write('upstream http 127.0.0.1:7997 "{}"\n'.format(domain))
+            conf_file.write('upstream http 127.0.0.1:7997 ".{}"\n'.format(domain))
+
+        conf_file.write('upstream http 127.0.0.1:7997 "."\n')
+
+
+def heaven_main():
+    config = addons.heaven.util.local_read_json('domains')
+    domains = list(itertools.chain(*config['blacklist'].values()))
+
+    write_etc_hosts('/etc/hosts', domains)
+    write_tinyproxy_conf('/etc/tinyproxy/tinyproxy.conf', domains)
+    shell.run('systemctl restart tinyproxy')
+
+
+def local_main():
+    config = addons.config.Config('domains').read()
+    domains = list(itertools.chain(*config['blacklist'].values()))
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        hosts_file = os.path.join(tmpdir, 'hosts')
+        tp_file = os.path.join(tmpdir, 'tinyproxy.conf')
+        tp_tor_file = os.path.join(tmpdir, 'tinyproxy-tor.conf')
+
+        shutil.copyfile('/etc/hosts', hosts_file)
+        shutil.copyfile('/etc/tinyproxy/tinyproxy.conf', tp_file)
+        shutil.copyfile('/etc/tinyproxy/tinyproxy-tor.conf', tp_tor_file)
+
+        write_etc_hosts(hosts_file, domains)
+        write_tinyproxy_conf(tp_file, domains)
+        write_tinyproxy_conf(tp_tor_file, domains)
+
+        shell.run('sudo mv {} /etc/hosts'.format(hosts_file))
+        shell.run('sudo mv {} /etc/tinyproxy/tinyproxy.conf'.format(tp_file))
+        shell.run('sudo mv {} /etc/tinyproxy/tinyproxy-tor.conf'.format(tp_tor_file))
+
+    addons.heaven.util.remote_upload_json('domains', config)
+    addons.heaven.util.remote_run('sudo heaven-gendomains')
 
 
 if __name__ == '__main__':
-    main()
+    local_main()
