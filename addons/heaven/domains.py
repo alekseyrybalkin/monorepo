@@ -1,6 +1,7 @@
 import itertools
 
 import addons.heaven.util
+import addons.shell as shell
 
 
 class GenDomains:

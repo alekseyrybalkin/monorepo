@@ -10,7 +10,7 @@ class DomainsUpdater:
 
 
 def main():
-    TimersUpdater().main()
+    DomainsUpdater().main()
 
 
 if __name__ == '__main__':
