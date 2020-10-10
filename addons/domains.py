@@ -75,6 +75,11 @@ def local_main():
         shell.run('sudo mv {} /etc/tinyproxy/tinyproxy.conf'.format(tp_file))
         shell.run('sudo mv {} /etc/tinyproxy/tinyproxy-tor.conf'.format(tp_tor_file))
 
+        if shell.run('systemctl show tinyproxy --property=ActiveState', strip=True) == 'ActiveState=active':
+            shell.run('sudo systemctl restart tinyproxy')
+        if shell.run('systemctl show tinyproxy-tor --property=ActiveState', strip=True) == 'ActiveState=active':
+            shell.run('sudo systemctl restart tinyproxy-tor')
+
     if not args.no_remote:
         addons.heaven.util.remote_upload_json('domains', config)
         addons.heaven.util.remote_run('sudo heaven-gendomains')
