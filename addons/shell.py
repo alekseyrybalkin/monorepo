@@ -35,8 +35,10 @@ def copy_to_clipboard(value):
     )
 
 
-def home():
-    return os.path.expanduser('~{}'.format(getpass.getuser()))
+def home(user=None):
+    if user is None:
+        user = getpass.getuser()
+    return os.path.expanduser('~{}'.format(user))
 
 
 class NonZeroReturnCode(Exception):

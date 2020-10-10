@@ -5,21 +5,22 @@ import addons.shell as shell
 
 
 class Config:
-    def __init__(self, name, private=True, defaults=None):
+    def __init__(self, name, private=True, defaults=None, user=None):
         self.name = name
         self.private = private
         self.defaults = defaults
+        self.user = user
 
     def read(self):
         if not self.private:
             conffile_path = os.path.join(
-                shell.home(),
+                shell.home(user=self.user),
                 '.config',
                 '{}.json'.format(self.name),
             )
         else:
             conffile_path = os.path.join(
-                shell.home(),
+                shell.home(user=self.user),
                 '.config',
                 'private',
                 '{}.json'.format(self.name),
