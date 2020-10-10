@@ -1,9 +1,5 @@
-import os
-import tempfile
-
 import addons.config
 import addons.heaven.util
-import addons.shell as shell
 
 
 class TimersUpdater:
