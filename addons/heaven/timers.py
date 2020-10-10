@@ -38,7 +38,7 @@ class TimersUpdater:
         for systemd_file in glob.iglob('/etc/systemd/system/valet*'):
             os.remove(systemd_file)
 
-        config = addons.heaven.util.read_json('timers')
+        config = addons.heaven.util.local_read_json('timers')
 
         for timer in config['timers']:
             service_file_name = os.path.join('/etc/systemd/system', 'valet-{}.service'.format(timer['name']))
