@@ -1,6 +1,8 @@
 #!/bin/bash
 
+set -e
 sudo true
+set +e
 
 git add .
 git commit -m 'python-addons updates'
