@@ -11,5 +11,5 @@ else
     git push
 fi
 
-ji pull python-addons
+srcfetcher python-addons
 sudo ji u python-addons
