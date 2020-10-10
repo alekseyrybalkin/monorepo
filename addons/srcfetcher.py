@@ -2,6 +2,7 @@ import argparse
 import datetime
 import os
 import signal
+import subprocess
 import sys
 import time
 
@@ -95,22 +96,22 @@ class SourceFetcher:
             if project_name == 'compton':
                 shell.run('git tag -d vNext')
 
-            git_dir = shell.output('git rev-parse --git-dir')
+            git_dir = shell.run('git rev-parse --git-dir')
 
             if os.path.isdir('.git/svn'):
                 shell.run('git svn fetch')
 
-                branches = shell.output('git branch -a').split()
+                branches = shell.run('git branch -a').split()
                 if any('origin/trunk' in branch for branch in branches):
                     shell.run('git merge --ff-only origin/trunk')
                 else:
                     shell.run('git merge --ff-only git-svn')
             elif git_dir == '.' or git_dir == '.git':
-                remotes = shell.output('git remote').split()
+                remotes = shell.run('git remote').split()
                 for remote in remotes:
                     shell.run('git fetch -p --tags {}'.format(remote))
 
-                if shell.output('git config --bool core.bare') == 'false':
+                if shell.run('git config --bool core.bare') == 'false':
                     shell.run('git merge --ff-only')
             elif os.path.isdir('.hg'):
                 shell.run('hg pull')
@@ -125,7 +126,7 @@ class SourceFetcher:
             # post-processing
             if project_name == 'chromium-webrtc':
                 shell.run('git fetch origin +refs/branch-heads/*:refs/remotes/branch-heads/*')
-        except shell.NonZeroReturnCode:
+        except subprocess.CalledProcessError:
             return False
 
         return True

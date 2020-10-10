@@ -8,7 +8,7 @@ import sys
 import addons.config
 import addons.db
 import addons.relmon
-import addons.shell
+import addons.shell as shell
 import addons.srcfetcher as srcfetcher
 import addons.updater.relmon as relmon
 import addons.updater.arch as arch
@@ -25,7 +25,7 @@ class Package:
         command = 'source {}; '.format(path)
         for field in pkgbuild_fields:
             command += 'echo ${}; '.format(field)
-        values = [v.strip() for v in addons.shell.output([command], shell=True, strip=False).split('\n')[:-1]]
+        values = [v.strip() for v in shell.run([command], shell=True, strip=False).split('\n')[:-1]]
 
         return cls(**{k: v for k, v in zip(pkgbuild_fields, values)})
 

@@ -178,7 +178,7 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
             v.strip().lower(),
             pkgname=pkgname,
             dirname=dirname,
-        ) for v in shell.output(command).split('\n')
+        ) for v in shell.run(command).split('\n')
     ]
 
     if preprocessing:
