@@ -19,6 +19,7 @@ setup(
             'timers = addons.timers:main',
             'fetch-videos = addons.youtube:fetch_videos',
             'heaven-gentimers = addons.heaven.timers:main',
+            'heaven-gendomains = addons.heaven.domains:main',
         ],
     },
     include_package_data=True,
