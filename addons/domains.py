@@ -1,3 +1,4 @@
+import argparse
 import itertools
 import os
 import shutil
@@ -50,7 +51,11 @@ def heaven_main():
 
 
 def local_main():
-    config = addons.config.Config('domains').read()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no-remote', action='store_true')
+    args = parser.parse_args()
+
+    config = addons.config.Config('domains', user='rybalkin').read()
     domains = list(itertools.chain(*config['blacklist'].values()))
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -70,8 +75,9 @@ def local_main():
         shell.run('sudo mv {} /etc/tinyproxy/tinyproxy.conf'.format(tp_file))
         shell.run('sudo mv {} /etc/tinyproxy/tinyproxy-tor.conf'.format(tp_tor_file))
 
-    addons.heaven.util.remote_upload_json('domains', config)
-    addons.heaven.util.remote_run('sudo heaven-gendomains')
+    if not args.no_remote:
+        addons.heaven.util.remote_upload_json('domains', config)
+        addons.heaven.util.remote_run('sudo heaven-gendomains')
 
 
 if __name__ == '__main__':
