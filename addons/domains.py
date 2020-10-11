@@ -28,7 +28,7 @@ def write_tinyproxy_conf(conf_file_name, domains):
     header = ''
     with open(conf_file_name, 'tr') as conf_file:
         for line in conf_file:
-            if not line.startswith('upstream http'):
+            if not line.startswith('upstream http 127.0.0.1:7997'):
                 header += line
 
     with open(conf_file_name, 'tw') as conf_file:
