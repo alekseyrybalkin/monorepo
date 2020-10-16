@@ -16,7 +16,6 @@ setup(
             'updater = addons.updater.updater:main',
             'valet = addons.valet:main',
             'schedule = addons.util.schedule:main',
-            'fetch-videos = addons.youtube:fetch_videos',
             'timers = addons.timers:main',
             'domains = addons.domains:local_main',
             'heaven-gentimers = addons.heaven.timers:main',
