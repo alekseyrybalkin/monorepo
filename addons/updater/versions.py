@@ -70,8 +70,6 @@ def apply_rules(version, rules):
             version = version.replace('-', '.')
         if rule == 'svn_tags':
             version = version.replace('remotes/origin/tags/', '')
-        if rule == 'bzr_cleanup':
-            version = version.split(' ')[0]
         if rule.startswith('lstrip_'):
             word = rule.replace('lstrip_', '')
             word = word.replace('-', '.').replace('_', '.')

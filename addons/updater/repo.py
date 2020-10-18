@@ -169,9 +169,6 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
         command = ['hg', 'tags', '-q']
     if vcs == 'fossil':
         command = ['fossil', 'tag', 'list']
-    if vcs == 'bzr':
-        command = ['brz', 'tags']
-        preprocessing = ['bzr_cleanup']
 
     tags = [
         Tag(

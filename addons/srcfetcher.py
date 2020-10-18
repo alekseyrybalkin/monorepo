@@ -118,8 +118,6 @@ class SourceFetcher:
             elif os.path.isfile('.fslckout'):
                 shell.run('fossil pull')
                 shell.run('fossil update')
-            elif os.path.isdir('.bzr'):
-                shell.run('brz pull')
             else:
                 return False
 
@@ -172,7 +170,6 @@ class SourceFetcher:
         # don't die when stopped, try to finish your job first
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
-        os.environ['BRZ_LOG'] = '/dev/null'
         os.environ['FOSSIL_HOME'] = os.path.join(shell.home(), '.config')
 
         self.args = self.parse_args()
