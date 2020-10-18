@@ -7,8 +7,7 @@ import stat
 import string
 import sys
 import time
-
-import requests
+import urllib.request
 
 import addons.db
 import addons.shell as shell
@@ -134,7 +133,8 @@ class HackerNews:
         url = 'https://hckrnews.com/data/{}.js'.format(day.strftime('%Y%m%d'))
         if not quiet:
             print('fetching {}...'.format(url))
-        stories = json.loads(requests.get(url).content)
+        with urllib.request.urlopen(url) as req:
+            stories = json.loads(req.read())
 
         if self.get_day(day) is None:
             self.insert_day(day)

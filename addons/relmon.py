@@ -4,8 +4,7 @@ import json
 import logging
 import signal
 import time
-
-import requests
+import urllib.request
 
 import addons.db
 
@@ -32,11 +31,13 @@ class Relmon:
 
     def get_by_id(self, package_id):
         url = 'https://release-monitoring.org/api/project/{}'
-        return requests.get(url.format(package_id)).json()
+        with urllib.request.urlopen(url.format(package_id)) as req:
+            return json.loads(req.read())
 
     def search_by_name(self, name):
         url = 'https://release-monitoring.org/api/projects/?pattern={}'
-        return requests.get(url.format(name)).json()
+        with urllib.request.urlopen(url.format(name)) as req:
+            return json.loads(req.read())
 
     def get_from_cache(self, package_id):
         row = self.db.select_one('select info from package where id = ?', (package_id,))
