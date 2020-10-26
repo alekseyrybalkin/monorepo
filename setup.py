@@ -21,6 +21,7 @@ setup(
             'domains = addons.domains:local_main',
             'heaven-gentimers = addons.heaven.timers:main',
             'heaven-gendomains = addons.domains:heaven_main',
+            'backup = addons.backup:main',
         ],
     },
     include_package_data=True,

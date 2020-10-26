@@ -3,14 +3,21 @@ import os
 import subprocess
 
 
-def run(command, shell=False, strip=True):
+def run(command, shell=False, strip=True, input_bytes=None):
     if isinstance(command, str):
         command = command.split(' ')
 
+    options = {
+        'shell': shell,
+    }
+    if input_bytes:
+        options['input'] = input_bytes
+
+    result = subprocess.check_output(command, **options).decode()
+
     if strip:
-        return subprocess.check_output(command, shell=shell).strip().decode()
-    else:
-        return subprocess.check_output(command, shell=shell).decode()
+        return result.strip()
+    return result
 
 
 def copy_to_clipboard(value):

@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 
+import addons.config
 import addons.db
 import addons.shell as shell
 
@@ -32,6 +33,7 @@ class SrcfetcherDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
 class SourceFetcher:
     def __init__(self, db):
         self.db = db
+        self.config = addons.config.Config('srcfetcher').read()
 
     def find_project(self, name):
         return self.db.select_one(
@@ -88,13 +90,9 @@ class SourceFetcher:
         os.chdir(self.find_project(project_name)['path'])
 
         try:
-            # pre-processing
-            if project_name == 'chromium-glslang':
-                shell.run('git tag -d master-tot')
-            if project_name == 'tmux':
-                shell.run('git tag -d 3.2-rc')
-            if project_name == 'compton':
-                shell.run('git tag -d vNext')
+            for rule in self.config['pre_processing']:
+                if rule['project'] == project_name:
+                    shell.run(rule['command'])
 
             git_dir = shell.run('git rev-parse --git-dir')
 
@@ -121,13 +119,57 @@ class SourceFetcher:
             else:
                 return False
 
-            # post-processing
-            if project_name == 'chromium-webrtc':
-                shell.run('git fetch origin +refs/branch-heads/*:refs/remotes/branch-heads/*')
+            for rule in self.config['post_processing']:
+                if rule['project'] == project_name:
+                    shell.run(rule['command'])
         except subprocess.CalledProcessError:
             return False
 
         return True
+
+    def get_info(self, project_name):
+        project = self.find_project(project_name)
+        if not project:
+            raise ValueError('Project {} not found'.format(project_name))
+        os.chdir(self.find_project(project_name)['path'])
+
+        try:
+            git_dir = shell.run('git rev-parse --git-dir')
+
+            if os.path.isdir('.git/svn'):
+                return [('git-svn', shell.run('git config svn-remote.svn.url'), '')]
+            elif git_dir == '.' or git_dir == '.git':
+                remotes = shell.run('git remote').split()
+                result = []
+                for remote in remotes:
+                    result.append((
+                        'git',
+                        shell.run('git remote get-url {}'.format(remote)),
+                        remote,
+                    ))
+                return result
+            elif os.path.isdir('.hg'):
+                url = ''
+                with open('.hg/hgrc', 'tr') as hgrc:
+                    for line in hgrc:
+                        if line.startswith('default = '):
+                            url = line.replace('default = ', '').strip()
+                            break
+                return [('mercurial', url, '')]
+            elif os.path.isfile('.fslckout'):
+                return [('fossil', shell.run('fossil remote-url'), '')]
+        except subprocess.CalledProcessError:
+            pass
+
+        return []
+
+    def update_url_list_file(self):
+        if time.time() - os.stat(self.config['url_list_file']).st_mtime > 12 * 3600:
+            with open(self.config['url_list_file'], 'tw') as url_list_file:
+                for project, path in self.list_projects():
+                    for (vcs, url, remote) in self.get_info(project):
+                        group_project = '{}/{}'.format(os.path.basename(os.path.dirname(path)), project)
+                        url_list_file.write('{:<42}{:<12}{:<10}{}\n'.format(group_project, vcs, remote, url))
 
     def fetch(self, project_name):
         success = self.pull_dir(project_name)
@@ -179,6 +221,8 @@ class SourceFetcher:
             for name in set(project_names):
                 project_names.remove(name)
             raise ValueError('Duplicate package names in sources directory: {}'.format(project_names))
+
+        self.update_url_list_file()
 
         rows = self.db.select_many('select name from project')
         db_projects = set(row['name'] for row in rows)
