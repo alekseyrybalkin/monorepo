@@ -22,6 +22,7 @@ setup(
             'backup = addons.backup:main',
             'regen-reader-index = addons.reader.reader:main',
             'which = addons.util.which:main',
+            'sss = addons.util.sss:main',
         ],
     },
     include_package_data=True,
