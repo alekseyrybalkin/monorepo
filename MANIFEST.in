@@ -1,3 +1,4 @@
 recursive-include addons *.html
 recursive-include addons *.tpl
 recursive-include addons *.ico
+recursive-include addons *.css
