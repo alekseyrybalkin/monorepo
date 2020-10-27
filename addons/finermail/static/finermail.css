@@ -1,0 +1,25 @@
+body {
+    font-family: 'Ubuntu Mono', 'fixed';
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+a:link,
+a:hover,
+a:visited,
+a:active {
+    text-decoration: none;
+    color: rgb(214, 21, 108);
+}
+
+.message-body {
+    font-size: 1.2em;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+.right-menu {
+    text-align: right;
+}
