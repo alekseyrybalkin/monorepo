@@ -188,7 +188,10 @@ class Updater:
     def check_all(self):
         problems = False
 
-        failed = self.source_fetcher.get_all_failed()
+        failed = {
+            project for project in self.source_fetcher.get_all_failed()
+            if project['name'] not in self.source_fetcher.config['ignore']
+        }
         if failed:
             sys.stdout.write('Projects failed to update: ')
             sys.stdout.write(self.colorize(

@@ -8,10 +8,10 @@ user    4m52.777s
 sys     10m39.487s
 
 $ ls -al ~/.data/docs/mywiki/enwiki* ~/.data/databases/large/wiki.db
--rw-r----- 1 rybalkin rybalkin  1746817024 Jun 10 12:15 /home/rybalkin/.data/databases/large/wiki.db
--rw-r----- 1 rybalkin rybalkin   903452687 Jun 10 10:43 /home/rybalkin/.data/docs/mywiki/enwiki-20190601-pages-articles-multistream-index.txt
--rw-r----- 1 rybalkin rybalkin   212809630 Jun  4 15:32 /home/rybalkin/.data/docs/mywiki/enwiki-20190601-pages-articles-multistream-index.txt.bz2
--rw-r----- 1 rybalkin rybalkin 17142482823 Jun  4 15:30 /home/rybalkin/.data/docs/mywiki/enwiki-20190601-pages-articles-multistream.xml.bz2
+  1746817024 Jun 10 12:15 .../wiki.db
+   903452687 Jun 10 10:43 .../enwiki-20190601-pages-articles-multistream-index.txt
+   212809630 Jun  4 15:32 .../enwiki-20190601-pages-articles-multistream-index.txt.bz2
+ 17142482823 Jun  4 15:30 .../enwiki-20190601-pages-articles-multistream.xml.bz2
 
 https://github.com/earwig/mwparserfromhell
 https://mwparserfromhell.readthedocs.io/en/latest/index.html
