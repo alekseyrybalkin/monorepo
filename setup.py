@@ -23,6 +23,7 @@ setup(
             'heaven-gendomains = addons.domains:heaven_main',
             'backup = addons.backup:main',
             'regen-reader-index = addons.reader.reader:main',
+            'which = addons.util.which:main',
         ],
     },
     include_package_data=True,
