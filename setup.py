@@ -10,7 +10,6 @@ setup(
             'nmap = addons.util.nmap:main',
             'gen = addons.util.gen:gen',
             'srcfetcher = addons.srcfetcher:main',
-            'take-screenshot = addons.util.screenshot:main',
             'hckrnews = addons.hckrnews.hckrnews:main',
             'relmon = addons.relmon:main',
             'updater = addons.updater.updater:main',
