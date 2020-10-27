@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='addons',
     version=1,
-    packages=['addons', 'addons.hckrnews'],
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             'compress-music = addons.util.compress_music:compress',
