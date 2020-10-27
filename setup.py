@@ -22,6 +22,7 @@ setup(
             'heaven-gentimers = addons.heaven.timers:main',
             'heaven-gendomains = addons.domains:heaven_main',
             'backup = addons.backup:main',
+            'regen-reader-index = addons.reader.reader:main',
         ],
     },
     include_package_data=True,
