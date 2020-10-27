@@ -164,7 +164,7 @@ class SourceFetcher:
         return []
 
     def update_url_list_file(self):
-        if time.time() - os.stat(self.config['url_list_file']).st_mtime > 12 * 3600:
+        if not os.path.exists(self.config['url_list_file']) or time.time() - os.stat(self.config['url_list_file']).st_mtime > 12 * 3600:
             with open(self.config['url_list_file'], 'tw') as url_list_file:
                 for project, path in self.list_projects():
                     for (vcs, url, remote) in self.get_info(project):
