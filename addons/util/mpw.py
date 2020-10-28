@@ -87,7 +87,7 @@ class MPW:
                         current_index = index
 
                 ls_context = self.config['ls_context']
-                print(shell.colorize('Total tracks in a playlist: 21'.format(len(tracks)), color=2))
+                print(shell.colorize('Total tracks in a playlist: {}'.format(len(tracks)), color=2))
                 if current_index > self.config['ls_context']:
                     print('  ...')
                 for index, track in enumerate(tracks):
