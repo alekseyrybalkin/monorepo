@@ -25,6 +25,7 @@ setup(
             'sss = addons.util.sss:main',
             'genvcf = addons.util.genvcf:main',
             'kopass = addons.util.kopass:main',
+            'things = addons.util.things:main',
         ],
     },
     include_package_data=True,
