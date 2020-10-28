@@ -142,7 +142,7 @@ class Updater:
             if best_version != pkg.pkgver and self.in_place and can_change:
                 self.update_pkgver(pkgbuild, pkg.pkgver, best_version)
             if best_version != pkg.pkgver and self.in_place and not can_change:
-                print(self.colorize('WARNING: can\'t change {}'.format(pkgbuild), color=3))
+                print(shell.colorize('WARNING: can\'t change {}'.format(pkgbuild), color=3))
 
             versions_to_print = []
             vers = [pkg.pkgver, arch_version, relmon_version, repo_version]
@@ -152,10 +152,10 @@ class Updater:
                     spaces = ''
                     if index < len(vers) - 1:
                         spaces = ' ' * (25 - len(version))
-                    formatted = self.colorize(version, color=2) + spaces
+                    formatted = shell.colorize(version, color=2) + spaces
                 versions_to_print.append(formatted)
 
-            jinni_tag = self.colorize('  [jinni]' if repo_version_jinni else '', color=1)
+            jinni_tag = shell.colorize('  [jinni]' if repo_version_jinni else '', color=1)
             print('{:<30}{:<25}{:<25}{:<25}{}'.format(
                 pkg.pkgname,
                 *versions_to_print[:-1], '{}{}'.format(versions_to_print[-1], jinni_tag)
@@ -170,12 +170,6 @@ class Updater:
         if checks == 1 and pkg.pkgname not in self.config['custom']:
             if pkg.pkgname not in self.config['one_check_ok']:
                 self.one_check.append(pkg.pkgname)
-
-    def colorize(self, text, color=7):
-        if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
-            seq = "\x1b[1;{}m".format(30 + color) + text + "\x1b[0m"
-            return seq
-        return text
 
     def list_all_projects(self):
         projects = []
@@ -194,7 +188,7 @@ class Updater:
         }
         if failed:
             sys.stdout.write('Projects failed to update: ')
-            sys.stdout.write(self.colorize(
+            sys.stdout.write(shell.colorize(
                 '{}\n'.format(' '.join(project['name'] for project in failed)),
                 color=1,
             ))
@@ -203,7 +197,7 @@ class Updater:
         failed = self.relmon.get_all_failed()
         if failed:
             sys.stdout.write('Relmon ID update failures: ')
-            sys.stdout.write(self.colorize(
+            sys.stdout.write(shell.colorize(
                 '{}\n'.format(str(len(failed))),
                 color=1,
             ))
@@ -214,14 +208,14 @@ class Updater:
         hours = (datetime.datetime.now() - last_attempt).total_seconds() / 3600
         if hours >= 50:
             sys.stdout.write('Oldest fetch attempt:      {} hours ago\n'.format(
-                self.colorize('{:.1f}'.format(hours), color=1),
+                shell.colorize('{:.1f}'.format(hours), color=1),
             ))
             problems = True
 
         if problems:
             sys.stdout.write('\n')
 
-        sys.stdout.write(self.colorize('{:<30}{:<25}{:<25}{:<25}{}\n'.format(
+        sys.stdout.write(shell.colorize('{:<30}{:<25}{:<25}{:<25}{}\n'.format(
             '[PACKAGE]',
             '[VERSION]',
             '[ARCH]',
@@ -238,13 +232,13 @@ class Updater:
             sys.stdout.write('\n')
         if self.no_checks:
             sys.stdout.write('Projects with no checks: ')
-            sys.stdout.write(self.colorize(
+            sys.stdout.write(shell.colorize(
                 '{}\n'.format(' '.join(project for project in self.no_checks)),
                 color=1,
             ))
         if self.one_check:
             sys.stdout.write('Projects with only one check: ')
-            sys.stdout.write(self.colorize(
+            sys.stdout.write(shell.colorize(
                 '{}\n'.format(' '.join(project for project in self.one_check)),
                 color=6,
             ))

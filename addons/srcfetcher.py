@@ -77,12 +77,6 @@ class SourceFetcher:
         for group in (g for g in os.scandir(sources_dir) if g.is_dir() and g.name != '_ignore'):
             yield from ((project.name, project.path) for project in os.scandir(group) if project.is_dir())
 
-    def colorize(self, text, color=7):
-        if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
-            seq = "\x1b[1;{}m".format(30 + color) + text + "\x1b[0m"
-            return seq
-        return text
-
     def pull_dir(self, project_name):
         if project_name in self.config['ignore']:
             return False
@@ -197,7 +191,7 @@ class SourceFetcher:
 
         if not self.args.quiet:
             sys.stdout.write(
-                self.colorize(
+                shell.colorize(
                     '{}: {}\n'.format(
                         project_name,
                         'ok' if success else 'failed',

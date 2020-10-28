@@ -1,6 +1,7 @@
 import getpass
 import os
 import subprocess
+import sys
 
 
 def run(command, shell=False, strip=True, input_bytes=None):
@@ -32,3 +33,10 @@ def home(user=None):
     if user is None:
         user = getpass.getuser()
     return os.path.expanduser('~{}'.format(user))
+
+
+def colorize(text, color=7):
+    if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
+        seq = "\x1b[1;{}m".format(30 + color) + text + "\x1b[0m"
+        return seq
+    return text

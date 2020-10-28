@@ -2,6 +2,7 @@ import sys
 import os
 
 import addons.config
+import addons.shell as shell
 
 
 class Things:
@@ -11,12 +12,6 @@ class Things:
         self.secondary_list_1 = self.config['secondary_list_1']
         self.secondary_list_2 = self.config['secondary_list_2']
         self.bonus_list = self.config['bonus_list']
-
-    def colorize(self, text, color=7):
-        if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
-            seq = "\x1b[1;{}m".format(30 + color) + text + "\x1b[0m"
-            return seq
-        return text
 
     def main(self):
         os.system('clear')
@@ -30,18 +25,18 @@ class Things:
 
         print('-' * 169)
         line = '| {:<29s}{:>6} {:>3} | {:<20s}{:>6} {:>3} | {:<20s}{:>6} {:>3} | {:<20s}{:>15} {:>3} |'.format(
-                self.colorize('{:<29s}'.format('Main')),
-                self.colorize('{:>6}'.format(sum1)),
-                self.colorize('{:>3}'.format(sum(item[1] for item in self.main_list))),
-                self.colorize('{:<20s}'.format('Secondary #1')),
-                self.colorize('{:>6} / {:>6}'.format(sum2, sum1 + sum2)),
-                self.colorize('{:>3}'.format(sum(item[1] for item in self.secondary_list_1))),
-                self.colorize('{:<20s}'.format('Secondary #2')),
-                self.colorize('{:>6} / {:>6}'.format(sum3, sum1 + sum2 + sum3)),
-                self.colorize('{:>3}'.format(sum(item[1] for item in self.secondary_list_2))),
-                self.colorize('{:<20s}'.format('Bonus')),
-                self.colorize('{:>6} / {:>6}'.format(sum4, sum1 + sum2 + sum3 + sum4)),
-                self.colorize('{:>3}'.format(sum(item[1] for item in self.bonus_list))),
+                shell.colorize('{:<29s}'.format('Main')),
+                shell.colorize('{:>6}'.format(sum1)),
+                shell.colorize('{:>3}'.format(sum(item[1] for item in self.main_list))),
+                shell.colorize('{:<20s}'.format('Secondary #1')),
+                shell.colorize('{:>6} / {:>6}'.format(sum2, sum1 + sum2)),
+                shell.colorize('{:>3}'.format(sum(item[1] for item in self.secondary_list_1))),
+                shell.colorize('{:<20s}'.format('Secondary #2')),
+                shell.colorize('{:>6} / {:>6}'.format(sum3, sum1 + sum2 + sum3)),
+                shell.colorize('{:>3}'.format(sum(item[1] for item in self.secondary_list_2))),
+                shell.colorize('{:<20s}'.format('Bonus')),
+                shell.colorize('{:>6} / {:>6}'.format(sum4, sum1 + sum2 + sum3 + sum4)),
+                shell.colorize('{:>3}'.format(sum(item[1] for item in self.bonus_list))),
         )
         print(line)
         print('-' * 169)
