@@ -23,6 +23,7 @@ setup(
             'regen-reader-index = addons.reader.reader:main',
             'which = addons.util.which:main',
             'sss = addons.util.sss:main',
+            'genvcf = addons.util.genvcf:main',
         ],
     },
     include_package_data=True,
