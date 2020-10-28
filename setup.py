@@ -30,6 +30,7 @@ setup(
             'taxes = addons.networth.taxes:main',
             'utilities = addons.networth.utilities:main',
             'expenses = addons.networth.expenses:main',
+            'mpw = addons.util.mpw:main',
         ],
     },
     include_package_data=True,
