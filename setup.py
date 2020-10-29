@@ -22,7 +22,6 @@ setup(
             'backup = addons.backup:main',
             'regen-reader-index = addons.reader.reader:main',
             'which = addons.util.which:main',
-            'sss = addons.util.sss:main',
             'genvcf = addons.util.genvcf:main',
             'kopass = addons.util.kopass:main',
             'things = addons.util.things:main',
