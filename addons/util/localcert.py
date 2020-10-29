@@ -17,7 +17,10 @@ class LocalCertificateManager:
         if self.args.command == 'gendomain' and not self.args.domain:
             raise ValueError('command gendmain requires --domain')
 
-        self.config = addons.config.Config('localcert').read()
+        self.config = addons.config.Config(
+            'localcert',
+            defaults={'local-cert-location': 'etc/ssl/local'},
+        ).read()
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
