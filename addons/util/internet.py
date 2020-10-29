@@ -17,7 +17,7 @@ class Internet:
         parser.add_argument('command', type=str, default='wired', nargs='?')
         return parser.parse_args()
 
-    def stop(self):
+    def disconnect(self):
         all_timers = ' '.join('{}.timer'.format(timer) for timer in self.config['timers'])
         shell.run('sudo systemctl stop {}'.format(all_timers))
         time.sleep(self.config['sleep'])
@@ -36,7 +36,23 @@ class Internet:
         for service in list(self.config['wired_services'])[::-1]:
             shell.run('sudo systemctl stop {}'.format(service))
 
-    def start(self, access_point):
+    def connect(self):
+        access_point = {
+            'ssid': '',
+        }
+        if self.args.command != 'wired':
+            alias = self.args.command
+            if alias in ('wifi', 'wireless'):
+                alias = self.config['wifi']['current_access_point']
+
+            for ap in self.config['wifi']['access_points']:
+                if ap.get('alias', ap['ssid']) == alias:
+                    access_point = ap
+
+        self.gen_jinni_environment(access_point)
+        if self.args.command != 'wired':
+            self.gen_wpa_supplicant_conf(access_point)
+
         key = 'wired_services' if self.args.command == 'wired' else 'wireless_services'
         for service, conf in self.config[key].items():
             if conf['enabled']:
@@ -86,33 +102,10 @@ class Internet:
             shell.run('sudo chown root: {}'.format('/run/wpa_supplicant.conf'))
             shell.run('sudo chmod 600 {}'.format('/run/wpa_supplicant.conf'))
 
-    def main(self):
-        if self.args.command == 'stop':
-            self.stop()
-            return
 
-        access_point = {
-            'ssid': '',
-        }
-        if self.args.command != 'wired':
-            alias = self.args.command
-            if alias in ('wifi', 'wireless'):
-                alias = self.config['wifi']['current_access_point']
-
-            for ap in self.config['wifi']['access_points']:
-                if ap.get('alias', ap['ssid']) == alias:
-                    access_point = ap
-
-        self.gen_jinni_environment(access_point)
-        if self.args.command != 'wired':
-            self.gen_wpa_supplicant_conf(access_point)
-
-        self.start(access_point)
+def connect():
+    Internet().connect()
 
 
-def main():
-    Internet().main()
-
-
-if __name__ == '__main__':
-    main()
+def disconnect():
+    Internet().disconnect()
