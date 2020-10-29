@@ -28,7 +28,7 @@ class TmuxStatus:
         elif mean_charge >= 16 and mean_charge <= 30:
             print(f' #[fg=colour208]{mean_charge}% ', end='')
 
-        print('#[default]    ', end='')
+        print('#[default]    ')
 
     def right(self):
         # FIXME get housecarl from future ji config
@@ -48,6 +48,8 @@ class TmuxStatus:
 
         if shell.run('systemctl show --property=SystemState') != 'SystemState=running':
             print(' #[fg=colour196]X', end='')
+
+        print('#[default]')
 
     def main(self):
         parser = argparse.ArgumentParser()
