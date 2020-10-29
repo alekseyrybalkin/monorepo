@@ -101,7 +101,7 @@ class MPW:
 
         try:
             self.send_command('["get_property", "volume"]')
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, FileNotFoundError):
             self.start_daemon()
         self.populate_playlist(self.args.command)
         self.send_command('["loadlist", "{}"]'.format(self.config['playlist']))
