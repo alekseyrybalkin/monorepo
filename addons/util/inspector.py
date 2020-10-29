@@ -134,7 +134,8 @@ class Inspector:
                 if e.output:
                     print(e.output)
 
-        undone_tasks = shell.run('valet').count('[ ]')
+        # FIXME make a library call
+        undone_tasks = shell.run('r').count('[ ]')
         if undone_tasks:
             print('undone tasks: {}'.format(undone_tasks))
 
