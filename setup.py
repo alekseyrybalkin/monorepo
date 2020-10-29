@@ -31,6 +31,7 @@ setup(
             'utilities = addons.networth.utilities:main',
             'expenses = addons.networth.expenses:main',
             'mpw = addons.util.mpw:main',
+            's = addons.util.inspector:main',
         ],
     },
     include_package_data=True,
