@@ -7,6 +7,7 @@ import signal
 import subprocess
 
 import addons.config
+import addons.helpers
 import addons.shell as shell
 
 
@@ -112,12 +113,10 @@ class Inspector:
         if shutil.which('amixer'):
             self.check_amixer_settings()
 
-        if shutil.which('acpi'):
-            acpi_output = shell.run('acpi')
-            for line in acpi_output.split('\n'):
-                charge = int(re.match(r'^.* (\d+)%.*$', line).group(1))
-                if charge < 91:
-                    print('battery is only {}% charged'.format(charge))
+        charges = addons.helpers.get_battery_charges()
+        for charge in charges:
+            if charge < 91:
+                print('battery is only {}% charged'.format(charge))
 
         if shutil.which('pacman'):
             if len(shell.run('pacman -Qm').split('\n')) != 1:
