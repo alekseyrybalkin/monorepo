@@ -42,9 +42,9 @@ class TmuxStatus:
             path = os.path.join(self.config['mailbox-path'], mailbox['name'], 'new')
             count = len(glob.glob(os.path.join(path, '*')))
             if count > 0:
-                print(' #[fg=colour{}]{} '.format(self.config['default-color'], count), end='')
-            else:
                 print(' #[fg=colour{}]{} '.format(mailbox['color'], count), end='')
+            else:
+                print(' #[fg=colour{}]{} '.format(self.config['default-color'], count), end='')
 
         if shell.run('systemctl show --property=SystemState') != 'SystemState=running':
             print(' #[fg=colour196]X', end='')
