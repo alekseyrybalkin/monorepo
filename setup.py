@@ -33,6 +33,7 @@ setup(
             'mpw = addons.util.mpw:main',
             's = addons.util.inspector:main',
             'internets = addons.util.internet:main',
+            'localcert = addons.util.localcert:main',
         ],
     },
     include_package_data=True,
