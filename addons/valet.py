@@ -107,17 +107,15 @@ class Valet:
         else:
             sys.stdout.write(text + '\n')
 
-    def parse_args(self):
+    def parse_args(self, toggle_done):
         parser = argparse.ArgumentParser()
+        if toggle_done:
+            parser.add_argument('toggle', type=int, default=0, nargs='?')
         parser.add_argument('day', type=int, default=0, nargs='?')
-        parser.add_argument('--toggle-done', type=int, default=-1)
         parser.add_argument('--email', action='store_true')
-        args = parser.parse_args()
+        return parser.parse_args()
 
-        day = datetime.date.today() + datetime.timedelta(days=args.day)
-        return day, args.toggle_done, args.email
-
-    def main(self):
+    def main(self, toggle_done):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
         routines = []
@@ -126,7 +124,8 @@ class Valet:
         for group in config['routines']:
             routines.extend([Routine(**item) for item in config['routines'][group]])
 
-        day, toggle_done, email = self.parse_args()
+        args = self.parse_args(toggle_done)
+        day = datetime.date.today() + datetime.timedelta(days=args.day)
 
         tasks = sorted([r.get_text(day) for r in routines if r.check_day(day)])
 
@@ -134,8 +133,8 @@ class Valet:
         sometime_ago = datetime.date.today() - datetime.timedelta(days=30)
         self.db.execute('delete from done where day < ?', (sometime_ago,))
 
-        if toggle_done >= 0:
-            task = tasks[toggle_done]
+        if toggle_done and args.toggle >= 0:
+            task = tasks[args.toggle]
             item = self.db.select_one('select id from done where day = ? and task = ?', (day, task))
             if self.db.select_one('select id from done where day = ? and task = ?', (day, task)):
                 self.db.execute('delete from done where day = ? and task = ?', (day, task))
@@ -144,25 +143,30 @@ class Valet:
 
         done = set(row['task'] for row in self.db.select_many('select task from done where day = ?', (day,)))
 
-        indent = '' if email else ' ' * 4
-        if not email:
+        indent = '' if args.email else ' ' * 4
+        if not args.email:
             os.system('clear')
         print()
-        self.color_print('{}{}'.format(indent, day.strftime('%d.%m.%Y  %A')), 7, email)
+        self.color_print('{}{}'.format(indent, day.strftime('%d.%m.%Y  %A')), 7, args.email)
         print()
         for i, r in enumerate(tasks):
             self.color_print(
                 '{}   {:>2d} [{}] '.format(indent, i, 'v' if r in done else ' ') + r,
                 2 if r in done else 7,
-                email,
+                args.email,
             )
         print()
 
 
-def main():
+def just_show():
     with addons.db.DB('valet') as db:
-        Valet(db).main()
+        Valet(db).main(toggle_done=False)
+
+
+def toggle_done_and_show():
+    with addons.db.DB('valet') as db:
+        Valet(db).main(toggle_done=True)
 
 
 if __name__ == '__main__':
-    main()
+    just_show()
