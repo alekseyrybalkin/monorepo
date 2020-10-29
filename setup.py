@@ -32,7 +32,7 @@ setup(
             'expenses = addons.networth.expenses:main',
             'mpw = addons.util.mpw:main',
             's = addons.util.inspector:main',
-            'internet = addons.util.internet:main',
+            'internets = addons.util.internet:main',
         ],
     },
     include_package_data=True,
