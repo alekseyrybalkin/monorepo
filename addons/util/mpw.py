@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import random
+import re
 import socket
 import subprocess
 import time
@@ -48,7 +49,7 @@ class MPW:
             for root, dirs, files in os.walk(self.config['music_library']):
                 for track in files:
                     full_track = os.path.join(root, track)
-                    if query in full_track:
+                    if re.search(query, full_track):
                         all_tracks.append(full_track)
             if self.args.sorted:
                 all_tracks = sorted(all_tracks)
@@ -72,26 +73,34 @@ class MPW:
         if self.args.command in command_map:
             try:
                 self.send_command(command_map[self.args.command])
+                if self.args.command == 'play':
+                    self.send_command('["loadlist", "{}"]'.format(self.config['playlist']))
             except ConnectionRefusedError:
                 pass
             return
         if self.args.command == 'ls':
-            answer = self.send_command('["get_property", "filename"]')
-            current_track = json.loads(answer)['data']
+            try:
+                answer = json.loads(self.send_command('["get_property", "filename"]'))
+            except (ConnectionRefusedError, FileNotFoundError):
+                return
+            current_track = None
+            if 'data' in answer:
+                current_track = answer['data']
             with open(self.config['playlist'], 'tr') as playlist:
                 tracks = []
+                current_index = 0
                 for index, track in enumerate(playlist):
                     track = track.strip()
                     tracks.append(track)
-                    if track.endswith(current_track):
+                    if current_track and track.endswith(current_track):
                         current_index = index
 
                 ls_context = self.config['ls_context']
-                print(shell.colorize('Total tracks in a playlist: {}'.format(len(tracks)), color=2))
+                print(shell.colorize('Total tracks in a playlist: {}'.format(len(tracks))))
                 if current_index > self.config['ls_context']:
                     print('  ...')
                 for index, track in enumerate(tracks):
-                    if index == current_index:
+                    if current_track and index == current_index:
                         print(shell.colorize('{:>4} {}'.format(index + 1, track), color=2))
                     elif index >= current_index - ls_context and index <= current_index + ls_context:
                         print('{:>4} {}'.format(index + 1, track))
