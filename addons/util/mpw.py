@@ -75,7 +75,7 @@ class MPW:
                 self.send_command(command_map[self.args.command])
                 if self.args.command == 'play':
                     self.send_command('["loadlist", "{}"]'.format(self.config['playlist']))
-            except ConnectionRefusedError:
+            except (ConnectionRefusedError, FileNotFoundError):
                 pass
             return
         if self.args.command == 'ls':
