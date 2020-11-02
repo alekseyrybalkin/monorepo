@@ -54,16 +54,16 @@ class SourceFetcher:
     def delete_project(self, name):
         self.db.execute('delete from project where name = ?', (name,))
 
-    def get_oldest_expired(self):
+    def get_oldest_expired(self, count=1):
         prev_date = datetime.datetime.now() - datetime.timedelta(days=2)
-        return self.db.select_one(
+        return self.db.select_many(
             '''
                 select name from project
                     where last_attempt is null or last_attempt <= ?
                     order by last_attempt asc
-                    limit 1
+                    limit ?
             ''',
-            (prev_date,),
+            (prev_date, count),
         )
 
     def get_all_failed(self):
@@ -238,11 +238,10 @@ class SourceFetcher:
         if self.args.project:
             self.fetch(self.args.project)
         else:
-            for i in range(3):
-                project = self.get_oldest_expired()
-                if project:
-                    self.fetch(project['name'])
-                    time.sleep(2.0)
+            projects = self.get_oldest_expired(self.config['projects_per_run'])
+            for project in projects:
+                self.fetch(project['name'])
+                time.sleep(2.0)
 
 
 def main():
