@@ -143,7 +143,7 @@ class Inspector:
         domains_config = addons.config.Config('domains').read()
         domain_count = len(list(itertools.chain(*domains_config['whitelist'].values())))
         if domain_count > allowed_domains:
-            print('extra whitelisted domains:     {}'.format(domain_count - allowed_domains))
+            print('extra whitelisted domains: {}'.format(domain_count - allowed_domains))
 
 
 def main():
