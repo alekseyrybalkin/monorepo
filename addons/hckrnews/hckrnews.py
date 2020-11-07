@@ -38,15 +38,6 @@ class HckrnewsDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
         cursor.execute('create index article_day_idx on article(day)')
         cursor.execute('create index day_last_updated_idx on day(last_updated)')
 
-    def get_path(self):
-        return os.path.join(
-            shell.home(),
-            '.data',
-            'databases',
-            'large',
-            'hckrnews.db',
-        )
-
 
 class Day:
     def __init__(self, day, last_updated):
