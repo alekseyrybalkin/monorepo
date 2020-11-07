@@ -9,6 +9,7 @@ import sqlite3
 import time
 
 import addons.config
+import addons.db
 
 
 class IMAPTool:
@@ -82,75 +83,24 @@ class IMAPTool:
         return re.findall(b'APPENDUID (\\d+) (\\d+)', response[0])[0][1].decode()
 
 
-class DBTool:
-    def __init__(self, db_path):
-        self.conn = sqlite3.connect(db_path, timeout=0.1)
-        self.cursor = self.conn.cursor()
+class SyncemaDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
+    def exists(self, cursor):
+        cursor.execute('select 1 from message')
 
-        try:
-            self.cursor.execute('select 1 from message')
-        except sqlite3.OperationalError:
-            self.cursor.execute('''
-                create table message(
-                    id integer primary key,
-                    uid integer,
-                    folder text,
-                    maildir_id text
-                )''')
-            self.cursor.execute('''
-                create table lock(
-                    locked integer primary key
-                )''')
-            self.cursor.execute('create unique index uid_folder_idx on message(uid, folder)')
-            self.cursor.execute('create index maildir_id_idx on message(maildir_id)')
+    def create(self, cursor):
+        cursor.execute('''
+            create table message(
+                id integer primary key,
+                uid integer,
+                folder text,
+                maildir_id text
+            )''')
+        cursor.execute('create unique index uid_folder_idx on message(uid, folder)')
+        cursor.execute('create index maildir_id_idx on message(maildir_id)')
 
-        self.lock()
-
-    def close(self):
-        self.unlock()
-        self.conn.commit()
-        self.conn.close()
-
-    def lock(self):
-        self.cursor.execute('insert into lock(locked) values (1)')
-
-    def unlock(self):
-        self.cursor.execute('delete from lock')
-
-    def add(self, uid, folder, maildir_id):
-        self.cursor.execute(
-            'insert into message(uid, folder, maildir_id) values (?, ?, ?)',
-            (int(uid), folder, maildir_id),
-        )
-
-    def remove(self, uid, folder):
-        self.cursor.execute('delete from message where uid = ? and folder = ?', (uid, folder))
-
-    def check_is_new(self, uid, folder):
-        self.cursor.execute('select id from message where uid = ? and folder = ?', (int(uid), folder))
-        res = self.cursor.fetchone()
-        return res is None
-
-    def check_is_new_local(self, maildir_id, folder):
-        self.cursor.execute('select id from message where maildir_id = ? and folder = ?', (maildir_id, folder))
-        res = self.cursor.fetchone()
-        return res is None
-
-    def get_folder_listing(self, folder):
-        self.cursor.execute('select uid, maildir_id from message where folder = ?', (folder,))
-        return self.cursor.fetchall()
-
-
-class ManagedDBTool:
-    def __init__(self, db_path):
-        self.db_path = db_path
-
-    def __enter__(self):
-        self.db = DBTool(self.db_path)
-        return self.db
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.close()
+    def get_path(self):
+        config = addons.config.Config('syncema').read()
+        return os.path.join(config['maildir']['path'], 'syncema.db')
 
 
 class MaildirTool:
@@ -208,29 +158,29 @@ class Syncema:
         return parser.parse_args()
 
     def read_config(self):
-        cfg = addons.config.Config('syncema').read()
+        config = addons.config.Config('syncema').read()
 
-        if 'imap' not in cfg:
+        if 'imap' not in config:
             raise ValueError('Section imap is missing from config')
         for key in ['secure', 'server', 'login', 'password', 'mark-as-read', 'timeout']:
-            if key not in cfg['imap']:
+            if key not in config['imap']:
                 raise ValueError('Key imap.{} is missing from config'.format(key))
-        if not cfg['imap']['secure']:
+        if not config['imap']['secure']:
             raise ValueError('Only IMAPS is currently supported')
-        if not isinstance(cfg['imap']['mark-as-read'], bool):
+        if not isinstance(config['imap']['mark-as-read'], bool):
             raise ValueError('imap.mark-as-read must be boolean (true/false)')
-        if not isinstance(cfg['imap']['timeout'], int):
+        if not isinstance(config['imap']['timeout'], int):
             raise ValueError('imap.timeout must be integer')
-        if cfg['imap']['timeout'] < 0:
+        if config['imap']['timeout'] < 0:
             raise ValueError('imap.timeout must be non-negative')
 
-        if 'maildir' not in cfg:
+        if 'maildir' not in config:
             raise ValueError('Section maildir is missing from config')
         for key in ['path']:
-            if key not in cfg['maildir']:
+            if key not in config['maildir']:
                 raise ValueError('Key maildir.{} is missing from config'.format(key))
 
-        return cfg
+        return config
 
     def main(self):
         # don't die when stopped, try to finish your job first
@@ -240,19 +190,18 @@ class Syncema:
         if not args.quiet:
             logging.basicConfig(level=logging.INFO)
 
-        cfg = self.read_config()
-        db_path = os.path.join(cfg['maildir']['path'], 'syncema.db')
+        config = self.read_config()
 
-        server = cfg['imap']['server']
-        timeout = cfg['imap']['timeout']
+        server = config['imap']['server']
+        timeout = config['imap']['timeout']
 
-        with ManagedDBTool(db_path) as db, imaplib.IMAP4_SSL(server, timeout=timeout) as imap_conn:
+        with addons.db.DB('syncema') as db, imaplib.IMAP4_SSL(server, timeout=timeout) as imap_conn:
             # initialize imap tool
-            imap_conn.login(cfg['imap']['login'], cfg['imap']['password'])
+            imap_conn.login(config['imap']['login'], config['imap']['password'])
             imap = IMAPTool(imap_conn)
 
             # initialize maildir tool
-            maildir = MaildirTool(cfg['maildir']['path'])
+            maildir = MaildirTool(config['maildir']['path'])
 
             # get folder list
             folders = imap.get_folders()
@@ -263,23 +212,34 @@ class Syncema:
 
                 # first, fetch all new messages from imap server
                 for uid in imap.get_all_uids(folder):
-                    if db.check_is_new(uid, folder):
+                    exists = db.select_one('select id from message where uid = ? and folder = ?', (int(uid), folder))
+                    if not exists:
                         maildir_id = maildir.add(imap.fetch_message(uid, folder))
-                        db.add(uid, folder, maildir_id)
-                        if cfg['imap']['mark-as-read'] == 'True':
+                        db.execute(
+                            'insert into message(uid, folder, maildir_id) values (?, ?, ?)',
+                            (int(uid), folder, maildir_id),
+                        )
+                        if config['imap']['mark-as-read'] == 'True':
                             imap.mark_as_read(uid, folder)
 
                 # second, remove all locally deleted messages from imap server
-                for uid, maildir_id in db.get_folder_listing(folder):
-                    if not maildir.exists(maildir_id):
-                        imap.delete_message(str(uid), folder)
-                        db.remove(uid, folder)
+                for message in db.select_many('select uid, maildir_id from message where folder = ?', (folder,)):
+                    if not maildir.exists(message['maildir_id']):
+                        imap.delete_message(str(message['uid']), folder)
+                        db.execute('delete from message where uid = ? and folder = ?', (message['uid'], folder))
 
                 # third, append new locally created messages to imap server and store their new uids
                 for maildir_id in maildir.get_toc():
-                    if db.check_is_new_local(maildir_id, folder):
+                    exists = db.select_one(
+                        'select id from message where maildir_id = ? and folder = ?',
+                        (maildir_id, folder),
+                    )
+                    if not exists:
                         uid = imap.append_message(maildir.get_message(maildir_id), folder)
-                        db.add(uid, folder, maildir_id)
+                        db.execute(
+                            'insert into message(uid, folder, maildir_id) values (?, ?, ?)',
+                            (int(uid), folder, maildir_id),
+                        )
 
 
 def main():
