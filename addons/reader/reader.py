@@ -41,7 +41,8 @@ class ReaderIndexGenerator:
         template_file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'reader_index.html')
         with open(template_file_path, 'tr') as template_file:
             template = string.Template(template_file.read())
-        with open('/tmp/reader_index.html', 'tw') as reader_index:
+        reader_index_path = self.config['reader_index_path']
+        with open(reader_index_path, 'tw') as reader_index:
             reader_index.write(template.substitute(
                 epub_links=epub_links,
             ))
