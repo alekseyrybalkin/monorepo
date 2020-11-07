@@ -5,7 +5,6 @@ import mailbox
 import os
 import re
 import signal
-import sqlite3
 import time
 
 import addons.config
