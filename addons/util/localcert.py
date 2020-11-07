@@ -45,12 +45,12 @@ class LocalCertificateManager:
                 shutil.move(
                     f'{org}.crt.pem',
                     os.path.join(
-                        self.config['addons-path'],
+                        self.config['configs-path'],
                         self.config['local-cert-location'],
                         f'{org}.crt.pem',
                     ),
                 )
-                os.chdir(self.config['addons-path'])
+                os.chdir(self.config['configs-path'])
                 shell.run('bash update.bash')
                 os.chdir(tmpdir)
                 shell.run('sudo ji u nss')
@@ -108,7 +108,7 @@ class LocalCertificateManager:
             ])
 
             keys_dir = os.path.join(
-                self.config['addons-path'],
+                self.config['configs-path'],
                 self.config['nginx-keys-path'],
             )
             os.makedirs(keys_dir, exist_ok=True)
@@ -119,7 +119,7 @@ class LocalCertificateManager:
             os.makedirs(secret_dir, exist_ok=True)
             shutil.move(f'{domain}.csr', os.path.join(secret_dir, f'{domain}.csr'))
 
-            os.chdir(self.config['addons-path'])
+            os.chdir(self.config['configs-path'])
             shell.run('bash update.bash')
             os.chdir(tmpdir)
 
