@@ -7,6 +7,7 @@ import statistics
 
 import addons.config
 import addons.helpers
+import addons.util.hostconf
 import addons.shell as shell
 
 
@@ -32,7 +33,7 @@ class TmuxStatus:
 
     def right(self):
         # FIXME get housecarl from future ji config
-        housecarl = self.config['housecarls'][addons.helpers.get_host_distro()]
+        housecarl = self.config['housecarls'][addons.util.hosconf.HostConf().get_option('distro')]
         building = glob.glob(os.path.join(shell.home(user=housecarl), 'build*'))
         if building:
             package = re.match('^.*build\\.(.*)\\.\\d+\\..*$', building[0]).group(1)

@@ -5,7 +5,7 @@ import shutil
 import tempfile
 
 import addons.config
-import addons.helpers
+import addons.util.hostconf
 import addons.shell as shell
 
 
@@ -39,10 +39,10 @@ class LocalCertificateManager:
             shell.run(f'openssl genpkey -algorithm RSA -out {org}.key')
             shell.run(f'openssl req -x509 -key {org}.key -out {org}.crt.pem -days 3650 -subj /CN={org}/O={org}')
 
-            if addons.helpers.get_host_distro() == 'arch':
+            if addons.util.hosconf.HostConf().get_option('distro') == 'arch':
                 shell.run(f'sudo cp {org}.crt.pem /etc/ca-certificates/trust-source/anchors/')
                 shell.run('sudo trust extract-compat')
-            elif addons.helpers.get_host_distro() == 'jinni':
+            elif addons.util.hosconf.HostConf().get_option('distro') == 'jinni':
                 shutil.move(
                     f'{org}.crt.pem',
                     os.path.join(
