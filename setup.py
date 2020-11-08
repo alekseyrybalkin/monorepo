@@ -36,6 +36,7 @@ setup(
             'disconnect = addons.util.internet:disconnect',
             'localcert = addons.util.localcert:main',
             'unzip = addons.util.unzip:main',
+            'hostconf = addons.util.hostconf:main',
         ],
     },
     include_package_data=True,
