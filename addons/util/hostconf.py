@@ -16,9 +16,8 @@ class HostConf:
             label = label_file.read().strip()
 
         if option == 'label':
-            print(label)
-        else:
-            print(config['hosts'][label][option])
+            return label
+        return config['hosts'][label][option]
 
     def main(self):
         args = self.parse_args()
