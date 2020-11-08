@@ -33,7 +33,7 @@ class TmuxStatus:
 
     def right(self):
         # FIXME get housecarl from future ji config
-        housecarl = self.config['housecarls'][addons.util.hosconf.HostConf().get_option('distro')]
+        housecarl = self.config['housecarls'][addons.util.hostconf.HostConf().get_option('distro')]
         building = glob.glob(os.path.join(shell.home(user=housecarl), 'build*'))
         if building:
             package = re.match('^.*build\\.(.*)\\.\\d+\\..*$', building[0]).group(1)
