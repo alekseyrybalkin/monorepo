@@ -8,11 +8,13 @@ class UnZip:
         parser.add_argument('file', type=str)
         return parser.parse_args()
 
+    def unzip(self, archive_path, dest_dir=None):
+        with zipfile.ZipFile(archive_path, 'r') as archive:
+            archive.extractall(path=dest_dir)
+
     def main(self):
         args = self.parse_args()
-
-        with zipfile.ZipFile(args.file, 'r') as archive:
-            archive.extractall()
+        self.unzip(args.file)
 
 
 def main():

@@ -4,6 +4,7 @@ import os
 
 import addons.config
 import addons.shell as shell
+import addons.util.unzip as unzip
 
 
 class ReaderIndexGenerator:
@@ -30,7 +31,7 @@ class ReaderIndexGenerator:
             book_path = os.path.join(self.config['epubs_path'], book_name)
             os.makedirs(book_path, exist_ok=True)
             if not os.path.exists(os.path.join(book_path, 'META-INF')):
-                shell.run(['unzip', os.path.join(str(path), original_name), '-d', str(book_path)])
+                unzip.UnZip().unzip(os.path.join(str(path), original_name), book_path)
 
             if book_name in self.config['tocs']:
                 toc_path = os.path.join(book_path, self.config['tocs'][book_name])
