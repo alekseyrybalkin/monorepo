@@ -11,7 +11,7 @@ class HostConf:
 
     def main(self):
         args = self.parse_args()
-        config = addons.config.Config('hostconf').read()
+        config = addons.config.Config('hostconf', private=False).read()
 
         with open(config['label-file'], 'tr') as label_file:
             label = label_file.read().strip()

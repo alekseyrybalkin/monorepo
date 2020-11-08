@@ -14,8 +14,7 @@ class Config:
     def read(self):
         if not self.private:
             conffile_path = os.path.join(
-                shell.home(user=self.user),
-                '.config',
+                '/etc',
                 '{}.json'.format(self.name),
             )
         else:
