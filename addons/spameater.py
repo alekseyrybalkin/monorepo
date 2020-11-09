@@ -12,12 +12,12 @@ class SpamEater:
         }
 
         with open('/etc/procmailrc.new', 'w') as out:
-            out.write('MAILDIR={}\n'.format(self.config['maildir']))
-            out.write('LOGFILE={}\n'.format(self.config['logfile']))
-            out.write('VERBOSE={}\n'.format(self.config['verbose']))
+            out.write('MAILDIR={}\n'.format(config['maildir']))
+            out.write('LOGFILE={}\n'.format(config['logfile']))
+            out.write('VERBOSE={}\n'.format(config['verbose']))
             out.write('\n')
 
-            for rule in self.config['filters']:
+            for rule in config['filters']:
                 for regexp in rule['regexps']:
                     regexp = regexp.strip()
                     if not (regexp.startswith('^') and regexp.endswith('$')):
