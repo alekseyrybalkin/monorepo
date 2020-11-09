@@ -34,6 +34,8 @@ class SpamEater:
                         out.write('.{}/new\n'.format(rule['folder']))
                     out.write('\n')
 
+        shutil.move('/etc/procmailrc.new', '/etc/procmailrc')
+
     def local_main(self):
         config = addons.config.Config('spameater').read()
         addons.heaven.util.remote_upload_json('spameater', config)
