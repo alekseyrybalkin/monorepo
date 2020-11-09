@@ -60,7 +60,7 @@ class LocalCertificateManager:
             if nginx_running:
                 shell.run('sudo systemctl restart nginx')
 
-            secret_dir = os.path.join(self.config['secrets-path'], org)
+            secret_dir = os.path.join(self.common_config['secrets-path'], org)
             os.makedirs(secret_dir, exist_ok=True)
             shutil.move(f'{org}.key', os.path.join(secret_dir, f'{org}.key'))
 
@@ -100,9 +100,9 @@ class LocalCertificateManager:
                     f'{org}.crt.pem',
                 ),
                 '-CAkey',
-                os.path.join(self.config['secrets-path'], org, f'{org}.key'),
+                os.path.join(self.common_config['secrets-path'], org, f'{org}.key'),
                 '-CAserial',
-                os.path.join(self.config['secrets-path'], org, f'{org}.srl'),
+                os.path.join(self.common_config['secrets-path'], org, f'{org}.srl'),
                 '-CAcreateserial',
                 '-extfile',
                 'extfile',
@@ -116,7 +116,7 @@ class LocalCertificateManager:
             shutil.move(f'{domain}.crt', os.path.join(keys_dir, f'{domain}.crt'))
             shutil.move(f'{domain}.key', os.path.join(keys_dir, f'{domain}.key'))
 
-            secret_dir = os.path.join(self.config['secrets-path'], org)
+            secret_dir = os.path.join(self.common_config['secrets-path'], org)
             os.makedirs(secret_dir, exist_ok=True)
             shutil.move(f'{domain}.csr', os.path.join(secret_dir, f'{domain}.csr'))
 
