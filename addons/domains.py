@@ -52,15 +52,16 @@ def heaven_main():
 
 
 def local_main():
-    if shell.user() != 'rybalkin':
-        print('run as rybalkin')
+    common_config = addons.config.Config('common').read()
+    if shell.user() != common_config['master-user']:
+        print('domains: can run only as as {}'.format(common_config['master-user']))
         sys.exit(1)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--no-remote', action='store_true')
     args = parser.parse_args()
 
-    config = addons.config.Config('domains', user='rybalkin').read()
+    config = addons.config.Config('domains', user=common_config['master-user']).read()
     domains = list(itertools.chain(*config['blacklist'].values()))
 
     with tempfile.TemporaryDirectory() as tmpdir:
