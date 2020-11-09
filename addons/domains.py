@@ -2,6 +2,7 @@ import argparse
 import itertools
 import os
 import shutil
+import sys
 import tempfile
 
 import addons.config
@@ -51,6 +52,10 @@ def heaven_main():
 
 
 def local_main():
+    if shell.user() != 'rybalkin':
+        print('run as rybalkin')
+        sys.exit(1)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--no-remote', action='store_true')
     args = parser.parse_args()

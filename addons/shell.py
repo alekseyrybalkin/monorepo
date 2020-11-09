@@ -29,6 +29,10 @@ def copy_to_clipboard(value):
     )
 
 
+def user():
+    return getpass.getuser()
+
+
 def home(user=None):
     if user is None:
         user = getpass.getuser()
