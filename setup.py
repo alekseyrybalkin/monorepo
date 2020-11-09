@@ -37,6 +37,7 @@ setup(
             'localcert = addons.util.localcert:main',
             'unzip = addons.util.unzip:main',
             'hostconf = addons.util.hostconf:main',
+            'spameater = addons.spameater:local_main',
         ],
     },
     include_package_data=True,
