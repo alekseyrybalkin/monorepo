@@ -145,6 +145,9 @@ class Inspector:
         if domain_count > allowed_domains:
             print('extra whitelisted domains: {}'.format(domain_count - allowed_domains))
 
+        if shell.run('systemctl show --property=SystemState') != 'SystemState=running':
+            print(shell.run('systemctl --failed'))
+
 
 def main():
     Inspector().main()
