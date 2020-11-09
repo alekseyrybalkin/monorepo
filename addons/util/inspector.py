@@ -122,14 +122,14 @@ class Inspector:
             if len(shell.run('pacman -Qm').split('\n')) != 1:
                 print('pacman -Qm')
             try:
-                if shell.run('pacman -Qdt'):
-                    print('pacman -Qdt')
+                if shell.run('pacman -Qdtt'):
+                    print('pacman -Qdtt')
             except subprocess.CalledProcessError as e:
                 if e.output:
                     print(e.output)
             try:
-                if shell.run('pacman -Qet'):
-                    print('pacman -Qet')
+                if shell.run('pacman -Qett'):
+                    print('pacman -Qett')
             except subprocess.CalledProcessError as e:
                 if e.output:
                     print(e.output)
