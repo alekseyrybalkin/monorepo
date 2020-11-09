@@ -1,3 +1,5 @@
+import shutil
+
 import addons.config
 import addons.heaven.util
 
