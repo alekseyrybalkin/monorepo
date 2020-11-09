@@ -20,7 +20,7 @@ class SpamEater:
             for rule in config['filters']:
                 for regexp in rule['regexps']:
                     regexp = regexp.strip()
-                    if not (regexp.startswith('^') and regexp.endswith('$')):
+                    if not rule.get('exact', False) and not (regexp.startswith('^') and regexp.endswith('$')):
                         if rule.get('append-from', False):
                             regexp = '^from:.*{}.*$'.format(regexp)
                         else:
