@@ -21,7 +21,10 @@ class SpamEater:
                 for regexp in rule['regexps']:
                     regexp = regexp.strip()
                     if not (regexp.startswith('^') and regexp.endswith('$')):
-                        regexp = '^.*{}.*$'.format(regexp)
+                        if rule.get('append-from', False):
+                            regexp = '^from:.*{}.*$'.format(regexp)
+                        else:
+                            regexp = '^.*{}.*$'.format(regexp)
 
                     out.write('{}\n'.format(filter_types[rule['type']]))
                     out.write('* {}\n'.format(regexp))
