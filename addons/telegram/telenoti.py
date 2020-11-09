@@ -40,8 +40,8 @@ def run():
 
     client = telethon.TelegramClient(session_file, api_id, api_hash, proxy=proxy)
 
-    sender_blacklist = set(sender['id'] for sender in config['blacklist']['senders'] if sender['blacklisted'])
-    chats_blacklist = set(chat['id'] for chat in config['blacklist']['chats'] if chat['blacklisted'])
+    sender_blacklist = set(sender['id'] for sender in config['blacklist']['senders'].values() if sender['blacklisted'])
+    chats_blacklist = set(chat['id'] for chat in config['blacklist']['chats'].values() if chat['blacklisted'])
 
     @client.on(telethon.events.NewMessage(incoming=True))
     async def handle_new_message(event):
