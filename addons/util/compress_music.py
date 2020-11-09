@@ -12,8 +12,8 @@ def compress_file(src, dest):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--source-dir', required=True, type=str, help='source dir')
-    parser.add_argument('--destination-dir', type=str, default='/home/rybalkin/sandbox/music', help='destination dir')
+    parser.add_argument('--source-dir', type=str, help='source dir')
+    parser.add_argument('--destination-dir', type=str, help='destination dir')
     args = parser.parse_args()
 
     return args.source_dir, args.destination_dir

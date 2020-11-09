@@ -17,12 +17,12 @@ import string
 
 import bottle
 
+import addons.config
 import addons.finermail.finerlib.mail as finerlib_mail
 import addons.finermail.finerlib.session as finerlib_session
 
 
-SERVER = 'rybalkin.org'
-LOGIN = 'aleksey@rybalkin.org'
+config = addons.config.Config('finermail').read()
 app = bottle.Bottle()
 app_root = os.path.abspath(os.path.dirname(__file__))
 bottle.TEMPLATE_PATH = [os.path.join(app_root, 'views')]
@@ -38,8 +38,8 @@ def login_post():
     old_key = bottle.request.cookies.get('finer_session', None)
     password = bottle.request.forms.get('password', None)
     try:
-        imap = imaplib.IMAP4_SSL(SERVER)
-        imap.login(LOGIN, password)
+        imap = imaplib.IMAP4_SSL(config['server'])
+        imap.login(config['login'], password)
     except Exception as e:
         error = str(e)
         return bottle.template(
@@ -53,7 +53,7 @@ def login_post():
     bottle.response.set_cookie('finer_session', key, max_age=3600, secure=False)
     if old_key is not None:
         finerlib_session.remove_session(old_key)
-    finerlib_session.add_session(key, finerlib_session.Session(SERVER, LOGIN, imap))
+    finerlib_session.add_session(key, finerlib_session.Session(config['server'], config['login'], imap))
     return bottle.redirect('/folder')
 
 
@@ -61,8 +61,8 @@ def login_post():
 def login_get():
     session = finerlib_session.get_session(
         bottle.request.cookies.get('finer_session', None),
-        SERVER,
-        LOGIN,
+        config['server'],
+        config['login'],
     )
     if session is not None:
         logout = bottle.request.query.get('logout', None)
@@ -83,8 +83,8 @@ def login_get():
 def folder_post():
     session = finerlib_session.get_session(
         bottle.request.cookies.get('finer_session', None),
-        SERVER,
-        LOGIN,
+        config['server'],
+        config['login'],
     )
     if session is None:
         return bottle.redirect('/')
@@ -116,8 +116,8 @@ def folder_post():
 def folder_get():
     session = finerlib_session.get_session(
         bottle.request.cookies.get('finer_session', None),
-        SERVER,
-        LOGIN,
+        config['server'],
+        config['login'],
     )
     if session is None:
         return bottle.redirect('/')
@@ -145,8 +145,8 @@ def folder_get():
 def message(uid):
     session = finerlib_session.get_session(
         bottle.request.cookies.get('finer_session', None),
-        SERVER,
-        LOGIN,
+        config['server'],
+        config['login'],
     )
     if session is None:
         return bottle.redirect('/')
@@ -172,8 +172,8 @@ def message(uid):
 def folders_post():
     session = finerlib_session.get_session(
         bottle.request.cookies.get('finer_session', None),
-        SERVER,
-        LOGIN,
+        config['server'],
+        config['login'],
     )
     if session is None:
         return bottle.redirect('/')
@@ -193,8 +193,8 @@ def folders_post():
 def folders_get():
     session = finerlib_session.get_session(
         bottle.request.cookies.get('finer_session', None),
-        SERVER,
-        LOGIN,
+        config['server'],
+        config['login'],
     )
     if session is None:
         return bottle.redirect('/')
