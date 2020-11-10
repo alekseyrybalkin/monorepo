@@ -36,7 +36,11 @@ def user():
 def home(user=None):
     if user is None:
         user = getpass.getuser()
-    return os.path.expanduser('~{}'.format(user))
+    home_with_expansion = '~{}'.format(user)
+    home = os.path.expanduser(home_with_expansion)
+    if home == home_with_expansion:
+        raise RuntimeError('no such user {}'.format(user))
+    return home
 
 
 def colorize(text, color=7):
