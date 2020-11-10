@@ -93,15 +93,7 @@ class SourceFetcher:
 
             git_dir = shell.run('git rev-parse --git-dir')
 
-            if os.path.isdir('.git/svn'):
-                shell.run('git svn fetch')
-
-                branches = shell.run('git branch -a').split()
-                if any('origin/trunk' in branch for branch in branches):
-                    shell.run('git merge --ff-only origin/trunk')
-                else:
-                    shell.run('git merge --ff-only git-svn')
-            elif git_dir == '.' or git_dir == '.git':
+            if git_dir == '.' or git_dir == '.git':
                 remotes = shell.run('git remote').split()
                 for remote in remotes:
                     shell.run('git fetch -p --tags {}'.format(remote))
@@ -133,9 +125,7 @@ class SourceFetcher:
         try:
             git_dir = shell.run('git rev-parse --git-dir')
 
-            if os.path.isdir('.git/svn'):
-                return [('git-svn', shell.run('git config svn-remote.svn.url'), '')]
-            elif git_dir == '.' or git_dir == '.git':
+            if git_dir == '.' or git_dir == '.git':
                 remotes = shell.run('git remote').split()
                 result = []
                 for remote in remotes:

@@ -54,9 +54,6 @@ def check_rules(version, rules):
                         return False
                 except ValueError:
                     pass
-        if rule == 'svn_tags':
-            if 'origin/tags' not in version:
-                return False
     return True
 
 
@@ -68,8 +65,6 @@ def apply_rules(version, rules):
             version = version.replace('~', '.')
         if rule == 'repl_dash_dot':
             version = version.replace('-', '.')
-        if rule == 'svn_tags':
-            version = version.replace('remotes/origin/tags/', '')
         if rule.startswith('lstrip_'):
             word = rule.replace('lstrip_', '')
             word = word.replace('-', '.').replace('_', '.')

@@ -162,9 +162,6 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
     preprocessing = []
     if vcs == 'git':
         command = ['git', 'tag']
-    if vcs == 'git-svn':
-        command = ['git', 'branch', '-a']
-        preprocessing = ['svn_tags']
     if vcs == 'mercurial':
         command = ['hg', 'tags', '-q']
     if vcs == 'fossil':
