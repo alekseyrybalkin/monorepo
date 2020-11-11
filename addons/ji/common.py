@@ -3,9 +3,12 @@ import os
 import addons.shell as shell
 
 
-def source_pkgbuild(pm):
-    if not os.path.isfile('PKGBUILD'):
-        raise RuntimeError('PKGBUILD not found in current directory')
+def source_pkgbuild(pm, pkgbuild=None):
+    if pkgbuild is None:
+        pkgbuild = os.path.join(os.getcwd(), 'PKGBUILD')
+
+    if not os.path.isfile(pkgbuild):
+        raise RuntimeError('PKGBUILD not found')
 
     pkgbuild_fields = [
         'pkgname',
@@ -26,8 +29,9 @@ def source_pkgbuild(pm):
     result = {}
     result['location'] = os.getcwd()
 
-    command = 'location={};'.format(result['location'])
-    command += 'source {}; '.format(os.path.join(os.getcwd(), 'PKGBUILD'))
+    command = 'unset {}; '.format(' '.join(pkgbuild_fields))
+    command += 'location={}; '.format(result['location'])
+    command += 'source {}; '.format(pkgbuild)
     for field in pkgbuild_fields:
         command += 'echo ${}; '.format(field)
     values = [v.strip() for v in shell.run(command, shell=True, strip=False).split('\n')]

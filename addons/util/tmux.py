@@ -32,9 +32,9 @@ class TmuxStatus:
         print('#[default]    ')
 
     def right(self):
-        # FIXME get housecarl from future ji config
-        housecarl = self.config['housecarls'][addons.util.hostconf.HostConf().get_option('distro')]
-        building = glob.glob(os.path.join(shell.home(user=housecarl), 'build*'))
+        pm_config = addons.config.Config('packagemanager', private=False).read()
+        worker_name = pm_config['users']['worker']['name']
+        building = glob.glob(os.path.join(shell.home(user=worker_name), 'build*'))
         if building:
             package = re.match('^.*build\\.(.*)\\.\\d+\\..*$', building[0]).group(1)
             print(f' #[fg=colour78]{package} ', end='')

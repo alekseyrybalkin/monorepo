@@ -8,6 +8,7 @@ import os
 
 import addons.config
 import addons.db
+import addons.ji.integrity as integrity
 import addons.ji.make as make
 import addons.ji.queries as queries
 import addons.ji.tarball as tarball
@@ -132,16 +133,13 @@ class PackageManager:
         lib.gen_db(self)
 
     @run_as('manager')
-    def list_dups(self):
-        lib.list_dups(self)
-
-    @run_as('manager')
     def who_owns(self):
         lib.who_owns(self)
 
     @run_as('manager')
-    def who_owns_dir(self):
-        lib.who_owns_dir(self)
+    def who_uses_dir(self):
+        for item in queries.who_uses_dir(self, self.args.param[0]):
+            print(item)
 
     @run_as('manager')
     def check_conflicts(self):
@@ -165,7 +163,8 @@ class PackageManager:
 
     @run_as('manager')
     def ls(self):
-        queries.ls(self)
+        for item in queries.ls(self):
+            print(item)
 
     @run_as('root')
     def uninstall(self):
@@ -173,19 +172,22 @@ class PackageManager:
 
     @run_as('manager')
     def db_list_files(self):
-        queries.db_list_files(self, self.args.param[0])
+        for item in queries.db_list_files(self, self.args.param[0]):
+            print(item)
 
     @run_as('manager')
     def db_list_generated(self):
-        lib.db_list_generated(self)
+        for item in queries.db_list_generated(self, self.args.param[0]):
+            print(item)
 
     @run_as('manager')
     def db_list_dirs(self):
-        lib.db_list_dirs(self)
+        for item in queries.db_list_dirs(self, self.args.param[0]):
+            print(item)
 
     @run_as('root')
     def check_system_integrity(self):
-        lib.check_system_integrity(self)
+        integrity.check_system_integrity(self)
 
     @run_as('manager')
     def links(self):
