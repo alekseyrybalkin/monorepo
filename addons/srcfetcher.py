@@ -9,6 +9,7 @@ import time
 import addons.config
 import addons.db
 import addons.shell as shell
+import addons.updater.repo as repo
 
 
 class SrcfetcherDatabase(addons.db.Database, metaclass=addons.db.DatabaseMeta):
@@ -91,18 +92,17 @@ class SourceFetcher:
                 if rule['project'] == project_name:
                     shell.run(rule['command'])
 
-            git_dir = shell.run('git rev-parse --git-dir')
-
-            if git_dir == '.' or git_dir == '.git':
+            vcs = repo.guess_vcs(os.getcwd())
+            if vcs == 'git':
                 remotes = shell.run('git remote').split()
                 for remote in remotes:
                     shell.run('git fetch -p --tags {}'.format(remote))
 
                 if shell.run('git config --bool core.bare') == 'false':
                     shell.run('git merge --ff-only')
-            elif os.path.isdir('.hg'):
+            elif vcs == 'mercurial':
                 shell.run('hg pull')
-            elif os.path.isfile('.fslckout'):
+            elif vcs == 'fossil':
                 shell.run('fossil pull')
                 shell.run('fossil update')
             else:
@@ -123,9 +123,8 @@ class SourceFetcher:
         os.chdir(self.find_project(project_name)['path'])
 
         try:
-            git_dir = shell.run('git rev-parse --git-dir')
-
-            if git_dir == '.' or git_dir == '.git':
+            vcs = repo.guess_vcs(os.getcwd())
+            if vcs == 'git':
                 remotes = shell.run('git remote').split()
                 result = []
                 for remote in remotes:
@@ -135,7 +134,7 @@ class SourceFetcher:
                         remote,
                     ))
                 return result
-            elif os.path.isdir('.hg'):
+            elif vcs == 'mercurial':
                 url = ''
                 with open('.hg/hgrc', 'tr') as hgrc:
                     for line in hgrc:
@@ -143,7 +142,7 @@ class SourceFetcher:
                             url = line.replace('default = ', '').strip()
                             break
                 return [('mercurial', url, '')]
-            elif os.path.isfile('.fslckout'):
+            elif vcs == 'fossil':
                 return [('fossil', shell.run('fossil remote-url'), '')]
         except subprocess.CalledProcessError:
             pass

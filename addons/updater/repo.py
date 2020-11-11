@@ -143,6 +143,41 @@ def get_repo_dir(dirname):
     return None
 
 
+def guess_vcs(repo_dir):
+    old_cwd = os.getcwd()
+    os.chdir(repo_dir)
+
+    vcs = None
+    git_dir = shell.run('git rev-parse --git-dir')
+    if git_dir == '.' or git_dir == '.git':
+        vcs = 'git'
+    elif os.path.isdir('.hg'):
+        vcs = 'mercurial'
+    elif os.path.isfile('.fslckout'):
+        vcs = 'fossil'
+
+    os.chdir(old_cwd)
+    return vcs
+
+
+def get_raw_tags(repo_dir, vcs):
+    old_cwd = os.getcwd()
+    os.chdir(repo_dir)
+
+    if vcs == 'git':
+        command = ['git', 'tag']
+    elif vcs == 'mercurial':
+        command = ['hg', 'tags', '-q']
+    elif vcs == 'fossil':
+        command = ['fossil', 'tag', 'list']
+    else:
+        raise RuntimeError('unknown vcs {}'.format(vcs))
+    raw_tags = shell.run(command).split('\n')
+
+    os.chdir(old_cwd)
+    return raw_tags
+
+
 def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
     rules = rules.split(',')
 
@@ -154,36 +189,19 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
     os.chdir(repo_dir)
 
     if not vcs:
-        if not os.path.isdir(os.path.join(repo_dir, '.git')):
-            return None
-        vcs = 'git'
+        vcs = guess_vcs(repo_dir)
+    if not vcs:
+        return None
 
-    tags = []
-    preprocessing = []
-    if vcs == 'git':
-        command = ['git', 'tag']
-    if vcs == 'mercurial':
-        command = ['hg', 'tags', '-q']
-    if vcs == 'fossil':
-        command = ['fossil', 'tag', 'list']
+    raw_tags = get_raw_tags(repo_dir, vcs)
 
     tags = [
         Tag(
             v.strip().lower(),
             pkgname=pkgname,
             dirname=dirname,
-        ) for v in shell.run(command).split('\n')
+        ) for v in raw_tags
     ]
-
-    if preprocessing:
-        tags = [
-            Tag(
-                versions.apply_rules(tag.to_version(), preprocessing),
-                pkgname=pkgname,
-                dirname=dirname,
-                is_jinni=tag.jinni,
-            ) for tag in tags if versions.check_rules(tag.to_version(), preprocessing)
-        ]
 
     tags = [
         Tag(

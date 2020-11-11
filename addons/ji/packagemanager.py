@@ -11,6 +11,7 @@ import addons.db
 import addons.ji.integrity as integrity
 import addons.ji.make as make
 import addons.ji.queries as queries
+import addons.ji.sources as sources
 import addons.ji.tarball as tarball
 
 config = addons.config.Config('packagemanager', private=False).read()
@@ -222,11 +223,11 @@ class PackageManager:
 
     @run_as('manager')
     def pull(self):
-        lib.pull(self)
+        sources.pull(self)
 
     @run_as('manager')
     def tags(self):
-        lib.tags(self)
+        sources.tags(self, self.args.param[0])
 
 
 def main():
