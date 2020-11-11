@@ -38,6 +38,7 @@ setup(
             'unzip = addons.util.unzip:main',
             'hostconf = addons.util.hostconf:main',
             'spameater = addons.spameater:local_main',
+            'pyji = addons.ji.packagemanager:main',
         ],
     },
     include_package_data=True,
