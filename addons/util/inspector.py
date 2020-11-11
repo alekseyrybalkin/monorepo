@@ -26,10 +26,10 @@ class Inspector:
         git_status = shell.run('git -C {} status'.format(repo))
         if 'On branch master' not in git_status:
             return '{:<30} {}'.format(project, shell.colorize('not on master branch', color=1))
-        if 'Your branch is up to date' not in git_status:
-            return '{:<30} {}'.format(project, shell.colorize('not up to date', color=1))
         if 'nothing to commit, working tree clean' not in git_status:
             return '{:<30} {}'.format(project, shell.colorize('dirty', color=1))
+        if 'Your branch is up to date' not in git_status:
+            return '{:<30} {}'.format(project, shell.colorize('not up to date', color=3))
         return ''
 
     def check_rogue_processes(self):
