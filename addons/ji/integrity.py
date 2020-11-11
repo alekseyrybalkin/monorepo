@@ -28,16 +28,6 @@ def list_missing(pm):
 
 
 def list_wrong_tarballs(pm):
-    pkgbuild_fields = [
-        'vcs',
-        'urls',
-        'extra_urls',
-        'pkgname',
-        'pkgver',
-        'srcdir',
-        'srctar',
-    ]
-
     declared_tarballs = set()
     for root, dirs, files in os.walk(pm.config['repo_path']):
         for f in files:
