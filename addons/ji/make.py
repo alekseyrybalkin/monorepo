@@ -2,8 +2,12 @@ import addons.ji.common as common
 
 
 def prepare(pm):
-    pkgbuild = common.parse_pkgbuild()
+    pkgbuild = common.source_pkgbuild(pm)
 
 
 def make(pm):
-    pkgbuild = common.parse_pkgbuild()
+    pkgbuild = common.source_pkgbuild(pm)
+    print(pkgbuild)
+
+def make_worker(pm):
+    pass

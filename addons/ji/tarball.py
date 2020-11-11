@@ -2,4 +2,4 @@ import addons.ji.common as common
 
 
 def download(pm):
-    pkgbuild = common.parse_pkgbuild()
+    pkgbuild = common.source_pkgbuild(pm)

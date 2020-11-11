@@ -5,7 +5,7 @@ import sys
 
 
 def run(command, shell=False, strip=True, input_bytes=None):
-    if isinstance(command, str):
+    if not shell and isinstance(command, str):
         command = command.split(' ')
 
     options = {

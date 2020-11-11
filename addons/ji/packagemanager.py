@@ -101,6 +101,7 @@ class PackageManager:
         action_aliases = {
             'l': 'links-both',
             'u': 'upgrade-rebuild',
+            'ud': 'upgrade-with-deps',
         }
         action = args.action
         action = action_aliases.get(action, action)
@@ -111,51 +112,55 @@ class PackageManager:
         self.setup()
         self.do_action()
 
-    @run_as('user')
+    @run_as('manager')
     def prepare(self):
         make.prepare(self)
 
-    @run_as('worker')
+    @run_as('root')
     def make(self):
         make.make(self)
 
-    @run_as('user')
+    @run_as('worker')
+    def make_worker(self):
+        make.make_worker(self)
+
+    @run_as('manager')
     def download(self):
         tarball.download(self)
 
-    @run_as('user')
+    @run_as('root')
     def gen_db(self):
         lib.gen_db(self)
 
-    @run_as('user')
+    @run_as('manager')
     def list_dups(self):
         lib.list_dups(self)
 
-    @run_as('user')
+    @run_as('manager')
     def who_owns(self):
         lib.who_owns(self)
 
-    @run_as('user')
+    @run_as('manager')
     def who_owns_dir(self):
         lib.who_owns_dir(self)
 
-    @run_as('user')
+    @run_as('manager')
     def check_conflicts(self):
         lib.check_conflicts(self)
 
-    @run_as('user')
+    @run_as('manager')
     def list_files(self):
         lib.list_files(self)
 
-    @run_as('user')
+    @run_as('manager')
     def list_dirs(self):
         lib.list_dirs(self)
 
-    @run_as('user')
+    @run_as('root')
     def install(self):
         lib.install(self)
 
-    @run_as('user')
+    @run_as('root')
     def upgrade(self):
         lib.upgrade(self)
 
@@ -163,67 +168,67 @@ class PackageManager:
     def ls(self):
         queries.ls(self)
 
-    @run_as('user')
+    @run_as('root')
     def uninstall(self):
         lib.uninstall(self)
 
-    @run_as('user')
+    @run_as('manager')
     def db_list_files(self):
         lib.db_list_files(self)
 
-    @run_as('user')
+    @run_as('manager')
     def db_list_generated(self):
         lib.db_list_generated(self)
 
-    @run_as('user')
+    @run_as('manager')
     def db_list_dirs(self):
         lib.db_list_dirs(self)
 
-    @run_as('user')
+    @run_as('root')
     def check_system_integrity(self):
         lib.check_system_integrity(self)
 
-    @run_as('user')
+    @run_as('manager')
     def links(self):
         lib.links(self)
 
-    @run_as('user')
+    @run_as('manager')
     def linked_by(self):
         lib.linked_by(self)
 
-    @run_as('user')
+    @run_as('manager')
     def links_both(self):
         lib.links_both(self)
 
-    @run_as('user')
+    @run_as('manager')
     def check_buildorder(self):
         lib.check_buildorder(self)
 
-    @run_as('user')
+    @run_as('root')
     def upgrade_rebuild(self):
         lib.upgrade_rebuild(self)
 
-    @run_as('user')
+    @run_as('manager')
     def sort(self):
         lib.sort(self)
 
-    @run_as('user')
-    def ud(self):
-        lib.ud(self)
+    @run_as('root')
+    def upgrade_with_deps(self):
+        lib.upgrade_with_deps(self)
 
-    @run_as('user')
+    @run_as('root')
     def rebuild_world(self):
         lib.rebuild_world(self)
 
-    @run_as('user')
+    @run_as('manager')
     def list_old_tarballs(self):
         lib.list_old_tarballs(self)
 
-    @run_as('user')
+    @run_as('manager')
     def pull(self):
         lib.pull(self)
 
-    @run_as('user')
+    @run_as('manager')
     def tags(self):
         lib.tags(self)
 
