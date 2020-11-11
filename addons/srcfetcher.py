@@ -200,8 +200,6 @@ class SourceFetcher:
         # don't die when stopped, try to finish your job first
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
-        os.environ['FOSSIL_HOME'] = os.path.join(shell.home(), '.config')
-
         self.args = self.parse_args()
 
         project_names = list(name for name, _ in self.list_projects())
