@@ -81,5 +81,5 @@ def check_system_integrity(pm):
 
     print(' * searching for unclean build dirs...')
     worker_name = pm.config['users']['worker']['name']
-    for build_dir in  glob.iglob(os.path.join(shell.home(user=worker_name), 'build*')):
+    for build_dir in glob.iglob(os.path.join(shell.home(user=worker_name), 'build*')):
         print(build_dir)
