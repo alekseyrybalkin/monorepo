@@ -84,6 +84,7 @@ class PackageManager:
     def __init__(self, db):
         self.db = db
         self.config = config
+        self.args = self.parse_args()
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
@@ -96,14 +97,12 @@ class PackageManager:
             os.environ[key] = val
 
     def do_action(self):
-        args = self.parse_args()
-
         action_aliases = {
             'l': 'links-both',
             'u': 'upgrade-rebuild',
             'ud': 'upgrade-with-deps',
         }
-        action = args.action
+        action = self.args.action
         action = action_aliases.get(action, action)
 
         actions[action.replace('-', '_')](self)
@@ -174,7 +173,7 @@ class PackageManager:
 
     @run_as('manager')
     def db_list_files(self):
-        lib.db_list_files(self)
+        queries.db_list_files(self, self.args.param[0])
 
     @run_as('manager')
     def db_list_generated(self):
