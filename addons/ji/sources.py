@@ -1,5 +1,4 @@
 import os
-import pkg_resources
 
 import addons.ji.common as common
 import addons.shell as shell
@@ -24,7 +23,7 @@ def tags(pm, query):
     vcs = repo.guess_vcs(vcs_repo_dir)
     tags = repo.get_raw_tags(vcs_repo_dir, vcs)
 
-    for tag in sorted(tags, key=pkg_resources.parse_version):
+    for tag in sorted(tags, key=repo.Tag):
         print(tag)
 
     real_version = pm.db.select_one("select version from package where id=?", (package['id'],))
