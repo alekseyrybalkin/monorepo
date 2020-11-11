@@ -1,3 +1,4 @@
+import functools
 import os
 
 import addons.ji.common as common
@@ -23,7 +24,12 @@ def tags(pm, query):
     vcs = repo.guess_vcs(vcs_repo_dir)
     tags = repo.get_raw_tags(vcs_repo_dir, vcs)
 
-    for tag in sorted(tags, key=repo.Tag):
+    sort_key = functools.partial(
+        repo.Tag,
+        pkgname=package['name'],
+        dirname=vcs_repo,
+    )
+    for tag in sorted(tags, key=sort_key):
         print(tag)
 
     real_version = pm.db.select_one("select version from package where id=?", (package['id'],))
