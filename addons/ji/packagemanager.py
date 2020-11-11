@@ -101,7 +101,6 @@ class PackageManager:
         action_aliases = {
             'l': 'links-both',
             'u': 'upgrade-rebuild',
-            'ud': 'upgrade-with-deps',
         }
         action = self.args.action
         action = action_aliases.get(action, action)
@@ -212,10 +211,6 @@ class PackageManager:
     @run_as('manager')
     def sort(self):
         lib.sort(self)
-
-    @run_as('root')
-    def upgrade_with_deps(self):
-        lib.upgrade_with_deps(self)
 
     @run_as('root')
     def rebuild_world(self):
