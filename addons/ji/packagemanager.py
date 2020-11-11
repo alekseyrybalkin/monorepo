@@ -1,10 +1,16 @@
+'''
+TODO
+- db locking
+'''
 import argparse
 import functools
 import os
 
 import addons.config
 import addons.db
+import addons.ji.make as make
 import addons.ji.queries as queries
+import addons.ji.tarball as tarball
 
 config = addons.config.Config('packagemanager', private=False).read()
 
@@ -77,6 +83,7 @@ def run_as(user):
 class PackageManager:
     def __init__(self, db):
         self.db = db
+        self.config = config
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
@@ -84,7 +91,11 @@ class PackageManager:
         parser.add_argument('param', type=str, nargs="*")
         return parser.parse_args()
 
-    def main(self):
+    def setup(self):
+        for key, val in self.config['env'].items():
+            os.environ[key] = val
+
+    def do_action(self):
         args = self.parse_args()
 
         action_aliases = {
@@ -96,17 +107,21 @@ class PackageManager:
 
         actions[action.replace('-', '_')](self)
 
+    def main(self):
+        self.setup()
+        self.do_action()
+
     @run_as('user')
     def prepare(self):
-        lib.prepare(self)
+        make.prepare(self)
 
     @run_as('worker')
     def make(self):
-        lib.make(self)
+        make.make(self)
 
     @run_as('user')
     def download(self):
-        lib.download(self)
+        tarball.download(self)
 
     @run_as('user')
     def gen_db(self):
