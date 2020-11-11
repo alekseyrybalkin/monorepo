@@ -185,7 +185,7 @@ class PackageManager:
         for item in queries.db_list_dirs(self, self.args.param[0]):
             print(item)
 
-    @run_as('root')
+    @run_as('manager')
     def check_system_integrity(self):
         integrity.check_system_integrity(self)
 
