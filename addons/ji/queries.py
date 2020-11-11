@@ -1,13 +1,13 @@
+import addons.ji.common as common
+
+
 def ls(pm):
     for row in pm.db.select_many('select name, version from package order by name'):
         print('{}-{}'.format(row['name'], row['version']))
 
 
 def db_list_files(pm, query):
-    sql = "select id, name, version from package where name = ? or name || '-' || version = ?;"
-    package = pm.db.select_one(sql, (query, query))
-    if not package:
-        raise RuntimeError('package {} is not installed'.format(query))
+    package = common.find_package(pm, query)
 
     sql = """
         select name from file where package_id = ?
