@@ -58,7 +58,7 @@ def update_new_tarballs(pm):
         query = package_file.replace('-1-x86_64.pkg.tar.gz', '')
         package, version = query.rsplit('-', 1)
 
-        actual_package_set.add(package)
+        actual_package_set.add(query)
 
         stored_package = common.find_package(pm, query)
         if stored_package is None or int(stored_package['timestamp']) != timestamp:
@@ -129,8 +129,8 @@ def update_new_tarballs(pm):
 
     # now delete stale packages from db
     package_ids_to_delete = []
-    for row in pm.db.select_many('select id, name from package'):
-        if row['name'] not in actual_package_set:
+    for row in pm.db.select_many('select id, name, version from package'):
+        if '{}-{}'.format(row['name'], row['version']) not in actual_package_set:
             package_ids_to_delete.append(row['id'])
     for package_id in package_ids_to_delete:
         pm.db.execute('delete from file where package_id = ?', (package_id,))
