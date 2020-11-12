@@ -54,19 +54,15 @@ def db_list_dirs(pm, query):
 def who_uses_dir(pm, query):
     query = query.rstrip('/')
 
-    result = []
     sql = """
         select name, version from package where id in
             (select distinct package_id from file where name = ? and is_dir = 1)
         order by name
     """
-    for row in pm.db.select_many(sql, (query + '/',)):
-        result.append('{}-{}'.format(row['name'], row['version']))
-    return result
+    return pm.db.select_many(sql, (query,))
 
 
 def who_owns(pm, query):
-    result = []
     sql = """
         select id, name, version from package where id in
             (select distinct package_id from file where name = ? and is_dir = 0)

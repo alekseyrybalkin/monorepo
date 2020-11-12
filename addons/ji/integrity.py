@@ -54,7 +54,7 @@ def check_system_integrity(pm):
     for item in sorted(os.listdir('/')):
         full_dir = os.path.join('/', item)
         users = queries.who_uses_dir(pm, full_dir)
-        if set(users) - set(['filesystem-1']):
+        if set(user['name'] for user in users) - set(['filesystem']):
             dirs.append(full_dir)
 
     print(' * searching for untracked files on filesystem...')

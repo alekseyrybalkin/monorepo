@@ -151,7 +151,7 @@ class PackageManager:
     @run_as('manager')
     def who_uses_dir(self):
         for item in queries.who_uses_dir(self, self.args.param[0]):
-            print(item)
+            print('{}-{}'.format(item['name'], item['version']))
 
     @run_as('manager')
     def check_conflicts(self):
