@@ -212,7 +212,8 @@ class PackageManager:
             print(item)
 
     @run_as('manager')
-    def check_system_integrity(self):
+    def check(self):
+        buildorder.check_buildorder(self)
         integrity.check_system_integrity(self)
 
     @run_as('manager')
@@ -232,10 +233,6 @@ class PackageManager:
         print('---')
         for item in queries.linked_by(self, self.args.param[0]):
             print(item['name'])
-
-    @run_as('manager')
-    def check_buildorder(self):
-        buildorder.check_buildorder(self)
 
     @run_as('root')
     def upgrade_rebuild(self):

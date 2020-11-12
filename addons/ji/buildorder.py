@@ -38,10 +38,12 @@ def check_buildorder(pm):
                             vcs_num += 1
                             break
 
-    print('buildorder:  {}'.format(len(bom.buildorder)))
-    print('db:          {}'.format(len(queries.ls(pm))))
-    print('PKGBUILD:    {}'.format(pkgbuild_num))
-    print('vcs:         {}'.format(vcs_num))
+    db_num = len(queries.ls(pm))
+    bo_num = len(bom.buildorder)
+    print(' * db:          {}'.format(shell.colorize(str(db_num), color=7)))
+    print(' * buildorder:  {}'.format(shell.colorize(str(bo_num), color=7 if bo_num == db_num else 1)))
+    print(' * PKGBUILD:    {}'.format(shell.colorize(str(pkgbuild_num), color=7 if pkgbuild_num == db_num else 1)))
+    print(' * vcs:         {}'.format(shell.colorize(str(vcs_num), color=7 if vcs_num == db_num else 1)))
 
     for package in queries.ls(pm):
         if package['name'] not in bom.order_index:
