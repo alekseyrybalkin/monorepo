@@ -65,3 +65,8 @@ def check_buildorder(pm):
             if bom.order_index[parent['name']] > bom.order_index[package['name']]:
                 if [package['name'], parent['name']] not in pm.config['buildorder_exceptions']:
                     print(shell.colorize('wrong order: {} -> {}'.format(package['name'], parent['name']), color=1))
+
+
+def sort(pm, packages):
+    bom = BuildOrderManager(pm)
+    return sorted(packages, key=bom.order_index.get)

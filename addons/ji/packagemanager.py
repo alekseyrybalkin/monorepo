@@ -244,7 +244,8 @@ class PackageManager:
 
     @run_as('manager')
     def sort(self):
-        lib.sort(self)
+        for item in buildorder.sort(self, self.args.param):
+            print(item)
 
     @run_as('root')
     def rebuild_world(self):
