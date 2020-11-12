@@ -2,10 +2,9 @@ import addons.ji.common as common
 
 
 def ls(pm):
-    result = []
-    for row in pm.db.select_many('select name, version from package order by name'):
-        result.append('{}-{}'.format(row['name'], row['version']))
-    return result
+    return pm.db.select_many(
+        'select id, name, version, timestamp from package order by name',
+    )
 
 
 def db_list_files(pm, query):

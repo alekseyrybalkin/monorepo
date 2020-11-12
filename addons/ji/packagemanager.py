@@ -5,6 +5,7 @@ import os
 
 import addons.config
 import addons.db
+import addons.ji.buildorder as buildorder
 import addons.ji.gendb as gendb
 import addons.ji.integrity as integrity
 import addons.ji.make as make
@@ -185,7 +186,7 @@ class PackageManager:
     @run_as('manager')
     def ls(self):
         for item in queries.ls(self):
-            print(item)
+            print('{}-{}'.format(item['name'], item['version']))
 
     @run_as('root')
     def uninstall(self):
@@ -234,7 +235,7 @@ class PackageManager:
 
     @run_as('manager')
     def check_buildorder(self):
-        lib.check_buildorder(self)
+        buildorder.check_buildorder(self)
 
     @run_as('root')
     def upgrade_rebuild(self):

@@ -19,12 +19,12 @@ def list_untracked(pm, path):
 
 def list_missing(pm):
     for package in queries.ls(pm):
-        for f in queries.db_list_files(pm, package):
+        for f in queries.db_list_files(pm, package['name']):
             if not os.path.exists(f):
-                print('{} is missing ({})'.format(f, package))
-        for f in queries.db_list_generated(pm, package):
+                print('{} is missing ({})'.format(f, package['name']))
+        for f in queries.db_list_generated(pm, package['name']):
             if not os.path.exists(f):
-                print('generated {} is missing ({})'.format(f, package))
+                print('generated {} is missing ({})'.format(f, package['name']))
 
 
 def list_wrong_tarballs(pm):
