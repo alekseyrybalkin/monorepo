@@ -1,8 +1,5 @@
-'''
-TODO
-- db locking
-'''
 import argparse
+import fcntl
 import functools
 import os
 
@@ -98,6 +95,14 @@ class PackageManager:
         for key, val in self.config['env'].items():
             os.environ[key] = val
 
+    def acquire_lock(self):
+        with open(self.config['lockfile'], 'w') as lockfile:
+            fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    def release_lock(self):
+        with open(self.config['lockfile'], 'w') as lockfile:
+            fcntl.lockf(lockfile, fcntl.LOCK_UN)
+
     def do_action(self):
         action_aliases = {
             'l': 'links-both',
@@ -130,7 +135,11 @@ class PackageManager:
 
     @run_as('root')
     def gen_db(self):
-        lib.gen_db(self)
+        self.acquire_lock()
+        try:
+            lib.gen_db(self)
+        finally:
+            self.release_lock()
 
     @run_as('manager')
     def who_owns(self):
@@ -158,11 +167,19 @@ class PackageManager:
 
     @run_as('root')
     def install(self):
-        lib.install(self)
+        self.acquire_lock()
+        try:
+            lib.install(self)
+        finally:
+            self.release_lock()
 
     @run_as('root')
     def upgrade(self):
-        lib.upgrade(self)
+        self.acquire_lock()
+        try:
+            lib.upgrade(self)
+        finally:
+            self.release_lock()
 
     @run_as('manager')
     def ls(self):
@@ -171,7 +188,11 @@ class PackageManager:
 
     @run_as('root')
     def uninstall(self):
-        lib.uninstall(self)
+        self.acquire_lock()
+        try:
+            lib.uninstall(self)
+        finally:
+            self.release_lock()
 
     @run_as('manager')
     def db_list_files(self):
@@ -210,7 +231,11 @@ class PackageManager:
 
     @run_as('root')
     def upgrade_rebuild(self):
-        lib.upgrade_rebuild(self)
+        self.acquire_lock()
+        try:
+            lib.upgrade_rebuild(self)
+        finally:
+            self.release_lock()
 
     @run_as('manager')
     def sort(self):
@@ -218,7 +243,11 @@ class PackageManager:
 
     @run_as('root')
     def rebuild_world(self):
-        lib.rebuild_world(self)
+        self.acquire_lock()
+        try:
+            lib.rebuild_world(self)
+        finally:
+            self.release_lock()
 
     @run_as('manager')
     def list_old_tarballs(self):
