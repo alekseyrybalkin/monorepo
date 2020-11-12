@@ -134,7 +134,8 @@ class PackageManager:
 
     @run_as('manager')
     def who_owns(self):
-        lib.who_owns(self)
+        for item in queries.who_owns(self, self.args.param[0]):
+            print(item)
 
     @run_as('manager')
     def who_uses_dir(self):
@@ -147,11 +148,13 @@ class PackageManager:
 
     @run_as('manager')
     def list_files(self):
-        lib.list_files(self)
+        for item in tarball.list_files(self, self.args.param[0]):
+            print(os.path.join('/', item))
 
     @run_as('manager')
     def list_dirs(self):
-        lib.list_dirs(self)
+        for item in tarball.list_dirs(self, self.args.param[0]):
+            print(os.path.join('/', item))
 
     @run_as('root')
     def install(self):

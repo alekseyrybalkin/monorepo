@@ -66,6 +66,18 @@ def who_uses_dir(pm, query):
     return result
 
 
+def who_owns(pm, query):
+    result = []
+    sql = """
+        select name, version from package where id in
+            (select distinct package_id from file where name = ? and permissions not like 'd%')
+        order by name
+    """
+    for row in pm.db.select_many(sql, (query,)):
+        result.append('{}-{}'.format(row['name'], row['version']))
+    return result
+
+
 def list_duplicates(pm):
     result = []
     sql = """
