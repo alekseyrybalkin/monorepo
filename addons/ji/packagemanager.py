@@ -155,7 +155,7 @@ class PackageManager:
 
     @run_as('manager')
     def check_conflicts(self):
-        lib.check_conflicts(self)
+        tarball.check_conflicts(self, self.args.param[0])
 
     @run_as('manager')
     def list_files(self):

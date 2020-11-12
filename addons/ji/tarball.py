@@ -39,3 +39,14 @@ def list_dirs(pm, tar):
 def extract_file(pm, tar, member, path):
     with tarfile.open(tar, 'r') as tar:
         tar.extract(member, path=path)
+
+
+def check_conflicts(pm, tar):
+    for item in list_files(pm, tar):
+        full_path = os.path.join('/', item.name)
+        if os.path.exists(full_path):
+            print('{} already exists on filesystem'.format(full_path))
+    for item in list_dirs(pm, tar):
+        full_path = os.path.join('/', item.name)
+        if os.path.exists(full_path) and not os.path.isdir(full_path):
+            print('{} already exists on filesystem and is not a dir'.format(full_path))
