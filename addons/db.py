@@ -95,3 +95,11 @@ class DB:
 
         self.conn.commit()
         cursor.close()
+
+    def executemany(self, sql, params):
+        cursor = self.conn.cursor()
+
+        cursor.executemany(sql, params)
+
+        self.conn.commit()
+        cursor.close()

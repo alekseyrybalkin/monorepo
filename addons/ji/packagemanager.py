@@ -5,6 +5,7 @@ import os
 
 import addons.config
 import addons.db
+import addons.ji.gendb as gendb
 import addons.ji.integrity as integrity
 import addons.ji.make as make
 import addons.ji.queries as queries
@@ -30,7 +31,7 @@ class PackageManagerDatabase(addons.db.Database, metaclass=addons.db.DatabaseMet
             create table file(
                 id integer primary key,
                 package_id integer,
-                permissions text,
+                is_dir integer,
                 ownership text,
                 name text,
                 link text,
@@ -137,14 +138,14 @@ class PackageManager:
     def gen_db(self):
         self.acquire_lock()
         try:
-            lib.gen_db(self)
+            gendb.gen_db(self)
         finally:
             self.release_lock()
 
     @run_as('manager')
     def who_owns(self):
         for item in queries.who_owns(self, self.args.param[0]):
-            print(item)
+            print('{}-{}'.format(item['name'], item['version']))
 
     @run_as('manager')
     def who_uses_dir(self):
@@ -158,12 +159,12 @@ class PackageManager:
     @run_as('manager')
     def list_files(self):
         for item in tarball.list_files(self, self.args.param[0]):
-            print(os.path.join('/', item))
+            print(os.path.join('/', item.name))
 
     @run_as('manager')
     def list_dirs(self):
         for item in tarball.list_dirs(self, self.args.param[0]):
-            print(os.path.join('/', item))
+            print(os.path.join('/', item.name))
 
     @run_as('root')
     def install(self):

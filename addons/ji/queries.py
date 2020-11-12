@@ -14,7 +14,7 @@ def db_list_files(pm, query):
     result = []
     sql = """
         select name from file where package_id = ?
-            and permissions not like 'd%'
+            and is_dir = 0
             and (is_generated is null or is_generated = 0)
         order by name
     """
@@ -29,7 +29,7 @@ def db_list_generated(pm, query):
     result = []
     sql = """
         select name from file where package_id = ?
-            and permissions not like 'd%'
+            and is_dir = 0
             and is_generated = 1
         order by name
     """
@@ -44,7 +44,7 @@ def db_list_dirs(pm, query):
     result = []
     sql = """
         select name from file where package_id = ?
-            and permissions like 'd%'
+            and is_dir = 1
         order by name
     """
     for row in pm.db.select_many(sql, (package['id'],)):
@@ -58,7 +58,7 @@ def who_uses_dir(pm, query):
     result = []
     sql = """
         select name, version from package where id in
-            (select distinct package_id from file where name = ? and permissions like 'd%')
+            (select distinct package_id from file where name = ? and is_dir = 1)
         order by name
     """
     for row in pm.db.select_many(sql, (query + '/',)):
@@ -69,13 +69,11 @@ def who_uses_dir(pm, query):
 def who_owns(pm, query):
     result = []
     sql = """
-        select name, version from package where id in
-            (select distinct package_id from file where name = ? and permissions not like 'd%')
+        select id, name, version from package where id in
+            (select distinct package_id from file where name = ? and is_dir = 0)
         order by name
     """
-    for row in pm.db.select_many(sql, (query,)):
-        result.append('{}-{}'.format(row['name'], row['version']))
-    return result
+    return pm.db.select_many(sql, (query,))
 
 
 def list_duplicates(pm):
@@ -84,7 +82,7 @@ def list_duplicates(pm):
         select cnt, name from
             (
                 select count(id) as cnt, name from file
-                    where permissions not like 'd%'
+                    where is_dir = 0
                     group by name
                     order by cnt desc
             )

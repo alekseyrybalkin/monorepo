@@ -4,12 +4,13 @@ import subprocess
 import sys
 
 
-def run(command, shell=False, strip=True, input_bytes=None):
+def run(command, shell=False, strip=True, input_bytes=None, stderr=subprocess.STDOUT):
     if not shell and isinstance(command, str):
         command = command.split(' ')
 
     options = {
         'shell': shell,
+        'stderr': stderr,
     }
     if input_bytes:
         options['input'] = input_bytes

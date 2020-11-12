@@ -24,6 +24,7 @@ def source_pkgbuild(pm, pkgbuild=None):
         'srctar',
         'relmon_id',
         'updater_rules',
+        'generated_files',
     ]
 
     result = {}
@@ -48,10 +49,10 @@ def source_pkgbuild(pm, pkgbuild=None):
 
 
 def find_package(pm, query):
-    sql = "select id, name, version from package where name = ? or name || '-' || version = ?;"
+    sql = "select id, name, version, timestamp from package where name = ? or name || '-' || version = ?;"
     package = pm.db.select_one(sql, (query, query))
     if not package:
-        raise RuntimeError('package {} is not installed'.format(query))
+        return None
     return package
 
 
