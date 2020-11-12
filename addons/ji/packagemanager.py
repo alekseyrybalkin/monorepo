@@ -216,15 +216,21 @@ class PackageManager:
 
     @run_as('manager')
     def links(self):
-        lib.links(self)
+        for item in queries.links(self, self.args.param[0]):
+            print(item['name'])
 
     @run_as('manager')
     def linked_by(self):
-        lib.linked_by(self)
+        for item in queries.linked_by(self, self.args.param[0]):
+            print(item['name'])
 
     @run_as('manager')
     def links_both(self):
-        lib.links_both(self)
+        for item in queries.links(self, self.args.param[0]):
+            print(item['name'])
+        print('---')
+        for item in queries.linked_by(self, self.args.param[0]):
+            print(item['name'])
 
     @run_as('manager')
     def check_buildorder(self):

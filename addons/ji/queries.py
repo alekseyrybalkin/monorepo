@@ -91,3 +91,29 @@ def list_duplicates(pm):
     for row in pm.db.select_many(sql):
         result.append('{}  {}'.format(row['name'], row['cnt']))
     return result
+
+
+def links(pm, query):
+    package = common.find_package(pm, query)
+    sql = '''
+        select name from package
+            join depends on
+                depends.user_id = ?
+                and depends.provider_id = package.id
+        where package.id <> ?
+        order by package.name
+    '''
+    return pm.db.select_many(sql, (package['id'], package['id']))
+
+
+def linked_by(pm, query):
+    package = common.find_package(pm, query)
+    sql = '''
+        select name from package
+            join depends on
+                depends.provider_id = ?
+                and depends.user_id = package.id
+        where package.id <> ?
+        order by package.name
+    '''
+    return pm.db.select_many(sql, (package['id'], package['id']))
