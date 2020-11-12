@@ -226,7 +226,7 @@ class PackageManager:
 
     @run_as('manager')
     def pull(self):
-        sources.pull(self)
+        sources.pull(self, self.args.param[0])
 
     @run_as('manager')
     def tags(self):

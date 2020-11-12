@@ -1,13 +1,23 @@
 import functools
 import os
 
+import addons.db
 import addons.ji.common as common
 import addons.shell as shell
+import addons.srcfetcher
 import addons.updater.repo as repo
 
 
-def pull(pm):
-    pass
+def pull(pm, query):
+    package = common.find_package(pm, query)
+    repo_dir = common.get_repo_dir(pm, package['name'])
+    pkgbuild = common.source_pkgbuild(pm, pkgbuild=os.path.join(repo_dir, 'PKGBUILD'))
+    vcs_repo = package['name']
+    if pkgbuild['vcs_pkgname']:
+        vcs_repo = pkgbuild['vcs_pkgname']
+
+    with addons.db.DB('srcfetcher') as db:
+        addons.srcfetcher.SourceFetcher(db).fetch(vcs_repo)
 
 
 def tags(pm, query):

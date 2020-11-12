@@ -178,7 +178,7 @@ class SourceFetcher:
                 (now, project_name),
             )
 
-        if not self.args.quiet:
+        if not hasattr(self, 'args') or not self.args.quiet:
             sys.stdout.write(
                 shell.colorize(
                     '{}: {}\n'.format(
