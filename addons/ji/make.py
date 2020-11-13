@@ -160,7 +160,7 @@ def make_fakeroot(pm, location):
     os.chdir(pkgbuild['srcdir'])
 
     shell.run(
-        'source ../PKGBUILD; export pkgdir; set -e; package',
+        'source ../PKGBUILD; echo ${pkgdir}; export pkgdir; set -e; package',
         shell=True,
         user=pm.config['users']['worker']['uid'],
         group=pm.config['users']['worker']['gid'],
