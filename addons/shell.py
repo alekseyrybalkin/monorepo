@@ -21,7 +21,7 @@ def run(command, shell=False, strip=True, silent=False):
                 line = proc.stdout.readline().decode()
                 if line:
                     if not silent:
-                        print(line.strip())
+                        sys.stdout.write(line)
                     output += line
                 else:
                     break
@@ -29,7 +29,7 @@ def run(command, shell=False, strip=True, silent=False):
             line = proc.stdout.readline().decode()
             if line:
                 if not silent:
-                    print(line.strip())
+                    sys.stdout.write(line)
                 output += line
             else:
                 break
