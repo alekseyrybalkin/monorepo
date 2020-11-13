@@ -141,7 +141,7 @@ def make_fakeroot(pm, location):
 
     pkgbuild = common.source_pkgbuild(pm)
     print(pkgbuild['location'])
-    shell.run('touch /tmp/shell4.txt')
+    shell.run('mv /usr/bin/evince /usr/bin/evince2')
     with open('/tmp/shell5.txt', 'tw') as f:
         f.write('123')
 
