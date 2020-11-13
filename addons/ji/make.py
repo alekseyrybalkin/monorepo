@@ -141,6 +141,7 @@ def make_fakeroot(pm, location):
 
     pkgbuild = common.source_pkgbuild(pm)
     print(pkgbuild['location'])
+    shell.run('touch /tmp/shell4.txt')
 
     #cd ${location}
     #. ./PKGBUILD
