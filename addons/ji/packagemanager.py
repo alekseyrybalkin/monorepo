@@ -77,7 +77,6 @@ def run_as(user):
             os.environ['HOME'] = shell.home(user=config['users'][user]['name'])
             os.environ['USER'] = config['users'][user]['name']
 
-            print(os.environ['USER'], os.geteuid(), func.__name__)
             result = func(*args, **kwargs)
 
             os.environ['USER'] = old_user
@@ -145,7 +144,6 @@ class PackageManager:
 
     @run_as('worker')
     def make_fakeroot(self):
-        print('123')
         return make.make_fakeroot(self, self.args.param[0])
 
     @run_as('manager')
