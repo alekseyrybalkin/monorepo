@@ -13,6 +13,14 @@ def get_tarball_name(name, version):
     return '{}-{}{}'.format(name, version, get_tarball_suffix())
 
 
+def parse_package(tar):
+    name, version = os.path.basename(tar).replace(get_tarball_suffix(), '').split('-')
+    return {
+        'name': name,
+        'version': version,
+    }
+
+
 def download(pm):
     pkgbuild = common.source_pkgbuild(pm)
     if pkgbuild['vcs']:
@@ -44,17 +52,27 @@ def list_dirs(pm, tar):
                 yield member
 
 
-def extract_file(pm, tar, member, path):
+def extract_file(tar, member, path):
     with tarfile.open(tar, 'r') as tar:
         tar.extract(member, path=path)
 
 
+def extract_all(tar, path):
+    with tarfile.open(tar, 'r') as tar:
+        members = tar.getmembers()
+        allowed_members = [member for member in members if member.name != '.PKGINFO']
+        tar.extractall(members=members, path=path)
+
+
 def check_conflicts(pm, tar):
+    conflicts = []
     for item in list_files(pm, tar):
         full_path = os.path.join('/', item.name)
         if os.path.exists(full_path):
-            print('{} already exists on filesystem'.format(full_path))
+            conflicts.append('{} already exists on filesystem'.format(full_path))
     for item in list_dirs(pm, tar):
         full_path = os.path.join('/', item.name)
         if os.path.exists(full_path) and not os.path.isdir(full_path):
-            print('{} already exists on filesystem and is not a dir'.format(full_path))
+            conflicts.append('{} already exists on filesystem and is not a dir'.format(full_path))
+
+    return conflicts
