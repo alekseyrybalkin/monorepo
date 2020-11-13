@@ -64,8 +64,6 @@ actions = {}
 
 def run_as(user):
     def decorator(func):
-        actions[func.__name__] = func
-
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             old_egid = os.getegid()
@@ -79,7 +77,7 @@ def run_as(user):
             os.environ['HOME'] = shell.home(user=config['users'][user]['name'])
             os.environ['USER'] = config['users'][user]['name']
 
-            print(os.environ['USER'], os.geteuid())
+            print(os.environ['USER'], os.geteuid(), func.__name__)
             result = func(*args, **kwargs)
 
             os.environ['USER'] = old_user
@@ -89,6 +87,7 @@ def run_as(user):
             os.setegid(old_egid)
 
             return result
+        actions[func.__name__] = wrapper
         return wrapper
     return decorator
 
