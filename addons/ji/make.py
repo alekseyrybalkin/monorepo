@@ -24,7 +24,12 @@ def prepare(pm):
             raise RuntimeError('file {} not found'.format(url))
 
     for item in os.listdir('.'):
-        shell.run('git ls-files {} --error-unmatch'.format(item), silent=True)
+        shell.run(
+            'git ls-files {} --error-unmatch'.format(item),
+            silent=True,
+            user=pm.config['users']['manager']['uid'],
+            group=pm.config['users']['manager']['gid'],
+        )
 
     pkgbuild_path = os.path.join(os.getcwd(), 'PKGBUILD')
     shell.run(
@@ -115,12 +120,17 @@ def make_worker(pm):
         user=pm.config['users']['worker']['uid'],
         group=pm.config['users']['worker']['gid'],
     )
-    #cd ${location}
-    #green='\e[0;32m'
-    #txtrst='\e[0m'
-    #rm -rf ~/.{cache,cmake,java,npm,config/configstore,cargo,fontconfig,local}
-    #printf "${green}make ok${txtrst}\n"
-    #exit 0
+
+    for dir_to_cleanup in pm.config['worker_cleanups']:
+        shutil.rmtree(
+            os.path.join(
+                shell.home(user=pm.config['users']['worker']['name']),
+                dir_to_cleanup,
+            ),
+            ignore_errors=True,
+        )
+
+    print(shell.colorize('make ok', color=2))
 
     tar = os.path.join(
         builddir,
@@ -131,9 +141,6 @@ def make_worker(pm):
 
 
 def make_fakeroot(pm, location):
-    os.chdir(location)
-    shell.run('ls -al')
-
     python_package = (
         'python-package() {               '
         '    pip install --no-deps        '
@@ -146,17 +153,19 @@ def make_fakeroot(pm, location):
         '}                                '
     )
 
+    os.chdir(location)
     pkgbuild = common.source_pkgbuild(pm)
-    print(pkgbuild['location'])
-    with open('/tmp/shell5.txt', 'tw') as f:
-        f.write('123')
 
-    print(os.environ['USER'], os.geteuid())
+    os.makedirs(pkgbuild['pkgdir'])
+    os.chdir(pkgbuild['srcdir'])
 
-    #cd ${location}
-    #. ./PKGBUILD
-    #rm -rf ${pkgdir}
-    #mkdir -p ${pkgdir}
+    shell.run(
+        'source ../PKGBUILD; set -e; package',
+        shell=True,
+        user=pm.config['users']['worker']['uid'],
+        group=pm.config['users']['worker']['gid'],
+    )
+
     #cd ${srcdir}
     #package 2>&1 | tee ${location}/install.log
     #install_exit_status=${PIPESTATUS[0]}
