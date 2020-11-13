@@ -23,7 +23,7 @@ class Inspector:
         if not os.path.isdir(os.path.join(repo, '.git')):
             return '{:<30} {}'.format(project, shell.colorize('not a git repo', color=1))
 
-        git_status = shell.run('git -C {} status'.format(repo))
+        git_status = shell.run('git -C {} status'.format(repo), silent=True)
         if 'On branch master' not in git_status:
             return '{:<30} {}'.format(project, shell.colorize('not on master branch', color=1))
         if 'nothing to commit, working tree clean' not in git_status:
@@ -34,7 +34,7 @@ class Inspector:
 
     def check_rogue_processes(self):
         max_len = self.config['rogue_processes']['max_command_line_length']
-        ps_result = shell.run('ps -axo args')
+        ps_result = shell.run('ps -axo args', silent=True)
         for process in sorted(set(ps_result.split('\n'))):
             if process == 'COMMAND':
                 continue
@@ -58,7 +58,7 @@ class Inspector:
         for rule in config_rules:
             rules[tuple(rule['key'])] = tuple(rule['value'])
 
-        amixer_output = shell.run('amixer scontents')
+        amixer_output = shell.run('amixer scontents', silent=True)
 
         current_channel = ''
         for line in amixer_output.split('\n'):
@@ -119,23 +119,23 @@ class Inspector:
                 print('battery is only {}% charged'.format(charge))
 
         if shutil.which('pacman'):
-            if len(shell.run('pacman -Qm').split('\n')) != 1:
+            if len(shell.run('pacman -Qm', silent=True).split('\n')) != 1:
                 print('pacman -Qm')
             try:
-                if shell.run('pacman -Qdtt'):
+                if shell.run('pacman -Qdtt', silent=True):
                     print('pacman -Qdtt')
             except subprocess.CalledProcessError as e:
                 if e.output:
                     print(e.output)
             try:
-                if shell.run('pacman -Qett'):
+                if shell.run('pacman -Qett', silent=True):
                     print('pacman -Qett')
             except subprocess.CalledProcessError as e:
                 if e.output:
                     print(e.output)
 
         # FIXME make a library call
-        undone_tasks = shell.run('r').count('[ ]')
+        undone_tasks = shell.run('r', silent=True).count('[ ]')
         if undone_tasks:
             print('undone tasks: {}'.format(undone_tasks))
 
@@ -145,8 +145,8 @@ class Inspector:
         if domain_count > allowed_domains:
             print('extra whitelisted domains: {}'.format(domain_count - allowed_domains))
 
-        if shell.run('systemctl show --property=SystemState') != 'SystemState=running':
-            print(shell.run('systemctl --failed'))
+        if shell.run('systemctl show --property=SystemState', silent=True) != 'SystemState=running':
+            print(shell.run('systemctl --failed', silent=True))
 
 
 def main():

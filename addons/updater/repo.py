@@ -148,7 +148,7 @@ def guess_vcs(repo_dir):
     os.chdir(repo_dir)
 
     vcs = None
-    git_dir = shell.run('git rev-parse --git-dir')
+    git_dir = shell.run('git rev-parse --git-dir', silent=True)
     if git_dir == '.' or git_dir == '.git':
         vcs = 'git'
     elif os.path.isdir('.hg'):
@@ -172,7 +172,7 @@ def get_raw_tags(repo_dir, vcs):
         command = ['fossil', 'tag', 'list']
     else:
         raise RuntimeError('unknown vcs {}'.format(vcs))
-    raw_tags = shell.run(command).split('\n')
+    raw_tags = shell.run(command, silent=True).split('\n')
 
     os.chdir(old_cwd)
     return raw_tags

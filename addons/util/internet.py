@@ -89,11 +89,14 @@ class Internet:
             shell.run('sudo chmod 600 {}'.format('/run/jinni-environment'))
 
     def gen_wpa_supplicant_conf(self, access_point):
-        wpa_conf = shell.run([
-            'wpa_passphrase',
-            access_point['ssid'],
-            access_point['pass'],
-        ])
+        wpa_conf = shell.run(
+            [
+                'wpa_passphrase',
+                access_point['ssid'],
+                access_point['pass'],
+            ],
+            silent=True,
+        )
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_file_path = os.path.join(tmpdir, 'wpa_supplicant.conf')
             with open(tmp_file_path, 'tw') as tmp_file:

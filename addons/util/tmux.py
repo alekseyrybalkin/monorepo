@@ -47,7 +47,7 @@ class TmuxStatus:
             else:
                 print(' #[fg=colour{}]{} '.format(self.config['default-color'], count), end='')
 
-        if shell.run('systemctl show --property=SystemState') != 'SystemState=running':
+        if shell.run('systemctl show --property=SystemState', silent=True) != 'SystemState=running':
             print(' #[fg=colour196]X', end='')
 
         print('#[default]')

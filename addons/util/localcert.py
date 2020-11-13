@@ -56,7 +56,7 @@ class LocalCertificateManager:
                 os.chdir(tmpdir)
                 shell.run('sudo ji u nss')
 
-            nginx_running = 'SubState=running' in shell.run('systemctl show nginx')
+            nginx_running = 'SubState=running' in shell.run('systemctl show nginx', silent=True)
             if nginx_running:
                 shell.run('sudo systemctl restart nginx')
 
@@ -124,7 +124,7 @@ class LocalCertificateManager:
             shell.run('bash update.bash')
             os.chdir(tmpdir)
 
-            nginx_running = 'SubState=running' in shell.run('systemctl show nginx')
+            nginx_running = 'SubState=running' in shell.run('systemctl show nginx', silent=True)
             if nginx_running:
                 shell.run('sudo systemctl restart nginx')
 
