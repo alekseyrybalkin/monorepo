@@ -5,6 +5,14 @@ import urllib.request
 import addons.ji.common as common
 
 
+def get_tarball_suffix():
+    return '-1-x86_64.pkg.tar.gz'
+
+
+def get_tarball_name(name, version):
+    return '{}-{}{}'.format(name, version, get_tarball_suffix())
+
+
 def download(pm):
     pkgbuild = common.source_pkgbuild(pm)
     if pkgbuild['vcs']:

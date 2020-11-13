@@ -48,11 +48,13 @@ def source_pkgbuild(pm, pkgbuild=None):
     return result
 
 
-def find_package(pm, query):
+def find_package(pm, query, none_ok=False):
     sql = "select id, name, version, timestamp from package where name = ? or name || '-' || version = ?;"
     package = pm.db.select_one(sql, (query, query))
     if not package:
-        return None
+        if none_ok:
+            return None
+        raise RuntimeError('package {} is not installed'.format(query))
     return package
 
 
@@ -68,3 +70,14 @@ def find_vcs_repo_dir(pm, vcs_repo):
             return os.path.join(root, vcs_repo)
         if root != pm.config['sources_path'] and os.path.dirname(root) != pm.config['sources_path']:
             dirs.clear()
+
+
+def recreate_info_dir():
+    old_cwd = os.getcwd()
+    os.chdir('/usr/share/info')
+
+    os.remove('dir')
+    for info_file in os.listdir('.'):
+        shell.run('install-info {} dir'.format(info_file), silent=True)
+
+    os.chdir(old_cwd)

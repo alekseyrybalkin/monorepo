@@ -7,12 +7,15 @@ import addons.config
 import addons.db
 import addons.ji.buildorder as buildorder
 import addons.ji.gendb as gendb
+import addons.ji.install as install
 import addons.ji.integrity as integrity
 import addons.ji.make as make
 import addons.ji.queries as queries
 import addons.ji.rebuild as rebuild
 import addons.ji.sources as sources
 import addons.ji.tarball as tarball
+import addons.ji.uninstall as uninstall
+import addons.ji.upgrade as upgrade
 
 config = addons.config.Config('packagemanager', private=False).read()
 

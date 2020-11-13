@@ -55,12 +55,12 @@ def update_new_tarballs(pm):
         filename = os.path.join(packages_path, package_file)
         timestamp = int(os.stat(filename).st_mtime)
 
-        query = package_file.replace('-1-x86_64.pkg.tar.gz', '')
+        query = package_file.replace(tarball.get_tarball_suffix(), '')
         package, version = query.rsplit('-', 1)
 
         actual_package_set.add(query)
 
-        stored_package = common.find_package(pm, query)
+        stored_package = common.find_package(pm, query, none_ok=True)
         if stored_package is None or int(stored_package['timestamp']) != timestamp:
             depending_list = []
             if stored_package is not None:

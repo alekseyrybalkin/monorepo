@@ -50,7 +50,7 @@ def check_buildorder(pm):
             print('{} is missing from buildorder'.format(package['name']))
 
     for package in bom.order_index:
-        db_package = common.find_package(pm, package)
+        db_package = common.find_package(pm, package, none_ok=True)
         if not db_package:
             print('{} is not installed, but is in buildorder'.format(package))
 
