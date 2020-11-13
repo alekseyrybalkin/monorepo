@@ -52,7 +52,7 @@ def make_worker(pm):
         shell.home(user=pm.config['users']['worker']['name']),
         'build.{}.{}'.format(pkgbuild['pkgname'], time.time()),
     )
-    shutil.rmtree(builddir)
+    shutil.rmtree(builddir, ignore_errors=True)
     os.makedirs(builddir)
     for item in glob.iglob('*'):
         shutil.copy(item, builddir)
