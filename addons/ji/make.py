@@ -1,6 +1,9 @@
 import os
+import shutil
+import time
 
 import addons.ji.common as common
+import addons.ji.tarball as tarball
 import addons.shell as shell
 
 
@@ -31,9 +34,28 @@ def prepare(pm):
 
 
 def make(pm):
-    pkgbuild = common.source_pkgbuild(pm)
-    print(pkgbuild)
+    pm.prepare()
+    tar_path = pm.make_worker()
+    new_tar_path = os.path.join(os.getcwd(), os.path.basename(tar_path))
+    shutil.move(tar_path, new_tar_path)
+    shutil.chown(new_tar_path, pm.config['users']['manager']['uid'], pm.config['users']['manager']['gid'])
+    shutil.rmtree(os.path.dirname(tar_path))
 
 
 def make_worker(pm):
-    pass
+    os.environ['PATH'] = '{}:{}'.format('/usr/lib/ccache/bin', os.environ['PATH'])
+
+    pkgbuild = common.source_pkgbuild(pm)
+
+    builddir = os.path.join(
+        shell.home(user=pm.config['users']['worker']['name']),
+        'build.{}.{}'.format(pkgbuild['pkgname'], time.time()),
+    )
+
+    # lots of stuff here
+
+    tar = os.path.join(
+        builddir,
+        tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
+    )
+    print(tar)
