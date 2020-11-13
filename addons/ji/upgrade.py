@@ -46,10 +46,11 @@ def upgrade(pm, tar):
     with tempfile.TemporaryDirectory() as tmpdir:
         tarball.extract_all(tar, tmpdir)
 
+        files = [tarball.list_files(pm, tar)]
         old_cwd = os.getcwd()
         os.chdir(tmpdir)
 
-        for item in tarball.list_files(pm, tar):
+        for item in files:
             shutil.move(item.name, os.path.join('/', item.name + '.{}'.format(pm.config['exe'])))
             shutil.move(os.path.join('/', item.name + '.{}'.format(pm.config['exe'])), os.path.join('/', item.name))
 
