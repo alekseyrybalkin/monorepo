@@ -14,7 +14,7 @@ def get_tarball_name(name, version):
 
 
 def parse_package(tar):
-    name, version = os.path.basename(tar).replace(get_tarball_suffix(), '').split('-')
+    name, version = os.path.basename(tar).replace(get_tarball_suffix(), '').rsplit('-', 1)
     return {
         'name': name,
         'version': version,
