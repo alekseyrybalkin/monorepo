@@ -107,7 +107,14 @@ def make_worker(pm):
         group=pm.config['users']['worker']['gid'],
     )
 
-    shell.run('fakeroot {} make-fakeroot {}'.format(pm.config['exe'], pkgbuild['location']))
+    shell.run(
+        'fakeroot {} make-fakeroot {}'.format(
+            pm.config['exe'],
+            pkgbuild['location'],
+        ),
+        user=pm.config['users']['worker']['uid'],
+        group=pm.config['users']['worker']['gid'],
+    )
     #cd ${location}
     #green='\e[0;32m'
     #txtrst='\e[0m'
@@ -141,7 +148,6 @@ def make_fakeroot(pm, location):
 
     pkgbuild = common.source_pkgbuild(pm)
     print(pkgbuild['location'])
-    shell.run('mv /usr/bin/evince /usr/bin/evince2')
     with open('/tmp/shell5.txt', 'tw') as f:
         f.write('123')
 
