@@ -11,7 +11,8 @@ def prepare(pm):
         urls = pkgbuild['extra_urls'].split(' ')
     else:
         urls = pkgbuild['urls'].split(' ') + pkgbuild['extra_urls'].split(' ')
-    urls.remove('')
+    while '' in urls:
+        urls.remove('')
 
     for url in urls:
         path = os.path.join(pm.config['tarballs_path'], os.path.basename(url))
