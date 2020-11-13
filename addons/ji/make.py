@@ -126,140 +126,136 @@ def make_worker(pm):
 def make_fakeroot(pm):
     shell.run('ls -al')
 
-#    cat > ${maker} << "EOF"
-##!/bin/sh
-#
-#pip-install() {
-#    pip install \
-#        --no-deps \
-#        --no-build-isolation \
-#        --ignore-installed \
-#        --compile \
-#        --prefix=/usr \
-#        --root=${pkgdir} .
-#}
-#
-#python-package() {
-#    pip-install
-#}
-#
-#set -e
-#cd ${location}
-#. ./PKGBUILD
-#rm -rf ${pkgdir}
-#mkdir -p ${pkgdir}
-#cd ${srcdir}
-#package 2>&1 | tee ${location}/install.log
-#install_exit_status=${PIPESTATUS[0]}
-#if [ ${install_exit_status} -gt 0 ]; then
-#    exit ${install_exit_status}
-#fi
-#
-## fix /usr/share/info/dir
-#rm -fv ${pkgdir}/usr/share/info/dir
-#if [ "${pkgname}" != "filesystem" ]; then
-#    pushd ${pkgdir}
-#    regexp="^$"
-#    for i in /opt /boot /etc /usr; do
-#        regexp="${regexp}|^${i}$"
-#    done
-#    baddirs=`find . -maxdepth 1 -type d | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
-#    if [ -n "${baddirs}" ]; then
-#        echo " *** ERROR ***: package tries to use bad dirs:"
-#        echo "${baddirs}"
-#        exit 1
-#    fi
-#    if [ -d usr ]; then
-#        for i in /usr/bin /usr/include /usr/lib /usr/share; do
-#            regexp="${regexp}|^${i}$"
-#        done
-#        baddirs=`find ./usr -maxdepth 1 -type d | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
-#        if [ -n "${baddirs}" ]; then
-#            echo " *** ERROR ***: package tries to use bad dirs:"
-#            echo "${baddirs}"
-#            exit 1
-#        fi
-#        for i in /usr/sbin /usr/lib64; do
-#            regexp="${regexp}|^${i}$"
-#        done
-#        baddirs=`find ./usr -maxdepth 1 | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
-#        if [ -n "${baddirs}" ]; then
-#            echo " *** ERROR ***: package tries to use bad non-dirs in /usr:"
-#            echo "${baddirs}"
-#            exit 1
-#        fi
-#    fi
-#    files_with_spaces=`find . | grep -E "\ "` || true
-#    if [ -n "${files_with_spaces}" ]; then
-#        echo " *** ERROR ***: package has file names with spaces:"
-#        echo "${files_with_spaces}"
-#        exit 1
-#    fi
-#    popd
-#fi
-#
-## remove *.la files
-#if [ -d ${pkgdir}/usr/lib ]; then
-#    find ${pkgdir}/usr/lib -name "*.la" | xargs rm -vf
-#fi
-#
-## remove unused translations
-#if [ -d ${pkgdir}/usr/share/locale ]; then
-#    for locale_dir in $(find ${pkgdir}/usr/share/locale -mindepth 1 -maxdepth 1 -type d); do
-#        [[ ${locale_dir} =~ "locale/en" ]] && continue
-#        [[ ${locale_dir} =~ "locale/ru" ]] && continue
-#        rm -rf ${locale_dir}
-#    done
-#fi
-#
-## remove hicolor and locolor icons
-#if [ -d ${pkgdir}/usr/share/icons/hicolor ]; then
-#    rm -rf ${pkgdir}/usr/share/icons/hicolor
-#fi
-#if [ -d ${pkgdir}/usr/share/icons/locolor ]; then
-#    rm -rf ${pkgdir}/usr/share/icons/locolor
-#fi
-#
-## install dirs for generated files
-#if [ -n "${generated_files}" ]; then
-#    for i in ${generated_files}; do
-#        mkdir -p ${pkgdir}/`dirname ${i}`
-#    done
-#fi
-#
-#if [ -z "${NO_STRIPPING}" ]; then
-#    echo "Stripping..."
-#    if [ -d "${pkgdir}/usr/bin" ]; then
-#        find ${pkgdir}/usr/bin -type f -exec strip --strip-debug '{}' ';' >/dev/null 2>&1
-#    fi
-#    if [ -d "${pkgdir}/usr/lib" ]; then
-#        find ${pkgdir}/usr/lib -type f -exec strip --strip-debug '{}' ';' >/dev/null 2>&1
-#    fi
-#fi
-#
-#cd ${location}
-#mkdir -p ${EXE}-dest/usr/share/${EXE}
-#for f in PKGBUILD make.log install.log; do
-#    mv ${f} ${EXE}-dest/usr/share/${EXE}/${pkgname}.${f}
-#done
-#
-#echo creating gz archive...
-#cd ${EXE}-dest
-#
-#echo "pkgname = ${pkgname}" > .PKGINFO
-#echo "pkgbase = ${pkgname}" >> .PKGINFO
-#echo "pkgver = ${pkgver}-1" >> .PKGINFO
-#echo "pkgdesc = " >> .PKGINFO
-#echo "url = " >> .PKGINFO
-#echo "builddate = $(date +%s)" >> .PKGINFO
-#echo "packager = ${EXE}" >> .PKGINFO
-#echo "arch = x86_64" >> .PKGINFO
-#
-#if [ -f ${srcdir}/arch-depend ]; then
-#    cat ${srcdir}/arch-depend | grep '^provides = ' >> .PKGINFO || true
-#    cat ${srcdir}/arch-depend | grep '^depend = ' >> .PKGINFO || true
-#fi
-#
-#{ find . | sed 's/^\.\///g'; } | sort | uniq | \
-#    tar cfa ../${pkgname}-${pkgver}-1-x86_64.pkg.tar.gz --no-recursion -T -
-#EOF
+    python_package = (
+        'python-package() {               '
+        '    pip install --no-deps        '
+        '        --no-build-isolation     '
+        '        --ignore-installed       '
+        '        --compile                '
+        '        --prefix=/usr            '
+        '        --root=${pkgdir}         '
+        '        .                        '
+        '}                                '
+    )
+
+    pkgbuild = common.source_pkgbuild(pm, pkgbuild='../PKGBUILD')
+    print(pkgbuild['location'])
+
+    #cd ${location}
+    #. ./PKGBUILD
+    #rm -rf ${pkgdir}
+    #mkdir -p ${pkgdir}
+    #cd ${srcdir}
+    #package 2>&1 | tee ${location}/install.log
+    #install_exit_status=${PIPESTATUS[0]}
+    #if [ ${install_exit_status} -gt 0 ]; then
+    #    exit ${install_exit_status}
+    #fi
+    #
+    ## fix /usr/share/info/dir
+    #rm -fv ${pkgdir}/usr/share/info/dir
+    #if [ "${pkgname}" != "filesystem" ]; then
+    #    pushd ${pkgdir}
+    #    regexp="^$"
+    #    for i in /opt /boot /etc /usr; do
+    #        regexp="${regexp}|^${i}$"
+    #    done
+    #    baddirs=`find . -maxdepth 1 -type d | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
+    #    if [ -n "${baddirs}" ]; then
+    #        echo " *** ERROR ***: package tries to use bad dirs:"
+    #        echo "${baddirs}"
+    #        exit 1
+    #    fi
+    #    if [ -d usr ]; then
+    #        for i in /usr/bin /usr/include /usr/lib /usr/share; do
+    #            regexp="${regexp}|^${i}$"
+    #        done
+    #        baddirs=`find ./usr -maxdepth 1 -type d | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
+    #        if [ -n "${baddirs}" ]; then
+    #            echo " *** ERROR ***: package tries to use bad dirs:"
+    #            echo "${baddirs}"
+    #            exit 1
+    #        fi
+    #        for i in /usr/sbin /usr/lib64; do
+    #            regexp="${regexp}|^${i}$"
+    #        done
+    #        baddirs=`find ./usr -maxdepth 1 | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
+    #        if [ -n "${baddirs}" ]; then
+    #            echo " *** ERROR ***: package tries to use bad non-dirs in /usr:"
+    #            echo "${baddirs}"
+    #            exit 1
+    #        fi
+    #    fi
+    #    files_with_spaces=`find . | grep -E "\ "` || true
+    #    if [ -n "${files_with_spaces}" ]; then
+    #        echo " *** ERROR ***: package has file names with spaces:"
+    #        echo "${files_with_spaces}"
+    #        exit 1
+    #    fi
+    #    popd
+    #fi
+    #
+    ## remove *.la files
+    #if [ -d ${pkgdir}/usr/lib ]; then
+    #    find ${pkgdir}/usr/lib -name "*.la" | xargs rm -vf
+    #fi
+    #
+    ## remove unused translations
+    #if [ -d ${pkgdir}/usr/share/locale ]; then
+    #    for locale_dir in $(find ${pkgdir}/usr/share/locale -mindepth 1 -maxdepth 1 -type d); do
+    #        [[ ${locale_dir} =~ "locale/en" ]] && continue
+    #        [[ ${locale_dir} =~ "locale/ru" ]] && continue
+    #        rm -rf ${locale_dir}
+    #    done
+    #fi
+    #
+    ## remove hicolor and locolor icons
+    #if [ -d ${pkgdir}/usr/share/icons/hicolor ]; then
+    #    rm -rf ${pkgdir}/usr/share/icons/hicolor
+    #fi
+    #if [ -d ${pkgdir}/usr/share/icons/locolor ]; then
+    #    rm -rf ${pkgdir}/usr/share/icons/locolor
+    #fi
+    #
+    ## install dirs for generated files
+    #if [ -n "${generated_files}" ]; then
+    #    for i in ${generated_files}; do
+    #        mkdir -p ${pkgdir}/`dirname ${i}`
+    #    done
+    #fi
+    #
+    #if [ -z "${NO_STRIPPING}" ]; then
+    #    echo "Stripping..."
+    #    if [ -d "${pkgdir}/usr/bin" ]; then
+    #        find ${pkgdir}/usr/bin -type f -exec strip --strip-debug '{}' ';' >/dev/null 2>&1
+    #    fi
+    #    if [ -d "${pkgdir}/usr/lib" ]; then
+    #        find ${pkgdir}/usr/lib -type f -exec strip --strip-debug '{}' ';' >/dev/null 2>&1
+    #    fi
+    #fi
+    #
+    #cd ${location}
+    #mkdir -p ${EXE}-dest/usr/share/${EXE}
+    #for f in PKGBUILD make.log install.log; do
+    #    mv ${f} ${EXE}-dest/usr/share/${EXE}/${pkgname}.${f}
+    #done
+    #
+    #echo creating gz archive...
+    #cd ${EXE}-dest
+    #
+    #echo "pkgname = ${pkgname}" > .PKGINFO
+    #echo "pkgbase = ${pkgname}" >> .PKGINFO
+    #echo "pkgver = ${pkgver}-1" >> .PKGINFO
+    #echo "pkgdesc = " >> .PKGINFO
+    #echo "url = " >> .PKGINFO
+    #echo "builddate = $(date +%s)" >> .PKGINFO
+    #echo "packager = ${EXE}" >> .PKGINFO
+    #echo "arch = x86_64" >> .PKGINFO
+    #
+    #if [ -f ${srcdir}/arch-depend ]; then
+    #    cat ${srcdir}/arch-depend | grep '^provides = ' >> .PKGINFO || true
+    #    cat ${srcdir}/arch-depend | grep '^depend = ' >> .PKGINFO || true
+    #fi
+    #
+    #{ find . | sed 's/^\.\///g'; } | sort | uniq | \
+    #    tar cfa ../${pkgname}-${pkgver}-1-x86_64.pkg.tar.gz --no-recursion -T -
