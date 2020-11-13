@@ -149,7 +149,7 @@ def make_fakeroot(pm, location):
         '        --compile                '
         '        --prefix=/usr            '
         '        --root=${pkgdir}         '
-        '        .                        '
+        '        .;                       '
         '}                                '
     )
 
