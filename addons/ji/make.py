@@ -279,6 +279,6 @@ def make_worker(pm):
         tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
     )
     #FIXME
-    with open(tar, 'tr') as f:
+    with open(tar, 'tw') as f:
         f.write('hello')
     print(tar)
