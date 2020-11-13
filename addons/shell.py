@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 
-def run(command, shell=False, strip=True, silent=False):
+def run(command, shell=False, strip=True, silent=False, user=None, group=None):
     if not shell and isinstance(command, str):
         command = command.split(' ')
 
@@ -12,6 +12,8 @@ def run(command, shell=False, strip=True, silent=False):
         'stdout': subprocess.PIPE,
         'stderr': subprocess.STDOUT,
         'shell': shell,
+        'user': user,
+        'group': group,
     }
 
     with subprocess.Popen(command, **options) as proc:

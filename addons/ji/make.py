@@ -31,6 +31,8 @@ def prepare(pm):
         f'source {pkgbuild_path}; type prepare >/dev/null 2>&1 || function prepare() {{ :; }}; prepare',
         shell=True,
         silent=True,
+        user=pm.config['users']['manager']['uid'],
+        group=pm.config['users']['manager']['gid'],
     )
 
 
@@ -101,6 +103,8 @@ def make_worker(pm):
     shell.run(
         'source ../PKGBUILD; set -e; build',
         shell=True,
+        user=pm.config['users']['worker']['uid'],
+        group=pm.config['users']['worker']['gid'],
     )
 
 #    maker=${location}/maker.sh
