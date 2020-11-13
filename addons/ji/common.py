@@ -35,7 +35,7 @@ def source_pkgbuild(pm, pkgbuild=None):
     command += 'source {}; '.format(pkgbuild)
     for field in pkgbuild_fields:
         command += 'echo ${}; '.format(field)
-    values = [v.strip() for v in shell.run(command, shell=True, strip=False).split('\n')]
+    values = [v.strip() for v in shell.run(command, shell=True, strip=False, silent=True).split('\n')]
 
     for key, value in zip(pkgbuild_fields, values):
         result[key] = value
