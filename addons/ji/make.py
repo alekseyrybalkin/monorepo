@@ -142,7 +142,7 @@ def make_worker(pm):
 
 def make_fakeroot(pm, location):
     python_package = (
-        'function python-package() {      '
+        'function python_package() {      '
         '    pip install --no-deps        '
         '        --no-build-isolation     '
         '        --ignore-installed       '
