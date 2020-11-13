@@ -46,7 +46,7 @@ def upgrade(pm, tar):
     with tempfile.TemporaryDirectory() as tmpdir:
         tarball.extract_all(tar, tmpdir)
 
-        files = [tarball.list_files(pm, tar)]
+        files = [item for item in tarball.list_files(pm, tar)]
         old_cwd = os.getcwd()
         os.chdir(tmpdir)
 
