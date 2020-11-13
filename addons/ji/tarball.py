@@ -57,11 +57,18 @@ def extract_file(tar, member, path):
         tar.extract(member, path=path)
 
 
+def extract_dirs(tar, path):
+    with tarfile.open(tar, 'r') as tar:
+        members = tar.getmembers()
+        allowed_members = [member for member in members if member.type == tarfile.DIRTYPE]
+        tar.extractall(members=allowed_members, path=path)
+
+
 def extract_all(tar, path):
     with tarfile.open(tar, 'r') as tar:
         members = tar.getmembers()
         allowed_members = [member for member in members if member.name != '.PKGINFO']
-        tar.extractall(members=members, path=path)
+        tar.extractall(members=allowed_members, path=path)
 
 
 def check_conflicts(pm, tar):
