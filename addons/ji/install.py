@@ -51,3 +51,4 @@ def install(pm, tar):
 
     gendb.gen_db(pm)
     shell.run('ldconfig')
+    print(shell.colorize('install ok', color=2))

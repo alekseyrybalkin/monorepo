@@ -52,3 +52,4 @@ def uninstall(pm, query):
 
     gendb.gen_db(pm)
     shell.run('ldconfig')
+    print(shell.colorize('uninstall ok', color=2))
