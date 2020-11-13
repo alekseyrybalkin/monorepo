@@ -96,5 +96,4 @@ def upgrade(pm, tar):
 
     gendb.gen_db(pm)
     shell.run('ldconfig')
-
     print(shell.colorize('upgrade ok', color=2))
