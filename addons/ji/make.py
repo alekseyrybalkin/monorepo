@@ -107,7 +107,7 @@ def make_worker(pm):
         group=pm.config['users']['worker']['gid'],
     )
 
-    shell.run('fakeroot {} make-fakeroot'.format(pm.config['exe']))
+    shell.run('fakeroot {} make-fakeroot {}'.format(pm.config['exe'], pkgbuild['location']))
     #cd ${location}
     #green='\e[0;32m'
     #txtrst='\e[0m'
@@ -123,7 +123,8 @@ def make_worker(pm):
     return tar
 
 
-def make_fakeroot(pm):
+def make_fakeroot(pm, location):
+    os.chdir(location)
     shell.run('ls -al')
 
     python_package = (
@@ -138,7 +139,7 @@ def make_fakeroot(pm):
         '}                                '
     )
 
-    pkgbuild = common.source_pkgbuild(pm, pkgbuild='../PKGBUILD')
+    pkgbuild = common.source_pkgbuild(pm)
     print(pkgbuild['location'])
 
     #cd ${location}
