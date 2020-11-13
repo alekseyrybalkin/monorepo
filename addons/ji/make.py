@@ -142,7 +142,7 @@ def make_fakeroot(pm, location):
     pkgbuild = common.source_pkgbuild(pm)
     print(pkgbuild['location'])
     shell.run('touch /tmp/shell4.txt')
-    with open('tmp/shell5.txt', 'tw') as f:
+    with open('/tmp/shell5.txt', 'tw') as f:
         f.write('123')
 
     #cd ${location}
