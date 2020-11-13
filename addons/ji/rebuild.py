@@ -4,6 +4,7 @@ import os
 import addons.ji.buildorder as buildorder
 import addons.ji.common as common
 import addons.ji.tarball as tarball
+import addons.ji.upgrade as upgrade
 import addons.shell as shell
 
 
@@ -40,7 +41,6 @@ def rebuild_world(pm, start_package=None, end_package=None):
 
         glob_pattern = '*{}'.format(tarball.get_tarball_suffix())
         for tar in glob.iglob(glob_pattern):
-            # FIXME replace with library call
-            shell.run('{} upgrade {}'.format(pm.config['exe'], tar))
+            upgrade.upgrade(pm, tar)
 
         os.chdir(old_cwd)
