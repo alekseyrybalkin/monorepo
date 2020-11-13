@@ -17,10 +17,22 @@ def run(command, shell=False, strip=True, silent=False):
     with subprocess.Popen(command, **options) as proc:
         output = ''
         while proc.poll() is None:
+            while True:
+                line = proc.stdout.readline().decode()
+                if line:
+                    if not silent:
+                        print(line.strip())
+                    output += line
+                else:
+                    break
+        while True:
             line = proc.stdout.readline().decode()
-            if not silent and line:
-                print(line.strip())
-            output += line
+            if line:
+                if not silent:
+                    print(line.strip())
+                output += line
+            else:
+                break
 
     if proc.poll() != 0:
         raise subprocess.CalledProcessError(proc.poll(), command)
