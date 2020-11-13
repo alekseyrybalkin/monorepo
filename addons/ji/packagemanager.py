@@ -10,6 +10,7 @@ import addons.ji.gendb as gendb
 import addons.ji.integrity as integrity
 import addons.ji.make as make
 import addons.ji.queries as queries
+import addons.ji.rebuild as rebuild
 import addons.ji.sources as sources
 import addons.ji.tarball as tarball
 
@@ -108,7 +109,7 @@ class PackageManager:
     def do_action(self):
         action_aliases = {
             'l': 'links-both',
-            'u': 'upgrade-rebuild',
+            'u': 'rebuild',
         }
         action = self.args.action
         action = action_aliases.get(action, action)
@@ -235,10 +236,20 @@ class PackageManager:
             print(item['name'])
 
     @run_as('root')
-    def upgrade_rebuild(self):
+    def rebuild(self):
         self.acquire_lock()
         try:
-            lib.upgrade_rebuild(self)
+            rebuild.rebuild(self, self.args.param)
+        finally:
+            self.release_lock()
+
+    @run_as('root')
+    def rebuild_world(self):
+        self.acquire_lock()
+        try:
+            start_package = self.args.param[0] if len(self.args.param) > 0 else None
+            end_package = self.args.param[1] if len(self.args.param) > 1 else None
+            rebuild.rebuild_world(self, start_package, end_package)
         finally:
             self.release_lock()
 
@@ -246,14 +257,6 @@ class PackageManager:
     def sort(self):
         for item in buildorder.sort(self, self.args.param):
             print(item)
-
-    @run_as('root')
-    def rebuild_world(self):
-        self.acquire_lock()
-        try:
-            lib.rebuild_world(self)
-        finally:
-            self.release_lock()
 
     @run_as('manager')
     def list_old_tarballs(self):
