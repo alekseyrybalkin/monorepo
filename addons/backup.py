@@ -54,7 +54,7 @@ class Backuper:
                     ))
                 os.chdir(old_cwd)
                 with open(keyfile, 'br') as kf:
-                    shell.run('gpg --batch -c --passphrase-fd 0 {}'.format(tarfile), input_bytes=kf.read().strip())
+                    shell.run_with_input('gpg --batch -c --passphrase-fd 0 {}'.format(tarfile), input_bytes=kf.read().strip())
                 self.rsync(tarfile + '.gpg', destdir)
 
     def main(self):

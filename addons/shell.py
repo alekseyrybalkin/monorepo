@@ -4,22 +4,42 @@ import subprocess
 import sys
 
 
-def run(command, shell=False, strip=True, input_bytes=None, stderr=subprocess.STDOUT):
+def run(command, shell=False, strip=True, silent=False):
     if not shell and isinstance(command, str):
         command = command.split(' ')
 
     options = {
+        'stdout': subprocess.PIPE,
+        'stderr': subprocess.STDOUT,
         'shell': shell,
-        'stderr': stderr,
     }
-    if input_bytes:
-        options['input'] = input_bytes
 
-    result = subprocess.check_output(command, **options).decode()
+    with subprocess.Popen(command, **options) as proc:
+        output = ''
+        while proc.poll() is None:
+            line = proc.stdout.readline().decode()
+            if not silent and line:
+                print(line.strip())
+            output += line
+
+    if proc.poll() != 0:
+        raise subprocess.CalledProcessError(proc.poll(), command)
 
     if strip:
-        return result.strip()
-    return result
+        return output.strip()
+    return output
+
+
+def run_with_input(command, input_bytes):
+    if isinstance(command, str):
+        command = command.split(' ')
+
+    options = {
+        'shell': False,
+        'input': input_bytes,
+        'check': True,
+    }
+    subprocess.run(command, **options)
 
 
 def copy_to_clipboard(value):

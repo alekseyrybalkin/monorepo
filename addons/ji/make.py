@@ -5,7 +5,6 @@ import addons.shell as shell
 
 
 def prepare(pm):
-    shell.run('function prepare() { :; }', shell=True)
     pkgbuild = common.source_pkgbuild(pm)
 
     if pkgbuild['vcs']:

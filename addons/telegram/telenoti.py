@@ -67,7 +67,7 @@ def run():
 
         logging.info('sending message from sender {} in chat {}'.format(event.sender_id, event.chat_id))
         cmdline = ['mail', '-Ssendwait', '-s', message_header, '-r', message_from, message_to]
-        shell.run(cmdline, input_bytes=message_body.encode())
+        shell.run_with_input(cmdline, input_bytes=message_body.encode())
 
     client.start()
     client.run_until_disconnected()

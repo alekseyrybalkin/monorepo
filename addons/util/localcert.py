@@ -140,7 +140,7 @@ class LocalCertificateManager:
                 '-text',
                 '-fingerprint',
             ])
-            shell.run(
+            shell.run_with_input(
                 [
                     'certutil',
                     '-d',
