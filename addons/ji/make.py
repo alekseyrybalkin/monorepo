@@ -34,13 +34,17 @@ def prepare(pm):
     )
 
 
-def make(pm):
+def make(pm, package_name=None):
+    if package_name:
+        os.chdir(common.get_repo_dir(pm, package_name))
+
     pm.prepare()
     tar_path = pm.make_worker()
-    new_tar_path = os.path.join(os.getcwd(), os.path.basename(tar_path))
-    shutil.move(tar_path, new_tar_path)
-    shutil.chown(new_tar_path, pm.config['users']['manager']['uid'], pm.config['users']['manager']['gid'])
-    shutil.rmtree(os.path.dirname(tar_path))
+    #FIXME uncomment
+    #new_tar_path = os.path.join(os.getcwd(), os.path.basename(tar_path))
+    #shutil.move(tar_path, new_tar_path)
+    #shutil.chown(new_tar_path, pm.config['users']['manager']['uid'], pm.config['users']['manager']['gid'])
+    #shutil.rmtree(os.path.dirname(tar_path))
 
 
 def make_worker(pm):
@@ -57,71 +61,48 @@ def make_worker(pm):
     for item in glob.iglob('*'):
         shutil.copy(item, builddir)
 
-#    cd /home/${HOUSECARL}/${BUILDDIR}/
-#    unset srcdir
-#    location=`pwd`
-#    . ./PKGBUILD
-#    pkgdir=${location}/${EXE}-dest
-#    if [ -z "${srcdir}" ]; then
-#        srcdir=${location}/${pkgname}-${pkgver}
-#    fi
-#
-#    if [ ! -z ${vcs} ]; then
-#        vcs_repo=${pkgname}
-#        if [ -n "${vcs_pkgname}" ]; then
-#            vcs_repo=${vcs_pkgname}
-#        fi
-#        vcs_repo=`find_vcs_repo ${vcs_repo}`
-#        if [ ${vcs} == "git" ]; then
-#            git clone -s -n ${vcs_repo} ${srcdir}
-#            cd ${srcdir}
-#            if [ ! -z ${gittag} ]; then
-#                set +e
-#                git fetch origin +refs/remotes/*:refs/remotes/origin/*
-#                set -e
-#                git checkout ${gittag}
-#            else
-#                if git branch -a | grep origin/HEAD >/dev/null 2>&1; then
-#                    git checkout origin/HEAD
-#                fi
-#            fi
-#        fi
-#        if [ ${vcs} = 'mercurial' ]; then
-#            hg clone ${vcs_repo} ${srcdir}
-#            cd ${srcdir}
-#            if [ ! -z ${hgtag} ]; then
-#                hg update -r ${hgtag}
-#            fi
-#        fi
-#        if [ ${vcs} = 'fossil' ]; then
-#            mkdir ${srcdir}
-#            cd ${srcdir}
-#            fossil open ${vcs_repo}/${pkgname}.fossil
-#            if [ ! -z ${fossiltag} ]; then
-#                fossil checkout ${fossiltag}
-#            fi
-#        fi
-#    else
-#        if [[ ${srctar} ]]; then
-#            echo "unpacking ${srctar}..."
-#            tar xf ${TARBALLS_HOME}/${srctar}
-#            cd ${srcdir}
-#        fi
-#    fi
-#    if [ ! -d ${srcdir} ]; then
-#        mkdir -p ${srcdir}
-#        cd ${scrdir}
-#    fi
-#
-#    PKG_CONFIG=/usr/bin/pkg-config
-#    export PKG_CONFIG_PATH="/usr/lib/pkgconfig"
-#
-#    build 2>&1 | tee ${location}/make.log
-#    make_exit_status=${PIPESTATUS[0]}
-#    if [ ${make_exit_status} -gt 0 ]; then
-#        exit ${make_exit_status}
-#    fi
-#
+    os.chdir(builddir)
+    pkgbuild = common.source_pkgbuild(pm)
+
+    if pkgbuild['vcs']:
+        vcs_repo = pkgbuild['pkgname']
+        if pkgbuild['vcs_pkgname']:
+            vcs_repo = pkgbuild['vcs_pkgname']
+        vcs_repo_dir = common.find_vcs_repo_dir(pm, vcs_repo)
+
+        if pkgbuild['vcs'] == 'git':
+            shell.run('git clone -s -n {} {}'.format(vcs_repo_dir, pkgbuild['srcdir']))
+            os.chdir(pkgbuild['srcdir'])
+            if pkgbuild['gittag']:
+                shell.run('git checkout {}'.format(pkgbuild['gittag']))
+            else:
+                shell.run('git checkout origin/HEAD')
+        if pkgbuild['vcs'] == 'mercurial':
+            shell.run('hg clone {} {}'.format(vcs_repo_dir, pkgbuild['srcdir']))
+            os.chdir(pkgbuild['srcdir'])
+            if pkgbuild['hgtag']:
+                shell.run('hg update -r {}'.format(pkgbuild['hgtag']))
+        if pkgbuild['vcs'] == 'fossil':
+            os.makedirs(pkgbuild['srcdir'])
+            os.chdir(pkgbuild['srcdir'])
+            shell.run('fossil open {}'.format(os.path.join(vcs_repo_dir, pkgbuild['pkgname'] + '.fossil')))
+            if pkgbuild['fossiltag']:
+                shell.run('fossil checkout {}'.format(pkgbuild['fossiltag']))
+    else:
+        if pkgbuild['srctar']:
+            tar = os.path.join(pm.config['tarballs_path'], pkgbuild['srctar'])
+            tarball.extract_all(tar, '.')
+            os.chdir(pkgbuild['srcdir'])
+
+    if not os.path.isdir(pkgbuild['srcdir']):
+        os.makedirs(pkgbuild['srcdir'])
+        os.chdir(pkgbuild['srcdir'])
+
+    shell.run(
+        'source ../PKGBUILD; set -e; build',
+        shell=True,
+    )
+
 #    maker=${location}/maker.sh
 #    cat > ${maker} << "EOF"
 ##!/bin/sh
@@ -278,8 +259,5 @@ def make_worker(pm):
         builddir,
         tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
     )
-    #FIXME
-    with open(tar, 'tw') as f:
-        f.write('hello')
 
     return tar

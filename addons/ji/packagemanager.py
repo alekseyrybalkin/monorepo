@@ -16,6 +16,7 @@ import addons.ji.sources as sources
 import addons.ji.tarball as tarball
 import addons.ji.uninstall as uninstall
 import addons.ji.upgrade as upgrade
+import addons.shell as shell
 
 config = addons.config.Config('packagemanager', private=False).read()
 
@@ -69,13 +70,19 @@ def run_as(user):
         def wrapper(*args, **kwargs):
             old_egid = os.getegid()
             old_euid = os.geteuid()
+            old_home = os.environ['HOME']
+            old_user = os.environ['USER']
 
             os.setegid(config['users'][user]['gid'])
             os.seteuid(config['users'][user]['uid'])
             old_umask = os.umask(config['users'][user]['umask'])
+            os.environ['HOME'] = shell.home(user=config['users'][user]['name'])
+            os.environ['USER'] = config['users'][user]['name']
 
             result = func(*args, **kwargs)
 
+            os.environ['USER'] = old_user
+            os.environ['HOME'] = old_home
             os.umask(old_umask)
             os.seteuid(old_euid)
             os.setegid(old_egid)
@@ -129,11 +136,12 @@ class PackageManager:
 
     @run_as('root')
     def make(self):
-        make.make(self)
+        package_name = self.args.param[0] if len(self.args.param) > 0 else None
+        make.make(self, package_name)
 
     @run_as('worker')
     def make_worker(self):
-        make.make_worker(self)
+        return make.make_worker(self)
 
     @run_as('manager')
     def download(self):
