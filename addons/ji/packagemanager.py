@@ -146,6 +146,7 @@ class PackageManager:
 
     @run_as('worker')
     def make_fakeroot(self):
+        print('123')
         return make.make_fakeroot(self, self.args.param[0])
 
     @run_as('manager')
