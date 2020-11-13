@@ -107,7 +107,25 @@ def make_worker(pm):
         group=pm.config['users']['worker']['gid'],
     )
 
-#    maker=${location}/maker.sh
+    shell.run('fakeroot {} make-fakeroot'.format(pm.config['exe']))
+    #cd ${location}
+    #green='\e[0;32m'
+    #txtrst='\e[0m'
+    #rm -rf ~/.{cache,cmake,java,npm,config/configstore,cargo,fontconfig,local}
+    #printf "${green}make ok${txtrst}\n"
+    #exit 0
+
+    tar = os.path.join(
+        builddir,
+        tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
+    )
+
+    return tar
+
+
+def make_fakeroot(pm):
+    shell.run('ls -al')
+
 #    cat > ${maker} << "EOF"
 ##!/bin/sh
 #
@@ -245,23 +263,3 @@ def make_worker(pm):
 #{ find . | sed 's/^\.\///g'; } | sort | uniq | \
 #    tar cfa ../${pkgname}-${pkgver}-1-x86_64.pkg.tar.gz --no-recursion -T -
 #EOF
-#    location=${location} srcdir=${srcdir} pkgdir=${pkgdir} \
-#        pkgname=${pkgname} pkgver=${pkgver} \
-#        TARBALLS_HOME=${TARBALLS_HOME} \
-#        generated_files=${generated_files} \
-#        PACMAN=${PACMAN} \
-#        NO_STRIPPING=${NO_STRIPPING} EXE=${EXE} \
-#        fakeroot bash ${maker}
-#    cd ${location}
-#    green='\e[0;32m'
-#    txtrst='\e[0m'
-#    rm -rf ~/.{cache,cmake,java,npm,config/configstore,cargo,fontconfig,local}
-#    printf "${green}make ok${txtrst}\n"
-#    exit 0
-
-    tar = os.path.join(
-        builddir,
-        tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
-    )
-
-    return tar

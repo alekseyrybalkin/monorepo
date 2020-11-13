@@ -143,6 +143,10 @@ class PackageManager:
     def make_worker(self):
         return make.make_worker(self)
 
+    @run_as('worker')
+    def make_fakeroot(self):
+        return make.make_fakeroot(self)
+
     @run_as('manager')
     def download(self):
         tarball.download(self)
