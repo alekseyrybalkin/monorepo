@@ -145,6 +145,8 @@ def make_fakeroot(pm, location):
     with open('/tmp/shell5.txt', 'tw') as f:
         f.write('123')
 
+    print(os.environ['USER'], os.geteuid())
+
     #cd ${location}
     #. ./PKGBUILD
     #rm -rf ${pkgdir}
