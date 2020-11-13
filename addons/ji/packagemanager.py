@@ -172,7 +172,7 @@ class PackageManager:
     def install(self):
         self.acquire_lock()
         try:
-            lib.install(self)
+            install.install(self, self.args.param[0])
         finally:
             self.release_lock()
 
@@ -180,7 +180,7 @@ class PackageManager:
     def upgrade(self):
         self.acquire_lock()
         try:
-            lib.upgrade(self)
+            upgrade.upgrade(self, self.args.param[0])
         finally:
             self.release_lock()
 
@@ -193,7 +193,7 @@ class PackageManager:
     def uninstall(self):
         self.acquire_lock()
         try:
-            lib.uninstall(self)
+            uninstall.uninstall(self, self.args.param[0])
         finally:
             self.release_lock()
 
@@ -257,10 +257,6 @@ class PackageManager:
     def sort(self):
         for item in buildorder.sort(self, self.args.param):
             print(item)
-
-    @run_as('manager')
-    def list_old_tarballs(self):
-        lib.list_old_tarballs(self)
 
     @run_as('manager')
     def pull(self):
