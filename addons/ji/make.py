@@ -22,7 +22,7 @@ def prepare(pm):
     for item in os.listdir('.'):
         shell.run('git ls-files {} --error-unmatch'.format(item))
 
-    shell.run('type prepare >/dev/null 2>&1 || function prepare() { :; }; prepare', shell=True)
+    shell.run('source PKGBUILD; type prepare >/dev/null 2>&1 || function prepare() { :; }; prepare', shell=True)
 
 
 def make(pm):
