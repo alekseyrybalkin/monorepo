@@ -7,7 +7,9 @@ import addons.shell as shell
 
 
 def rebuild(pm, packages):
-    pass
+    for package in buildorder.sort(pm, packages):
+        rebuild_world(pm, package, package)
+
 
 def rebuild_world(pm, start_package=None, end_package=None):
     bom = buildorder.BuildOrderManager(pm)
@@ -32,11 +34,11 @@ def rebuild_world(pm, start_package=None, end_package=None):
         repo_dir = common.get_repo_dir(pm, package)
         os.chdir(repo_dir)
 
-        #FIXME replace with library call
+        # FIXME replace with library call
         shell.run('{} make'.format(pm.config['exe']))
 
         for tar in glob.iglob('*-1-x86_64.pkg.tar.gz'):
-            #FIXME replace with library call
+            # FIXME replace with library call
             shell.run('{} upgrade {}'.format(pm.config['exe'], tar))
 
         os.chdir(old_cwd)
