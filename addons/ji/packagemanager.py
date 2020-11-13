@@ -79,6 +79,7 @@ def run_as(user):
             os.environ['HOME'] = shell.home(user=config['users'][user]['name'])
             os.environ['USER'] = config['users'][user]['name']
 
+            print(os.environ['USER'], os.geteuid())
             result = func(*args, **kwargs)
 
             os.environ['USER'] = old_user
