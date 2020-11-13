@@ -281,4 +281,5 @@ def make_worker(pm):
     #FIXME
     with open(tar, 'tw') as f:
         f.write('hello')
-    print(tar)
+
+    return tar
