@@ -1,5 +1,7 @@
 import os
 import shutil
+import stat
+import tempfile
 
 import addons.ji.common as common
 import addons.ji.gendb as gendb
@@ -21,7 +23,6 @@ def upgrade(pm, tar):
     new_version = package['version']
     old_version = db_package['version']
     print('upgrading {} from {} to {}'.format(package['name'], old_version, new_version))
-    print('checking file owners...')
 
     for item in tarball.list_files(pm, tar):
         file_path = os.path.join('/', item.name)
@@ -47,7 +48,7 @@ def upgrade(pm, tar):
     tarball.extract_all(tar, '/')
 
     old_dirs = set(queries.db_list_dirs(pm, package['name']))
-    new_dirs = set(item.name for item in tarball.list_dirs(pm, tar))
+    new_dirs = set(os.path.join('/', item.name) for item in tarball.list_dirs(pm, tar))
 
     for old_dir in old_dirs - new_dirs:
         users = queries.who_uses_dir(pm, old_dir)
@@ -56,7 +57,7 @@ def upgrade(pm, tar):
                 os.rmdir(old_dir)
 
     old_files = set(queries.db_list_files(pm, package['name']))
-    new_files = set(item.name for item in tarball.list_files(pm, tar))
+    new_files = set(os.path.join('/', item.name) for item in tarball.list_files(pm, tar))
 
     for old_file in old_files - new_files:
         if os.path.exists(old_file):
