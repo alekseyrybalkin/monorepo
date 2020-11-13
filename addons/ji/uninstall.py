@@ -32,8 +32,9 @@ def uninstall(pm, query):
     dirs = queries.db_list_dirs(pm, package['name'])
     for item in sorted(dirs, key=len)[::-1]:
         users = queries.who_uses_dir(pm, item)
-        if len(users) == 1 and users[0]['name'] == package['name'] and not os.path.islink(item) and not os.listdir(item):
-            os.rmdir(item)
+        if len(users) == 1 and users[0]['name'] == package['name']:
+            if not os.path.islink(item) and not os.listdir(item):
+                os.rmdir(item)
 
     if '/usr/share/info' in dirs:
         common.recreate_info_dir()
