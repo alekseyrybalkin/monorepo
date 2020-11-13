@@ -54,7 +54,7 @@ def make_worker(pm):
     )
     shutil.rmtree(builddir)
     os.makedirs(builddir)
-    for item in glob.iglob(*):
+    for item in glob.iglob('*'):
         shutil.copy(item, builddir)
 
 #    cd /home/${HOUSECARL}/${BUILDDIR}/
