@@ -104,8 +104,27 @@ def make_worker(pm):
         os.makedirs(pkgbuild['srcdir'])
         os.chdir(pkgbuild['srcdir'])
 
+    functions = ';'.join([
+        (
+            'function find_vcs_repo() {{      '
+            '    find {}                      '
+            '        -mindepth 2              '
+            '        -maxdepth 2              '
+            '        -type d                  '
+            '        -name ${{1}}             '
+            '    | grep -v _ignore;           '
+            '}}                               '
+        ).format(pm.config['sources_path']),
+    ])
+    env_vars = ';'.join([
+        'location={}'.format(pkgbuild['location']),
+    ])
+
     shell.run(
-        'source ../PKGBUILD; set -e; build',
+        '{}; {}; source ../PKGBUILD; set -e; build'.format(
+            functions,
+            env_vars,
+        ),
         shell=True,
         user=pm.config['users']['worker']['uid'],
         group=pm.config['users']['worker']['gid'],
@@ -141,17 +160,23 @@ def make_worker(pm):
 
 
 def make_fakeroot(pm, location):
-    python_package = (
-        'function python_package() {      '
-        '    pip install --no-deps        '
-        '        --no-build-isolation     '
-        '        --ignore-installed       '
-        '        --compile                '
-        '        --prefix=/usr            '
-        '        --root=${pkgdir}         '
-        '        .;                       '
-        '}                                '
-    )
+    functions = ';'.join([
+        (
+            'function python_package() {      '
+            '    pip install --no-deps        '
+            '        --no-build-isolation     '
+            '        --ignore-installed       '
+            '        --compile                '
+            '        --prefix=/usr            '
+            '        --root=${pkgdir}         '
+            '        .;                       '
+            '}                                '
+        ),
+    ])
+    env_vars = ';'.join([
+        'pkgdir={}'.format(pkgbuild['pkgdir']),
+        'location={}'.format(pkgbuild['location']),
+    ])
 
     os.chdir(location)
     pkgbuild = common.source_pkgbuild(pm)
@@ -160,9 +185,9 @@ def make_fakeroot(pm, location):
     os.chdir(pkgbuild['srcdir'])
 
     shell.run(
-        '{}; source ../PKGBUILD; pkgdir={}; set -e; package'.format(
-            python_package,
-            pkgbuild['pkgdir'],
+        '{}; {}; source ../PKGBUILD; set -e; package'.format(
+            functions,
+            env_vars,
         ),
         shell=True,
         user=pm.config['users']['worker']['uid'],
