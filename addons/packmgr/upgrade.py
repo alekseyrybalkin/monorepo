@@ -59,7 +59,7 @@ def upgrade(pm, tar):
     old_dirs = set(queries.db_list_dirs(pm, package['name']))
     new_dirs = set(os.path.join('/', item.name) for item in tarball.list_dirs(pm, tar))
 
-    for old_dir in old_dirs - new_dirs:
+    for old_dir in sorted(list(old_dirs - new_dirs), key=len)[::-1]:
         users = queries.who_uses_dir(pm, old_dir)
         if len(users) == 1 and users[0]['name'] == package['name']:
             if not os.path.islink(old_dir) and not os.listdir(old_dir):
