@@ -25,7 +25,7 @@ class Package:
         command = 'source {}; '.format(path)
         for field in pkgbuild_fields:
             command += 'echo ${}; '.format(field)
-        values = [v.strip() for v in shell.run([command], shell=True, strip=False, silent=True).split('\n')[:-1]]
+        values = [v.strip() for v in shell.output([command], shell=True, strip=False).split('\n')[:-1]]
 
         return cls(**{k: v for k, v in zip(pkgbuild_fields, values)})
 

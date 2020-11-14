@@ -22,7 +22,7 @@ def update_links(pm, query):
     for item in queries.db_list_files(pm, package['name']):
         if not any(item.endswith(ext) for ext in pm.config['readelf_skip_extensions']):
             try:
-                readelf = shell.run('readelf --dynamic {}'.format(item), silent=True)
+                readelf = shell.output('readelf --dynamic {}'.format(item))
             except subprocess.CalledProcessError:
                 continue
             for line in readelf.split('\n'):

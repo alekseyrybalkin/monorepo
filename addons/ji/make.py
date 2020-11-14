@@ -35,7 +35,6 @@ def prepare(pm):
     shell.run(
         f'source {pkgbuild_path}; type prepare >/dev/null 2>&1 || function prepare() {{ :; }}; prepare',
         shell=True,
-        silent=True,
         user=pm.config['users']['manager']['uid'],
         group=pm.config['users']['manager']['gid'],
     )
@@ -110,6 +109,7 @@ def make_worker(pm):
         shell=True,
         user=pm.config['users']['worker']['uid'],
         group=pm.config['users']['worker']['gid'],
+        tee=os.path.join(pkgbuild['location'], 'build.log'),
     )
 
     shell.run(
@@ -167,6 +167,7 @@ def make_fakeroot(pm, location):
         shell=True,
         user=pm.config['users']['worker']['uid'],
         group=pm.config['users']['worker']['gid'],
+        tee=os.path.join(pkgbuild['location'], 'package.log'),
     )
 
     #cd ${srcdir}
@@ -260,7 +261,7 @@ def make_fakeroot(pm, location):
     #
     #cd ${location}
     #mkdir -p ${EXE}-dest/usr/share/${EXE}
-    #for f in PKGBUILD make.log install.log; do
+    #for f in PKGBUILD build.log package.log; do
     #    mv ${f} ${EXE}-dest/usr/share/${EXE}/${pkgname}.${f}
     #done
     #

@@ -75,11 +75,11 @@ def local_main():
         shell.run('sudo mv {} /etc/tinyproxy/tinyproxy.conf'.format(tp_file))
         shell.run('sudo mv {} /etc/tinyproxy/tinyproxy-tor.conf'.format(tp_tor_file))
 
-        tinyproxy_state = shell.run('systemctl show tinyproxy --property=ActiveState', strip=True, silent=True)
+        tinyproxy_state = shell.output('systemctl show tinyproxy --property=ActiveState', strip=True)
         if tinyproxy_state == 'ActiveState=active':
             shell.run('sudo systemctl restart tinyproxy')
 
-        tinyproxy_tor_state = shell.run('systemctl show tinyproxy-tor --property=ActiveState', strip=True, silent=True)
+        tinyproxy_tor_state = shell.output('systemctl show tinyproxy-tor --property=ActiveState', strip=True)
         if tinyproxy_tor_state == 'ActiveState=active':
             shell.run('sudo systemctl restart tinyproxy-tor')
 

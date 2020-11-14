@@ -4,7 +4,51 @@ import subprocess
 import sys
 
 
-def run(command, shell=False, strip=True, silent=False, user=None, group=None):
+def run(command, shell=False, silent=False, user=None, group=None, tee=None):
+    if not shell and isinstance(command, str):
+        command = command.split(' ')
+
+    options = {
+        'stdout': subprocess.PIPE,
+        'stderr': subprocess.STDOUT,
+        'shell': shell,
+        'user': user,
+        'group': group,
+    }
+
+    if tee:
+        tee_log = open(tee, 'tw')
+
+    with subprocess.Popen(command, **options) as proc:
+        while proc.poll() is None:
+            while True:
+                line = proc.stdout.readline().decode()
+                if line:
+                    if not silent:
+                        sys.stdout.write(line)
+                    if tee:
+                        print('XXX', tee)
+                        tee_log.write(line)
+                else:
+                    break
+        while True:
+            line = proc.stdout.readline().decode()
+            if line:
+                if not silent:
+                    sys.stdout.write(line)
+                if tee:
+                    tee_log.write(line)
+            else:
+                break
+
+    if tee:
+        tee_log.close()
+
+    if proc.poll() != 0:
+        raise subprocess.CalledProcessError(proc.poll(), command)
+
+
+def output(command, shell=False, strip=True, silent=True, user=None, group=None):
     if not shell and isinstance(command, str):
         command = command.split(' ')
 

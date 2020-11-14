@@ -35,7 +35,7 @@ def source_pkgbuild(pm, pkgbuild=None):
     command += 'source {}; '.format(pkgbuild)
     for field in pkgbuild_fields:
         command += 'echo ${}; '.format(field)
-    values = [v.strip() for v in shell.run(command, shell=True, strip=False, silent=True).split('\n')]
+    values = [v.strip() for v in shell.output(command, shell=True, strip=False).split('\n')]
 
     for key, value in zip(pkgbuild_fields, values):
         result[key] = value
@@ -78,6 +78,6 @@ def recreate_info_dir():
 
     os.remove('dir')
     for info_file in os.listdir('.'):
-        shell.run('install-info {} dir'.format(info_file), silent=True)
+        shell.run('install-info {} dir'.format(info_file))
 
     os.chdir(old_cwd)

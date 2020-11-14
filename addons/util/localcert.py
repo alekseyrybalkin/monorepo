@@ -56,7 +56,7 @@ class LocalCertificateManager:
                 os.chdir(tmpdir)
                 shell.run('sudo ji u nss')
 
-            nginx_running = 'SubState=running' in shell.run('systemctl show nginx', silent=True)
+            nginx_running = 'SubState=running' in shell.output('systemctl show nginx')
             if nginx_running:
                 shell.run('sudo systemctl restart nginx')
 
@@ -124,7 +124,7 @@ class LocalCertificateManager:
             shell.run('bash update.bash')
             os.chdir(tmpdir)
 
-            nginx_running = 'SubState=running' in shell.run('systemctl show nginx', silent=True)
+            nginx_running = 'SubState=running' in shell.output('systemctl show nginx')
             if nginx_running:
                 shell.run('sudo systemctl restart nginx')
 
@@ -132,14 +132,17 @@ class LocalCertificateManager:
 
     def trust(self):
         for cert in glob.iglob(os.path.join('/', self.config['local-cert-location'], '*.pem')):
-            fingerprint = shell.run([
-                'openssl',
-                'x509',
-                '-in',
-                cert,
-                '-text',
-                '-fingerprint',
-            ])
+            fingerprint = shell.output(
+                [
+                    'openssl',
+                    'x509',
+                    '-in',
+                    cert,
+                    '-text',
+                    '-fingerprint',
+                ],
+                silent=False,
+            )
             shell.run_with_input(
                 [
                     'certutil',

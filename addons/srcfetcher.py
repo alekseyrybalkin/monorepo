@@ -94,11 +94,11 @@ class SourceFetcher:
 
             vcs = repo.guess_vcs(os.getcwd())
             if vcs == 'git':
-                remotes = shell.run('git remote', silent=True).split()
+                remotes = shell.output('git remote').split()
                 for remote in remotes:
                     shell.run('git fetch -p --tags {}'.format(remote))
 
-                if shell.run('git config --bool core.bare', silent=True) == 'false':
+                if shell.output('git config --bool core.bare') == 'false':
                     shell.run('git merge --ff-only')
             elif vcs == 'mercurial':
                 shell.run('hg pull')
@@ -125,12 +125,12 @@ class SourceFetcher:
         try:
             vcs = repo.guess_vcs(os.getcwd())
             if vcs == 'git':
-                remotes = shell.run('git remote', silent=True).split()
+                remotes = shell.output('git remote').split()
                 result = []
                 for remote in remotes:
                     result.append((
                         'git',
-                        shell.run('git remote get-url {}'.format(remote), silent=True),
+                        shell.output('git remote get-url {}'.format(remote)),
                         remote,
                     ))
                 return result
@@ -143,7 +143,7 @@ class SourceFetcher:
                             break
                 return [('mercurial', url, '')]
             elif vcs == 'fossil':
-                return [('fossil', shell.run('fossil remote-url', silent=True), '')]
+                return [('fossil', shell.output('fossil remote-url'), '')]
         except subprocess.CalledProcessError:
             pass
 
