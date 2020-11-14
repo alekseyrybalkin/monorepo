@@ -223,7 +223,7 @@ def make_fakeroot(pm, location):
     if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
         for item in os.listdir(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
             if not item.startswith('en') and not item.startswith('ru'):
-                os.remove(os.path.join(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale', item)))
+                shutil.rmtree(os.path.join(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale', item)))
 
     ## remove hicolor and locolor icons
     #if [ -d ${pkgdir}/usr/share/icons/hicolor ]; then
