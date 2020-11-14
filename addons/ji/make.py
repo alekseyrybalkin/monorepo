@@ -212,13 +212,14 @@ def make_fakeroot(pm, location):
         for root, dirs, files in os.walk(pkgbuild['pkgdir']):
             for item in dirs + files:
                 if ' ' in item:
-                    raise RuntimeError('spaces in file/dir {} are not allowed'.format(item))
+                    raise RuntimeError('spaces in file/dir "{}" are not allowed'.format(item))
 
-    #
-    ## remove *.la files
-    #if [ -d ${pkgdir}/usr/lib ]; then
-    #    find ${pkgdir}/usr/lib -name "*.la" | xargs rm -vf
-    #fi
+    if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
+        for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
+            for item in files:
+                if item.endswith('.la'):
+                    print('removing {}'.format(os.path.join(root, item)))
+                    os.remove(os.path.join(root, item))
     #
     ## remove unused translations
     #if [ -d ${pkgdir}/usr/share/locale ]; then
