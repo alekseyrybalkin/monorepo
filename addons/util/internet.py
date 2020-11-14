@@ -79,14 +79,14 @@ class Internet:
 
     def gen_jinni_environment(self, access_point):
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp_file_path = os.path.join(tmpdir, 'jinni-environment')
+            tmp_file_path = os.path.join(tmpdir, 'internet-environment')
             with open(tmp_file_path, 'tw') as tmp_file:
                 tmp_file.write('WIRED_DEVICE={}\n'.format(os.environ['WIRED_DEVICE']))
                 tmp_file.write('WIFI_DEVICE={}\n'.format(os.environ['WIFI_DEVICE']))
                 tmp_file.write('SSID={}\n'.format(access_point['ssid']))
-            shell.run('sudo mv {} {}'.format(tmp_file_path, '/run/jinni-environment'))
-            shell.run('sudo chown root: {}'.format('/run/jinni-environment'))
-            shell.run('sudo chmod 600 {}'.format('/run/jinni-environment'))
+            shell.run('sudo mv {} {}'.format(tmp_file_path, '/run/internet-environment'))
+            shell.run('sudo chown root: {}'.format('/run/internet-environment'))
+            shell.run('sudo chmod 600 {}'.format('/run/internet-environment'))
 
     def gen_wpa_supplicant_conf(self, access_point):
         wpa_conf = shell.output(['wpa_passphrase', access_point['ssid'], access_point['pass']])
