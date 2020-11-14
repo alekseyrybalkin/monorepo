@@ -5,8 +5,8 @@ import stat
 import subprocess
 import time
 
-import addons.ji.common as common
-import addons.ji.tarball as tarball
+import addons.packmgr.common as common
+import addons.packmgr.tarball as tarball
 import addons.shell as shell
 
 

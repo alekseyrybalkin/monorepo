@@ -2,7 +2,7 @@ import functools
 import os
 
 import addons.db
-import addons.ji.common as common
+import addons.packmgr.common as common
 import addons.shell as shell
 import addons.srcfetcher
 import addons.updater.repo as repo

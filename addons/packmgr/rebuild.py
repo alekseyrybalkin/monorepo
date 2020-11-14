@@ -1,11 +1,11 @@
 import glob
 import os
 
-import addons.ji.buildorder as buildorder
-import addons.ji.common as common
-import addons.ji.make as make
-import addons.ji.tarball as tarball
-import addons.ji.upgrade as upgrade
+import addons.packmgr.buildorder as buildorder
+import addons.packmgr.common as common
+import addons.packmgr.make as make
+import addons.packmgr.tarball as tarball
+import addons.packmgr.upgrade as upgrade
 import addons.shell as shell
 
 

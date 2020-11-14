@@ -1,8 +1,8 @@
 import glob
 import os
 
-import addons.ji.queries as queries
-import addons.ji.common as common
+import addons.packmgr.queries as queries
+import addons.packmgr.common as common
 import addons.shell as shell
 
 

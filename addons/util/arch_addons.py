@@ -18,7 +18,7 @@ pkgver = 1-1
 pkgdesc = addons
 url = https://addons.com
 builddate = {}
-packager = ji
+packager = anonymous
 arch = x86_64
         '''.format(int(time.time())).strip() + '\n')
                 with open('/etc/arch-depend', 'tr') as arch_depend:

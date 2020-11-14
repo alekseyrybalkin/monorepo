@@ -4,9 +4,9 @@ import re
 import subprocess
 import tempfile
 
-import addons.ji.common as common
-import addons.ji.tarball as tarball
-import addons.ji.queries as queries
+import addons.packmgr.common as common
+import addons.packmgr.tarball as tarball
+import addons.packmgr.queries as queries
 import addons.shell as shell
 
 

@@ -1,4 +1,4 @@
-import addons.ji.common as common
+import addons.packmgr.common as common
 
 
 def ls(pm):

@@ -38,7 +38,7 @@ setup(
             'unzip = addons.util.unzip:main',
             'hostconf = addons.util.hostconf:main',
             'spameater = addons.spameater:local_main',
-            'ji = addons.ji.packagemanager:main',
+            'ji = addons.packmgr.main:main',
         ],
     },
     include_package_data=True,

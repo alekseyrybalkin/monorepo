@@ -2,7 +2,7 @@ import os
 import tarfile
 import urllib.request
 
-import addons.ji.common as common
+import addons.packmgr.common as common
 
 
 def get_tarball_suffix():
