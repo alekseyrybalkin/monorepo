@@ -239,14 +239,14 @@ def make_fakeroot(pm, location):
             for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/bin')):
                 for item in files:
                     try:
-                        shell.run('strip --strip-debug {}'.format(os.path.join(root, item)))
+                        shell.run('strip --strip-debug {}'.format(os.path.join(root, item)), silent=True)
                     except subprocess.CalledProcessError:
                         pass
         if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
             for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
                 for item in files:
                     try:
-                        shell.run('strip --strip-debug {}'.format(os.path.join(root, item)))
+                        shell.run('strip --strip-debug {}'.format(os.path.join(root, item)), silent=True)
                     except subprocess.CalledProcessError:
                         pass
 
