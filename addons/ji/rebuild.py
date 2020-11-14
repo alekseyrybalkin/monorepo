@@ -35,9 +35,7 @@ def rebuild_world(pm, start_package=None, end_package=None):
         old_cwd = os.getcwd()
         repo_dir = common.get_repo_dir(pm, package)
         os.chdir(repo_dir)
-
-        # FIXME replace with library call
-        shell.run('{} make'.format(pm.config['exe']))
+        make.make(pm)
 
         glob_pattern = '*{}'.format(tarball.get_tarball_suffix())
         for tar in glob.iglob(glob_pattern):

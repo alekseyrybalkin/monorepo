@@ -228,8 +228,9 @@ def make_fakeroot(pm, location):
 
     if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
         for item in os.listdir(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
-            if not item.startswith('en') and not item.startswith('ru'):
-                shutil.rmtree(os.path.join(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale', item)))
+            item_path = os.path.join(pkgbuild['pkgdir'], 'usr/share/locale', item)
+            if os.path.isdir(item_path) and not item.startswith('en') and not item.startswith('ru'):
+                shutil.rmtree(item_path)
 
     shutil.rmtree(os.path.join(pkgbuild['pkgdir'], 'usr/share/icons/hicolor'), ignore_errors=True)
     shutil.rmtree(os.path.join(pkgbuild['pkgdir'], 'usr/share/icons/locolor'), ignore_errors=True)

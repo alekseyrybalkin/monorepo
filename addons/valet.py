@@ -117,7 +117,23 @@ class Valet:
 
     def main(self, toggle_done):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        day, tasks, done, email = self.get_data(toggle_done)
 
+        indent = '' if email else ' ' * 4
+        if not email:
+            os.system('clear')
+        print()
+        self.color_print('{}{}'.format(indent, day.strftime('%d.%m.%Y  %A')), 7, email)
+        print()
+        for i, r in enumerate(tasks):
+            self.color_print(
+                '{}   {:>2d} [{}] '.format(indent, i, 'v' if r in done else ' ') + r,
+                2 if r in done else 7,
+                email,
+            )
+        print()
+
+    def get_data(self, toggle_done):
         routines = []
 
         config = addons.config.Config('valet').read()
@@ -143,19 +159,7 @@ class Valet:
 
         done = set(row['task'] for row in self.db.select_many('select task from done where day = ?', (day,)))
 
-        indent = '' if args.email else ' ' * 4
-        if not args.email:
-            os.system('clear')
-        print()
-        self.color_print('{}{}'.format(indent, day.strftime('%d.%m.%Y  %A')), 7, args.email)
-        print()
-        for i, r in enumerate(tasks):
-            self.color_print(
-                '{}   {:>2d} [{}] '.format(indent, i, 'v' if r in done else ' ') + r,
-                2 if r in done else 7,
-                args.email,
-            )
-        print()
+        return day, tasks, done, args.email
 
 
 def just_show():
