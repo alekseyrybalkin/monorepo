@@ -54,7 +54,7 @@ class LocalCertificateManager:
                 os.chdir(self.common_config['configs-path'])
                 shell.run('bash update.bash')
                 os.chdir(tmpdir)
-                shell.run('sudo ji u nss')
+                shell.run('sudo packmgr u nss')
 
             nginx_running = 'SubState=running' in shell.output('systemctl show nginx')
             if nginx_running:

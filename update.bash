@@ -14,4 +14,4 @@ else
 fi
 
 srcfetcher python-addons
-sudo ji u python-addons
+sudo packmgr u python-addons
