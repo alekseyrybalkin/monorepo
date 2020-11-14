@@ -160,6 +160,12 @@ def make_worker(pm):
 
 
 def make_fakeroot(pm, location):
+    os.chdir(location)
+    pkgbuild = common.source_pkgbuild(pm)
+
+    os.makedirs(pkgbuild['pkgdir'])
+    os.chdir(pkgbuild['srcdir'])
+
     functions = ';'.join([
         (
             'function python_package() {      '
@@ -177,12 +183,6 @@ def make_fakeroot(pm, location):
         'pkgdir={}'.format(pkgbuild['pkgdir']),
         'location={}'.format(pkgbuild['location']),
     ])
-
-    os.chdir(location)
-    pkgbuild = common.source_pkgbuild(pm)
-
-    os.makedirs(pkgbuild['pkgdir'])
-    os.chdir(pkgbuild['srcdir'])
 
     shell.run(
         '{}; {}; source ../PKGBUILD; set -e; package'.format(
