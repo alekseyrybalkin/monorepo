@@ -7,8 +7,10 @@ import signal
 import subprocess
 
 import addons.config
+import addons.db
 import addons.helpers
 import addons.shell as shell
+import addons.valet
 
 
 class Inspector:
@@ -134,10 +136,11 @@ class Inspector:
                 if e.output:
                     print(e.output)
 
-        # FIXME make a library call
-        undone_tasks = shell.output('r').count('[ ]')
-        if undone_tasks:
-            print('undone tasks: {}'.format(undone_tasks))
+        with addons.db.DB('valet') as db:
+            _, tasks, done, _ = addons.valet.Valet(db).get_data(toggle_done=False)
+            undone_tasks = len([task for task in tasks if task not in done])
+            if undone_tasks:
+                print('undone tasks: {}'.format(undone_tasks))
 
         allowed_domains = self.config['allowed_domains']
         domains_config = addons.config.Config('domains').read()
