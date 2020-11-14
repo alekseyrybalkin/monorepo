@@ -83,3 +83,10 @@ def check_conflicts(pm, tar):
             conflicts.append('{} already exists on filesystem and is not a dir'.format(full_path))
 
     return conflicts
+
+
+def create(subject_dir, tar_path):
+    with tarfile.open(tar_path, 'w:gz') as tar:
+        os.chdir(subject_dir)
+        for item in os.listdir('.'):
+            tar.add(item)

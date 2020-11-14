@@ -280,5 +280,8 @@ def make_fakeroot(pm, location):
                     if line.startswith('provides = ') or line.startswith('depend = '):
                         pkginfo.write(line)
 
-    #{ find . | sed 's/^\.\///g'; } | sort | uniq | \
-    #    tar cfa ../${pkgname}-${pkgver}-1-x86_64.pkg.tar.gz --no-recursion -T -
+    tar = os.path.join(
+        pkgbuild['location'],
+        tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
+    )
+    tarball.create(pkgbuild['pkgdir'], tar)
