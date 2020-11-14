@@ -30,16 +30,6 @@ def install(pm, tar):
     if any(item.name == 'usr/share/info' for item in tarball.list_dirs(pm, tar)):
         common.recreate_info_dir()
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        relative_path = os.path.join('usr/share', pm.config['exe'], '{}.PKGBUILD'.format(package['name']))
-        tarball.extract_file(tar, relative_path, tmpdir)
-        shell.run(
-            'source {}; type after_install >/dev/null 2>&1 || function after_install() {{ :; }}; after_install'.format(
-                os.path.join(tmpdir, relative_path),
-            ),
-            shell=True,
-        )
-
     installed_path = os.path.join(pm.config['data_path'], 'installed')
     installed_tar = os.path.join(installed_path, os.path.basename(tar))
     shutil.move(
@@ -51,4 +41,14 @@ def install(pm, tar):
 
     gendb.gen_db(pm)
     shell.run('ldconfig')
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        relative_path = os.path.join('usr/share', pm.config['exe'], '{}.PKGBUILD'.format(package['name']))
+        tarball.extract_file(installed_tar, relative_path, tmpdir)
+        shell.run(
+            'source {}; type after_install >/dev/null 2>&1 || function after_install() {{ :; }}; after_install'.format(
+                os.path.join(tmpdir, relative_path),
+            ),
+            shell=True,
+        )
     print(shell.colorize('install ok', color=2))
