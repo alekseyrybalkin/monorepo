@@ -234,6 +234,7 @@ def make_fakeroot(pm, location):
             os.makedirs(os.path.join(pkgbuild['pkgdir'], os.path.dirname(item)), exist_ok=True)
 
     if not pkgbuild['disable_stripping']:
+        print('stripping...')
         if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/bin')):
             for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/bin')):
                 for item in files:
