@@ -48,11 +48,10 @@ def make(pm, package_name=None):
 
     pm.prepare()
     tar_path = pm.make_worker()
-    #FIXME uncomment
-    #new_tar_path = os.path.join(os.getcwd(), os.path.basename(tar_path))
-    #shutil.move(tar_path, new_tar_path)
-    #shutil.chown(new_tar_path, pm.config['users']['manager']['uid'], pm.config['users']['manager']['gid'])
-    #shutil.rmtree(os.path.dirname(tar_path))
+    new_tar_path = os.path.join(os.getcwd(), os.path.basename(tar_path))
+    shutil.move(tar_path, new_tar_path)
+    shutil.chown(new_tar_path, pm.config['users']['manager']['uid'], pm.config['users']['manager']['gid'])
+    shutil.rmtree(os.path.dirname(tar_path))
 
 
 def make_worker(pm):
@@ -159,7 +158,6 @@ def make_worker(pm):
         builddir,
         tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
     )
-
     return tar
 
 
