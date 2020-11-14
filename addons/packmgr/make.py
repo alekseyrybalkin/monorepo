@@ -276,7 +276,7 @@ def make_fakeroot(pm, location):
         pkginfo.write('pkgdesc = \n')
         pkginfo.write('url = \n')
         pkginfo.write('builddate = {}\n'.format(int(time.time())))
-        pkginfo.write('packager = {}\n'.format(pm.config['exe']))
+        pkginfo.write('packager = anonymous\n')
         pkginfo.write('arch = x86_64\n')
 
         if os.path.exists(os.path.join(pkgbuild['srcdir'], 'arch-depend')):

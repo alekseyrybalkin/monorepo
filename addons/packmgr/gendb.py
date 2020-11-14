@@ -101,6 +101,9 @@ def update_new_tarballs(pm):
             # generated files
             with tempfile.TemporaryDirectory() as tmpdir:
                 relative_path = os.path.join('usr/share', pm.config['exe'], '{}.PKGBUILD'.format(package))
+                #FIXME remove after full rebuild
+                if not os.path.exists(relative_path):
+                    relative_path = os.path.join('usr/share', 'ji', '{}.PKGBUILD'.format(package))
                 tarball.extract_file(filename, relative_path, tmpdir)
                 pkgbuild = common.source_pkgbuild(pm, pkgbuild=os.path.join(tmpdir, relative_path))
                 for generated_file in pkgbuild['generated_files'].strip().split(' '):
