@@ -25,6 +25,7 @@ def source_pkgbuild(pm, pkgbuild=None):
         'relmon_id',
         'updater_rules',
         'generated_files',
+        'disable_stripping',
     ]
 
     result = {}

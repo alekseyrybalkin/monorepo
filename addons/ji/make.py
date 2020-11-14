@@ -232,23 +232,23 @@ def make_fakeroot(pm, location):
         for item in pkgbuild['generated_files'].split(' '):
             os.makedirs(os.path.join(pkgbuild['pkgdir'], os.path.dirname(item)), exist_ok=True)
 
-    ## install dirs for generated files
-    #if [ -n "${generated_files}" ]; then
-    #    for i in ${generated_files}; do
-    #        mkdir -p ${pkgdir}/`dirname ${i}`
-    #    done
-    #fi
-    #
-    #if [ -z "${NO_STRIPPING}" ]; then
-    #    echo "Stripping..."
-    #    if [ -d "${pkgdir}/usr/bin" ]; then
-    #        find ${pkgdir}/usr/bin -type f -exec strip --strip-debug '{}' ';' >/dev/null 2>&1
-    #    fi
-    #    if [ -d "${pkgdir}/usr/lib" ]; then
-    #        find ${pkgdir}/usr/lib -type f -exec strip --strip-debug '{}' ';' >/dev/null 2>&1
-    #    fi
-    #fi
-    #
+    if not pkgbuild['disable_stripping']:
+        print('stripping...')
+        if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/bin')):
+            for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/bin')):
+                for item in files:
+                    try:
+                        shell.run('strip --strip-debug {}'.format(os.path.join(root, item)))
+                    except subprocess.CalledProcessError:
+                        pass
+        if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
+            for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
+                for item in files:
+                    try:
+                        shell.run('strip --strip-debug {}'.format(os.path.join(root, item)))
+                    except subprocess.CalledProcessError:
+                        pass
+
     #cd ${location}
     #mkdir -p ${EXE}-dest/usr/share/${EXE}
     #for f in PKGBUILD build.log package.log; do
