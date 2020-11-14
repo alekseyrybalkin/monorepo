@@ -94,6 +94,11 @@ def upgrade(pm, tar):
     shutil.chown(installed_tar, 'root', 'root')
     os.chmod(installed_tar, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
+    uninstalled_path = os.path.join(pm.config['data_path'], 'uninstalled')
+    old_tar = os.path.join(uninstalled_path, tarball.get_tarball_name(db_package['name'], db_package['version']))
+    if os.path.exists(old_tar):
+        os.remove(old_tar)
+
     gendb.gen_db(pm)
     shell.run('ldconfig')
     print(shell.colorize('upgrade ok', color=2))
