@@ -38,6 +38,7 @@ def rebuild_world(pm, start_package=None, end_package=None):
         os.chdir(repo_dir)
         make.make(pm)
 
+        os.chdir(repo_dir)
         glob_pattern = '*{}'.format(tarball.get_tarball_suffix())
         for tar in glob.iglob(glob_pattern):
             upgrade.upgrade(pm, tar)
