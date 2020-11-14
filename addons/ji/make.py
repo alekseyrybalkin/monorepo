@@ -198,55 +198,22 @@ def make_fakeroot(pm, location):
         tee=os.path.join(pkgbuild['location'], 'package.log'),
     )
 
-    #cd ${srcdir}
-    #package 2>&1 | tee ${location}/install.log
-    #install_exit_status=${PIPESTATUS[0]}
-    #if [ ${install_exit_status} -gt 0 ]; then
-    #    exit ${install_exit_status}
-    #fi
-    #
-    ## fix /usr/share/info/dir
-    #rm -fv ${pkgdir}/usr/share/info/dir
-    #if [ "${pkgname}" != "filesystem" ]; then
-    #    pushd ${pkgdir}
-    #    regexp="^$"
-    #    for i in /opt /boot /etc /usr; do
-    #        regexp="${regexp}|^${i}$"
-    #    done
-    #    baddirs=`find . -maxdepth 1 -type d | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
-    #    if [ -n "${baddirs}" ]; then
-    #        echo " *** ERROR ***: package tries to use bad dirs:"
-    #        echo "${baddirs}"
-    #        exit 1
-    #    fi
-    #    if [ -d usr ]; then
-    #        for i in /usr/bin /usr/include /usr/lib /usr/share; do
-    #            regexp="${regexp}|^${i}$"
-    #        done
-    #        baddirs=`find ./usr -maxdepth 1 -type d | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
-    #        if [ -n "${baddirs}" ]; then
-    #            echo " *** ERROR ***: package tries to use bad dirs:"
-    #            echo "${baddirs}"
-    #            exit 1
-    #        fi
-    #        for i in /usr/sbin /usr/lib64; do
-    #            regexp="${regexp}|^${i}$"
-    #        done
-    #        baddirs=`find ./usr -maxdepth 1 | sed "s/^\.//g" | grep -v -E "${regexp}"` && true
-    #        if [ -n "${baddirs}" ]; then
-    #            echo " *** ERROR ***: package tries to use bad non-dirs in /usr:"
-    #            echo "${baddirs}"
-    #            exit 1
-    #        fi
-    #    fi
-    #    files_with_spaces=`find . | grep -E "\ "` || true
-    #    if [ -n "${files_with_spaces}" ]; then
-    #        echo " *** ERROR ***: package has file names with spaces:"
-    #        echo "${files_with_spaces}"
-    #        exit 1
-    #    fi
-    #    popd
-    #fi
+    if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/share/info/dir')):
+        os.remove(os.path.join(pkgbuild['pkgdir'], 'usr/share/info/dir'))
+
+    if pkgbuild['pkgname'] != 'filesystem':
+        for item in os.listdir(pkgbuild['pkgdir']):
+            if item not in ['opt', 'boot', 'etc', 'usr']:
+                raise RuntimeError('file/dir /{} is not allowed'.format(item))
+        if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr')):
+            for item in os.listdir(os.path.join(pkgbuild['pkgdir'], 'usr')):
+                if item not in ['bin', 'include', 'lib', 'share']:
+                    raise RuntimeError('file/dir /usr/{} is not allowed'.format(item))
+        for root, dirs, files in os.walk(pkgbuild['pkgdir']):
+            for item in dirs + files:
+                if ' ' in item:
+                    raise RuntimeError('spaces in file/dir {} are not allowed'.format(item))
+
     #
     ## remove *.la files
     #if [ -d ${pkgdir}/usr/lib ]; then
