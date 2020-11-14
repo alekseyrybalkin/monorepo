@@ -62,6 +62,10 @@ def output(command, shell=False, strip=True, silent=True, user=None, group=None)
         'user': user,
         'group': group,
     }
+    # FIXME remove after Arch upgrades python to 3.9
+    if sys.version_info.minor < 9:
+        del options['user']
+        del options['group']
 
     with subprocess.Popen(command, **options) as proc:
         output = ''
