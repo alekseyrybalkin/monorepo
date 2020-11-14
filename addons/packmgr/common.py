@@ -69,6 +69,8 @@ def find_vcs_repo_dir(pm, vcs_repo):
     for root, dirs, files in os.walk(pm.config['sources_path']):
         if os.path.dirname(root) == pm.config['sources_path'] and vcs_repo in dirs:
             return os.path.join(root, vcs_repo)
+        if '_ignore' in dirs:
+            dirs.remove('_ignore')
         if root != pm.config['sources_path'] and os.path.dirname(root) != pm.config['sources_path']:
             dirs.clear()
 
