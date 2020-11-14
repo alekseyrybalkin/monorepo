@@ -218,18 +218,13 @@ def make_fakeroot(pm, location):
         for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
             for item in files:
                 if item.endswith('.la'):
-                    print('removing {}'.format(os.path.join(root, item)))
                     os.remove(os.path.join(root, item))
-    #
-    ## remove unused translations
-    #if [ -d ${pkgdir}/usr/share/locale ]; then
-    #    for locale_dir in $(find ${pkgdir}/usr/share/locale -mindepth 1 -maxdepth 1 -type d); do
-    #        [[ ${locale_dir} =~ "locale/en" ]] && continue
-    #        [[ ${locale_dir} =~ "locale/ru" ]] && continue
-    #        rm -rf ${locale_dir}
-    #    done
-    #fi
-    #
+
+    if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
+        for item in os.listdir(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
+            if not item.startswith('en') and not item.startswith('ru'):
+                os.remove(os.path.join(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale', item)))
+
     ## remove hicolor and locolor icons
     #if [ -d ${pkgdir}/usr/share/icons/hicolor ]; then
     #    rm -rf ${pkgdir}/usr/share/icons/hicolor
