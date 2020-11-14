@@ -5,6 +5,7 @@ import mailbox
 import os
 import re
 import signal
+import sys
 import time
 
 import addons.config
@@ -194,7 +195,14 @@ class Syncema:
         server = config['imap']['server']
         timeout = config['imap']['timeout']
 
-        with addons.db.DB('syncema') as db, imaplib.IMAP4_SSL(server, timeout=timeout) as imap_conn:
+        # FIXME remove after Arch upgrades python to 3.9
+        args = {
+            'timeout': timeout,
+        }
+        if sys.version_info.minor < 9:
+            del args['timeout']
+
+        with addons.db.DB('syncema') as db, imaplib.IMAP4_SSL(server, **args) as imap_conn:
             # initialize imap tool
             imap_conn.login(config['imap']['login'], config['imap']['password'])
             imap = IMAPTool(imap_conn)
