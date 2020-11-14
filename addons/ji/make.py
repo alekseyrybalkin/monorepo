@@ -264,22 +264,21 @@ def make_fakeroot(pm, location):
         )
         os.chmod(new_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
-    #echo creating gz archive...
-    #cd ${EXE}-dest
-    #
-    #echo "pkgname = ${pkgname}" > .PKGINFO
-    #echo "pkgbase = ${pkgname}" >> .PKGINFO
-    #echo "pkgver = ${pkgver}-1" >> .PKGINFO
-    #echo "pkgdesc = " >> .PKGINFO
-    #echo "url = " >> .PKGINFO
-    #echo "builddate = $(date +%s)" >> .PKGINFO
-    #echo "packager = ${EXE}" >> .PKGINFO
-    #echo "arch = x86_64" >> .PKGINFO
-    #
-    #if [ -f ${srcdir}/arch-depend ]; then
-    #    cat ${srcdir}/arch-depend | grep '^provides = ' >> .PKGINFO || true
-    #    cat ${srcdir}/arch-depend | grep '^depend = ' >> .PKGINFO || true
-    #fi
-    #
+    with open(os.path.join(pkgbuild['pkgdir'], '.PKGINFO'), 'tw') as pkginfo:
+        pkginfo.write('pkgname = {}\n'.format(pkgbuild['pkgname']))
+        pkginfo.write('pkgbase = {}\n'.format(pkgbuild['pkgname']))
+        pkginfo.write('pkgver = {}-1\n'.format(pkgbuild['pkgver']))
+        pkginfo.write('pkgdesc = \n')
+        pkginfo.write('url = \n')
+        pkginfo.write('builddate = {}\n'.format(int(time.time())))
+        pkginfo.write('packager = {}\n'.format(pm.config['exe']))
+        pkginfo.write('arch = x86_64\n')
+
+        if os.path.exists(os.path.join(pkgbuild['srcdir'], 'arch-depend')):
+            with open(os.path.join(pkgbuild['srcdir'], 'arch-depend'), 'tr') as arch_depend:
+                for line in arch_depend:
+                    if line.startswith('provides = ') or line.startswith('depend = '):
+                        pkginfo.write(line)
+
     #{ find . | sed 's/^\.\///g'; } | sort | uniq | \
     #    tar cfa ../${pkgname}-${pkgver}-1-x86_64.pkg.tar.gz --no-recursion -T -
