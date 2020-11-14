@@ -249,12 +249,13 @@ def make_fakeroot(pm, location):
                     except subprocess.CalledProcessError:
                         pass
 
-    #cd ${location}
-    #mkdir -p ${EXE}-dest/usr/share/${EXE}
-    #for f in PKGBUILD build.log package.log; do
-    #    mv ${f} ${EXE}-dest/usr/share/${EXE}/${pkgname}.${f}
-    #done
-    #
+    os.makedirs(os.path.join(pkgbuild['pkgdir'], 'usr/share', pm.config['exe']), exist_ok=True)
+    for item in ['PKGBUILD', 'build.log', 'package.log']:
+        shutil.move(
+            os.path.join(pkgbuild['location'], item),
+            os.path.join(pkgbuild['pkgdir'], 'usr/share', pm.config['exe'], '{}.{}'.format(pkgbuild['pkgname'], item)),
+        )
+
     #echo creating gz archive...
     #cd ${EXE}-dest
     #
