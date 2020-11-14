@@ -225,14 +225,9 @@ def make_fakeroot(pm, location):
             if not item.startswith('en') and not item.startswith('ru'):
                 shutil.rmtree(os.path.join(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale', item)))
 
-    ## remove hicolor and locolor icons
-    #if [ -d ${pkgdir}/usr/share/icons/hicolor ]; then
-    #    rm -rf ${pkgdir}/usr/share/icons/hicolor
-    #fi
-    #if [ -d ${pkgdir}/usr/share/icons/locolor ]; then
-    #    rm -rf ${pkgdir}/usr/share/icons/locolor
-    #fi
-    #
+    shutil.rmtree(os.path.join(pkgbuild['pkgdir'], 'usr/share/icons/hicolor'), ignore_errors=True)
+    shutil.rmtree(os.path.join(pkgbuild['pkgdir'], 'usr/share/icons/locolor'), ignore_errors=True)
+
     ## install dirs for generated files
     #if [ -n "${generated_files}" ]; then
     #    for i in ${generated_files}; do
