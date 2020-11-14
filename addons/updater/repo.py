@@ -40,7 +40,7 @@ def alphanum_split(part):
 
 
 class Tag:
-    def __init__(self, tag, pkgname=None, dirname=None, is_jinni=None):
+    def __init__(self, tag, pkgname=None, dirname=None, is_handmade=None):
         tag = re.sub('^release-', '', tag)
         tag = re.sub('^release_', '', tag)
         tag = re.sub('^release\\.', '', tag)
@@ -56,11 +56,11 @@ class Tag:
         tag = re.sub('^v', '', tag)
         tag = re.sub('^v_', '', tag)
 
-        if is_jinni is not None:
-            self.jinni = is_jinni
+        if is_handmade is not None:
+            self.handmade = is_handmade
         else:
-            self.jinni = tag.startswith('jinni-')
-        tag = re.sub('^jinni-', '', tag)
+            self.handmade = tag.startswith('handmade-')
+        tag = re.sub('^handmade-', '', tag)
 
         if pkgname and '+' not in pkgname:
             pkgname_variants = [pkgname.replace(a, b) for a in ['~', '_', '-', '.'] for b in ['~', '_', '-', '.']]
@@ -208,7 +208,7 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
             versions.apply_rules(tag.to_version(), rules),
             pkgname=pkgname,
             dirname=dirname,
-            is_jinni=tag.jinni,
+            is_handmade=tag.handmade,
         ) for tag in tags if versions.check_rules(tag.to_version(), rules)
     ]
 

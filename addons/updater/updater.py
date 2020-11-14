@@ -97,9 +97,9 @@ class Updater:
             )
             if repo_version is None or (version is not None and repo_version < version):
                 repo_version = version
-        repo_version_jinni = False
+        repo_version_handmade = False
         if repo_version:
-            repo_version_jinni = repo_version.jinni
+            repo_version_handmade = repo_version.handmade
             repo_version = repo_version.to_version()
 
         if repo_version and self.config['repo_postprocessing'].get(pkg.pkgname):
@@ -156,13 +156,13 @@ class Updater:
                     formatted = shell.colorize(version, color=2) + spaces
                 versions_to_print.append(formatted)
 
-            jinni_tag = shell.colorize('  [jinni]' if repo_version_jinni else '', color=1)
+            handmade_tag = shell.colorize('  [handmade]' if repo_version_handmade else '', color=1)
             print('{:<30}{:<25}{:<25}{:<25}{}'.format(
                 pkg.pkgname,
-                *versions_to_print[:-1], '{}{}'.format(versions_to_print[-1], jinni_tag)
+                *versions_to_print[:-1], '{}{}'.format(versions_to_print[-1], handmade_tag)
             ))
 
-        parsed_list = [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_jinni else None)]
+        parsed_list = [arch_parsed, relmon_parsed, (repo_parsed if not repo_version_handmade else None)]
         checks = sum(1 if parsed else 0 for parsed in parsed_list)
 
         if checks == 0 and pkg.pkgname not in self.config['custom']:
