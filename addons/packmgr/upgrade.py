@@ -56,6 +56,13 @@ def upgrade(pm, tar):
 
         os.chdir(old_cwd)
 
+    old_files = set(queries.db_list_files(pm, package['name']))
+    new_files = set(os.path.join('/', item.name) for item in tarball.list_files(pm, tar))
+
+    for old_file in (old_files - new_files):
+        if os.path.lexists(old_file):
+            os.remove(old_file)
+
     old_dirs = set(queries.db_list_dirs(pm, package['name']))
     new_dirs = set(os.path.join('/', item.name) for item in tarball.list_dirs(pm, tar))
 
@@ -64,13 +71,6 @@ def upgrade(pm, tar):
         if len(users) == 1 and users[0]['name'] == package['name']:
             if not os.path.islink(old_dir) and not os.listdir(old_dir):
                 os.rmdir(old_dir)
-
-    old_files = set(queries.db_list_files(pm, package['name']))
-    new_files = set(os.path.join('/', item.name) for item in tarball.list_files(pm, tar))
-
-    for old_file in old_files - new_files:
-        if os.path.exists(old_file):
-            os.remove(old_file)
 
     if any(item.name == 'usr/share/info' for item in tarball.list_dirs(pm, tar)):
         common.recreate_info_dir()
