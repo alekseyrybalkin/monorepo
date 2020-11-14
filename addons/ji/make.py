@@ -83,6 +83,10 @@ def make_worker(pm):
             shell.run('git clone -s -n {} {}'.format(vcs_repo_dir, pkgbuild['srcdir']))
             os.chdir(pkgbuild['srcdir'])
             if pkgbuild['gittag']:
+                try:
+                    shell.run('git fetch origin +refs/remotes/*:refs/remotes/origin/*')
+                except subprocess.CalledProcessError:
+                    pass
                 shell.run('git checkout {}'.format(pkgbuild['gittag']))
             else:
                 shell.run('git checkout origin/HEAD')
