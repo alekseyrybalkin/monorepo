@@ -229,7 +229,7 @@ def make_fakeroot(pm, location):
     shutil.rmtree(os.path.join(pkgbuild['pkgdir'], 'usr/share/icons/locolor'), ignore_errors=True)
 
     if pkgbuild['generated_files']:
-        for item in pkgbuild['generated_files']:
+        for item in pkgbuild['generated_files'].split(' '):
             os.makedirs(os.path.join(pkgbuild['pkgdir'], os.path.dirname(item)), exist_ok=True)
 
     ## install dirs for generated files
