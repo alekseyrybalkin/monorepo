@@ -251,10 +251,17 @@ def make_fakeroot(pm, location):
 
     os.makedirs(os.path.join(pkgbuild['pkgdir'], 'usr/share', pm.config['exe']), exist_ok=True)
     for item in ['PKGBUILD', 'build.log', 'package.log']:
+        new_path = os.path.join(
+            pkgbuild['pkgdir'],
+            'usr/share',
+            pm.config['exe'],
+            '{}.{}'.format(pkgbuild['pkgname'], item),
+        )
         shutil.move(
             os.path.join(pkgbuild['location'], item),
-            os.path.join(pkgbuild['pkgdir'], 'usr/share', pm.config['exe'], '{}.{}'.format(pkgbuild['pkgname'], item)),
+            new_path,
         )
+        os.chmod(new_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     #echo creating gz archive...
     #cd ${EXE}-dest
