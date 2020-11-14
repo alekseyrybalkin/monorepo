@@ -49,7 +49,7 @@ class Internet:
                 if ap.get('alias', ap['ssid']) == alias:
                     access_point = ap
 
-        self.gen_jinni_environment(access_point)
+        self.gen_internet_environment(access_point)
         if self.args.command != 'wired':
             self.gen_wpa_supplicant_conf(access_point)
 
@@ -77,7 +77,7 @@ class Internet:
         all_timers = ' '.join('{}.timer'.format(timer) for timer in enabled_timers)
         shell.run('sudo systemctl start {}'.format(all_timers))
 
-    def gen_jinni_environment(self, access_point):
+    def gen_internet_environment(self, access_point):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_file_path = os.path.join(tmpdir, 'internet-environment')
             with open(tmp_file_path, 'tw') as tmp_file:
