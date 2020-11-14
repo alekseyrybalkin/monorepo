@@ -118,6 +118,8 @@ def make_worker(pm):
     ])
     env_vars = ';'.join([
         'location={}'.format(pkgbuild['location']),
+        'srcdir={}'.format(pkgbuild['srcdir']),
+        'tarballs_path={}'.format(pm.config['tarballs_path']),
     ])
 
     shell.run(
@@ -182,6 +184,7 @@ def make_fakeroot(pm, location):
     env_vars = ';'.join([
         'pkgdir={}'.format(pkgbuild['pkgdir']),
         'location={}'.format(pkgbuild['location']),
+        'srcdir={}'.format(pkgbuild['srcdir']),
     ])
 
     shell.run(
