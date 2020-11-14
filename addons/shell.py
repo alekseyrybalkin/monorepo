@@ -27,7 +27,6 @@ def run(command, shell=False, silent=False, user=None, group=None, tee=None):
                     if not silent:
                         sys.stdout.write(line)
                     if tee:
-                        print('XXX', tee)
                         tee_log.write(line)
                 else:
                     break
