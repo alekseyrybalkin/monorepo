@@ -36,6 +36,7 @@ class Updater:
         self.source_fetcher = srcfetcher.SourceFetcher(srcfetcher_db)
         self.relmon = addons.relmon.Relmon(relmon_db)
         self.config = addons.config.Config('updater').read()
+        self.common_config = addons.config.Config('common').read()
 
         self.no_checks = []
         self.one_check = []
@@ -173,7 +174,7 @@ class Updater:
 
     def list_all_projects(self):
         projects = []
-        for group in os.scandir('/home/rybalkin/projects/jinni-repo'):
+        for group in os.scandir(self.common_config['packages-path']):
             if group.is_dir():
                 for project in os.scandir(group.path):
                     projects.append(project)
