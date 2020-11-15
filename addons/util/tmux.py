@@ -4,6 +4,7 @@ import glob
 import os
 import re
 import statistics
+import sys
 
 import addons.config
 import addons.helpers
@@ -12,7 +13,10 @@ import addons.shell as shell
 
 class TmuxStatus:
     def __init__(self):
-        self.config = addons.config.Config('tmux').read()
+        try:
+            self.config = addons.config.Config('tmux').read()
+        except ValueError:
+            sys.exit(0)
 
     def left(self):
         now = datetime.datetime.now()
