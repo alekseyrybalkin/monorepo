@@ -11,10 +11,7 @@ class HostConf:
 
     def get_option(self, option):
         config = addons.config.Config('hostconf', private=False).read()
-        for conf in config['hosts']:
-            if conf.get('this', False):
-                return conf.get(option, '')
-        return ''
+        return config.get(option, '')
 
     def main(self):
         args = self.parse_args()

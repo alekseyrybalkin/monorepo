@@ -42,7 +42,11 @@ def write_tinyproxy_conf(conf_file_name, domains):
 
 
 def heaven_main():
-    config = addons.heaven.util.local_read_json('domains')
+    try:
+        config = addons.heaven.util.local_read_json('domains')
+    except FileNotFoundError:
+        print('no local doamins.json found, skipping domains update')
+        return
     domains = list(itertools.chain(*config['blacklist'].values()))
 
     write_etc_hosts('/etc/hosts', domains)
