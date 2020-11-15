@@ -5,7 +5,7 @@ import shutil
 import tempfile
 
 import addons.config
-import addons.heaven.util
+import addons.cloud.util
 import addons.shell as shell
 
 
@@ -41,9 +41,9 @@ def write_tinyproxy_conf(conf_file_name, domains):
         conf_file.write('upstream http 127.0.0.1:7997 "."\n')
 
 
-def heaven_main():
+def cloud_main():
     try:
-        config = addons.heaven.util.local_read_json('domains')
+        config = addons.cloud.util.local_read_json('domains')
     except FileNotFoundError:
         print('no local doamins.json found, skipping domains update')
         return
@@ -88,8 +88,8 @@ def local_main():
             shell.run('sudo systemctl restart tinyproxy-tor')
 
     if not args.no_remote:
-        addons.heaven.util.remote_upload_json('domains', config)
-        addons.heaven.util.remote_run('sudo heaven-gendomains')
+        addons.cloud.util.remote_upload_json('domains', config)
+        addons.cloud.util.remote_run('sudo cloud-gendomains')
 
 
 if __name__ == '__main__':

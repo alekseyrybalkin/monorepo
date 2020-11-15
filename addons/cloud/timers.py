@@ -1,7 +1,7 @@
 import glob
 import os
 
-import addons.heaven.util
+import addons.cloud.util
 import addons.shell as shell
 
 
@@ -38,7 +38,7 @@ class TimersUpdater:
         for systemd_file in glob.iglob('/etc/systemd/system/valet*'):
             os.remove(systemd_file)
 
-        config = addons.heaven.util.local_read_json('timers')
+        config = addons.cloud.util.local_read_json('timers')
 
         for timer in config['timers']:
             service_file_name = os.path.join('/etc/systemd/system', 'valet-{}.service'.format(timer['name']))
@@ -55,7 +55,7 @@ class TimersUpdater:
             shell.run('systemctl enable valet-{}.timer'.format(timer['name']))
             shell.run('systemctl start valet-{}.timer'.format(timer['name']))
 
-        addons.heaven.util.local_remove_json('timers')
+        addons.cloud.util.local_remove_json('timers')
 
 
 def main():

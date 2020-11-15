@@ -1,12 +1,12 @@
 import shutil
 
 import addons.config
-import addons.heaven.util
+import addons.cloud.util
 
 
 class SpamEater:
     def remote_main(self):
-        config = addons.heaven.util.local_read_json('spameater')
+        config = addons.cloud.util.local_read_json('spameater')
 
         filter_types = {
             'header': ':0:',
@@ -40,8 +40,8 @@ class SpamEater:
 
     def local_main(self):
         config = addons.config.Config('spameater').read()
-        addons.heaven.util.remote_upload_json('spameater', config)
-        addons.heaven.util.remote_run('sudo python -m addons.spameater')
+        addons.cloud.util.remote_upload_json('spameater', config)
+        addons.cloud.util.remote_run('sudo python -m addons.spameater')
 
 
 def local_main():

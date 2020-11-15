@@ -7,8 +7,8 @@ set +e
 git add .
 git commit -m 'python-addons updates'
 
-if ! ping -c 1 ${HEAVEN_DOMAIN} >/dev/null 2>&1; then
-    echo "No ping to ${HEAVEN_DOMAIN}, skipping git push."
+if ! ping -c 1 ${CLOUD_DOMAIN} >/dev/null 2>&1; then
+    echo "No ping to ${CLOUD_DOMAIN}, skipping git push."
 else
     git push
 fi

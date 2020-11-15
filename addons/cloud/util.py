@@ -11,21 +11,21 @@ def remote_upload_json(name, obj):
         with open(local_file_name, 'tw') as local_file:
             local_file.write(json.dumps(obj, indent=4))
 
-        heaven = os.environ['HEAVEN']
+        cloud = os.environ['CLOUD']
         shell.run([
             'scp',
             local_file_name,
-            '{}:/run/aleksey/private/{}.json'.format(heaven, name),
+            '{}:/run/aleksey/private/{}.json'.format(cloud, name),
         ])
 
 
 def remote_run(command):
-    heaven = os.environ['HEAVEN']
+    cloud = os.environ['CLOUD']
 
     if isinstance(command, str):
-        shell.run('ssh {} {}'.format(heaven, command))
+        shell.run('ssh {} {}'.format(cloud, command))
     else:
-        shell.run(['ssh', heaven] + command)
+        shell.run(['ssh', cloud] + command)
 
 
 def local_read_json(name):
