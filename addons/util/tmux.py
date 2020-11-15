@@ -7,7 +7,6 @@ import statistics
 
 import addons.config
 import addons.helpers
-import addons.util.hostconf
 import addons.shell as shell
 
 
