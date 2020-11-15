@@ -49,10 +49,11 @@ def check_buildorder(pm):
         if package['name'] not in bom.order_index:
             print('{} is missing from buildorder'.format(package['name']))
 
-    for package in bom.order_index:
-        db_package = common.find_package(pm, package, none_ok=True)
-        if not db_package:
-            print('{} is not installed, but is in buildorder'.format(package))
+    if pm.config['integrity_checks']['buildorder_extras']:
+        for package in bom.order_index:
+            db_package = common.find_package(pm, package, none_ok=True)
+            if not db_package:
+                print('{} is not installed, but is in buildorder'.format(package))
 
     for package, cnt in collections.Counter(bom.buildorder).most_common():
         if cnt > 1:

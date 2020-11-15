@@ -57,10 +57,11 @@ def check_system_integrity(pm):
         if set(user['name'] for user in users) - set(['filesystem']):
             dirs.append(full_dir)
 
-    print(' * searching for untracked files on filesystem...')
-    print(' * used system dirs: {}'.format(' '.join(dirs)))
-    for item in dirs:
-        list_untracked(pm, item)
+    if pm.config['integrity_checks']['untracked']:
+        print(' * searching for untracked files on filesystem...')
+        print(' * used system dirs: {}'.format(' '.join(dirs)))
+        for item in dirs:
+            list_untracked(pm, item)
 
     print(' * searching for missing package files...')
     list_missing(pm)
@@ -69,15 +70,17 @@ def check_system_integrity(pm):
     for item in queries.list_duplicates(pm):
         print(item)
 
-    print(' * searching for empty unknown folders...')
-    for item in dirs:
-        for root, dirs, files in os.walk(item):
-            if not dirs and not files:
-                if not queries.who_uses_dir(pm, root):
-                    print(root)
+    if pm.config['integrity_checks']['empty_folders']:
+        print(' * searching for empty unknown folders...')
+        for item in dirs:
+            for root, dirs, files in os.walk(item):
+                if not dirs and not files:
+                    if not queries.who_uses_dir(pm, root):
+                        print(root)
 
-    print(' * searching for wrong tarballs...')
-    list_wrong_tarballs(pm)
+    if pm.config['integrity_checks']['tarballs']:
+        print(' * searching for wrong tarballs...')
+        list_wrong_tarballs(pm)
 
     print(' * searching for unclean build dirs...')
     worker_name = pm.config['users']['worker']['name']
