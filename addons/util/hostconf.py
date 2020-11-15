@@ -13,8 +13,8 @@ class HostConf:
         config = addons.config.Config('hostconf', private=False).read()
         for conf in config['hosts']:
             if conf.get('this', False):
-                return conf[option]
-        return None
+                return conf.get(option, '')
+        return ''
 
     def main(self):
         args = self.parse_args()
