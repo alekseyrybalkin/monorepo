@@ -17,6 +17,7 @@ import addons.packmgr.tarball as tarball
 import addons.packmgr.uninstall as uninstall
 import addons.packmgr.upgrade as upgrade
 import addons.shell as shell
+import addons.util.hostconf
 
 config = addons.config.Config('packagemanager', private=False).read()
 
@@ -107,12 +108,16 @@ class PackageManager:
         for key, val in self.config['env'].items():
             os.environ[key] = val
 
+    def lockfile(self):
+        kernel = addons.util.hostconf.HostConf().get_option('kernel')
+        return '{}.{}'.format(self.config['lockfile'], kernel)
+
     def acquire_lock(self):
-        with open(self.config['lockfile'], 'w') as lockfile:
+        with open(self.lockfile(), 'w') as lockfile:
             fcntl.lockf(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
     def release_lock(self):
-        with open(self.config['lockfile'], 'w') as lockfile:
+        with open(self.lockfile(), 'w') as lockfile:
             fcntl.lockf(lockfile, fcntl.LOCK_UN)
 
     def do_action(self):
