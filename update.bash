@@ -14,4 +14,4 @@ else
 fi
 
 srcfetcher monorepo
-sudo packmgr u python-monorepo
+sudo packmgr u monorepo
