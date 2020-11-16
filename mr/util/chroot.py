@@ -34,6 +34,7 @@ class ChrootManager:
 
         chroot_dir = '/.{}'.format(mr.util.hostconf.HostConf().get_option('chroot'))
         extra_mount = mr.util.hostconf.HostConf().get_option('chroot_extra_mount').split(' ')
+        killall = mr.util.hostconf.HostConf().get_option('chroot_killall')
 
         if not self.is_mounted(chroot_dir):
             for mount in extra_mount + mounts:
@@ -50,15 +51,16 @@ class ChrootManager:
 
         ps_result = shell.output('ps auxfww')
         if ps_result.count('/usr/bin/chroot-enter') <= 1:
-            try:
-                shell.run('killall gpg-agent scdaemon xclip', silent=True)
-            except subprocess.CalledProcessError:
-                pass
+            if killall:
+                try:
+                    shell.run('killall {}'.format(killall), silent=True)
+                except subprocess.CalledProcessError:
+                    pass
             for mount in mounts[::-1] + extra_mount:
                 shell.run('umount {}{}'.format(chroot_dir, mount))
 
             for item in os.listdir('{}/tmp'.format(chroot_dir)):
-                shutil.rmtree(item, ignore_errors=True)
+                shutil.rmtree(os.path.join('{}/tmp'.format(chroot_dir), item), ignore_errors=True)
 
 
 def main():
