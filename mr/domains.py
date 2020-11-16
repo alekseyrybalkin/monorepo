@@ -7,6 +7,7 @@ import tempfile
 import mr.config
 import mr.cloud.util
 import mr.shell as shell
+import mr.util.hostconf
 
 
 def write_etc_hosts(conf_file_name, domains):
@@ -59,7 +60,8 @@ def local_main():
     parser.add_argument('--no-remote', action='store_true')
     args = parser.parse_args()
 
-    config = mr.config.Config('domains', user='rybalkin').read()
+    firewall_manager = mr.util.hostconf.HostConf().get_option('firewall_manager')
+    config = mr.config.Config('domains', user=firewall_manager).read()
     domains = list(itertools.chain(*config['blacklist'].values()))
 
     with tempfile.TemporaryDirectory() as tmpdir:
