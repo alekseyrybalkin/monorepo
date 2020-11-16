@@ -58,9 +58,7 @@ class ChrootManager:
         subprocess.run(['chroot', chroot_dir] + command)
 
         ps_result = shell.output('ps auxfww')
-        #FIXME
-        print(ps_result.count('chroot-enter'))
-        if ps_result.count('chroot-enter') < 2:
+        if ps_result.count('/usr/bin/chroot-enter') <= 1:
             try:
                 shell.run('killall gpg-agent scdaemon xclip', silent=True)
             except subprocess.CalledProcessError:
