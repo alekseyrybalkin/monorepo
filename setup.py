@@ -41,6 +41,7 @@ setup(
             'packmgr = mr.packmgr.main:main',
             'ji = mr.packmgr.main:main',
             'browser = mr.util.browser:main',
+            'chroot-enter = mr.util.chroot:main',
         ],
     },
     include_package_data=True,
