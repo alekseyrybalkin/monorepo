@@ -1,12 +1,15 @@
 import os
 
+import mr.config
+
 
 def get_arch_version(pkgname):
     arch_version = None
 
-    arch_packages = '/home/rybalkin/.data/sources/external-repos/arch-packages'
-    arch_community = '/home/rybalkin/.data/sources/external-repos/arch-community'
-    aur = '/home/rybalkin/.data/sources/aur'
+    pm_config = mr.config.Config('packagemanager', private=False).read()
+    arch_packages = '{}/external-repos/arch-packages'.format(pm_config['sources_path'])
+    arch_community = '{}/external-repos/arch-community'.format(pm_config['sources_path'])
+    aur = '{}/aur'.format(pm_config['sources_path'])
 
     for repo in [arch_packages, arch_community, aur]:
         if repo != aur:

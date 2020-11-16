@@ -2,6 +2,7 @@ import itertools
 import os
 import re
 
+import mr.config
 import mr.shell as shell
 import mr.updater.versions as versions
 
@@ -135,7 +136,8 @@ class Tag:
 
 
 def get_repo_dir(dirname):
-    for entry in os.scandir('/home/rybalkin/.data/sources'):
+    pm_config = mr.config.Config('packagemanager', private=False).read()
+    for entry in os.scandir(pm_config['sources_path']):
         if entry.name != '_ignore' and entry.is_dir():
             for subentry in os.scandir(entry.path):
                 if subentry.is_dir() and subentry.name == dirname:
