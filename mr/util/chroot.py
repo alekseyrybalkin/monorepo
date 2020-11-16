@@ -1,8 +1,8 @@
-import argparse
 import os
 import shutil
 import stat
 import subprocess
+import sys
 
 import mr.shell as shell
 import mr.util.hostconf
@@ -15,14 +15,6 @@ class ChrootManager:
     sudo chroot-enter sudo -u someuser bash --login
     sudo -b chroot-enter sudo -u someuser someprogram >/dev/null 2>&1
     '''
-    def __init__(self):
-        self.args = self.parse_args()
-
-    def parse_args(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument('param', nargs='*')
-        return parser.parse_args()
-
     def is_mounted(self, chroot_dir):
         with open('/proc/mounts', 'tr') as mounts:
             for mount in mounts:
@@ -36,10 +28,9 @@ class ChrootManager:
         if shell.user() != 'root':
             raise RuntimeError('should be run as root')
 
-        if self.args.param:
-            command = self.args.param
-        else:
-            command = ['/bin/bash', '--login']
+        command = sys.argv[1:]
+        if not command:
+            command += ['/bin/bash', '--login']
 
         chroot_dir = '/.{}'.format(mr.util.hostconf.HostConf().get_option('chroot'))
         extra_mount = mr.util.hostconf.HostConf().get_option('chroot_extra_mount').split(' ')
