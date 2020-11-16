@@ -40,6 +40,7 @@ setup(
             'spameater = mr.spameater:local_main',
             'packmgr = mr.packmgr.main:main',
             'ji = mr.packmgr.main:main',
+            'browser = mr.util.browser:main',
         ],
     },
     include_package_data=True,
