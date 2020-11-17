@@ -38,7 +38,7 @@ class SourceFetcher:
 
     def find_project(self, name):
         return self.db.select_one(
-            'select path from project where name = ?',
+            'select id, name, path from project where name = ?',
             (name,),
         )
 
@@ -85,7 +85,7 @@ class SourceFetcher:
         project = self.find_project(project_name)
         if not project:
             raise ValueError('Project {} not found'.format(project_name))
-        os.chdir(self.find_project(project_name)['path'])
+        os.chdir(project['path'])
 
         try:
             for rule in self.config['pre_processing']:
@@ -120,7 +120,7 @@ class SourceFetcher:
         project = self.find_project(project_name)
         if not project:
             raise ValueError('Project {} not found'.format(project_name))
-        os.chdir(self.find_project(project_name)['path'])
+        os.chdir(project['path'])
 
         try:
             vcs = repo.guess_vcs(os.getcwd())
@@ -213,12 +213,13 @@ class SourceFetcher:
         db_projects = set(row['name'] for row in rows)
 
         for project, path in self.list_projects():
-            existing_path = self.find_project(project)
-            if existing_path is None:
+            existing_project = self.find_project(project)
+            if existing_project['path'] is None:
                 self.insert_project(project, path)
+            elif existing_project['path'] != path:
+                self.db.execute('update project set path=? where id=?', (path, existing_project['id']))
             db_projects.discard(project)
 
-        # FIXME does not handle projects moving from one folder to another (e.g. gaming/lc0 -> dev/lc0)
         for project in db_projects:
             self.delete_project(project)
 
