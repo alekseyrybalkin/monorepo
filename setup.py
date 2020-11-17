@@ -44,6 +44,7 @@ setup(
             'chroot-enter = mr.util.chroot:main',
             'intel-bl = mr.util.intel_backlight:main',
             'fma = mr.util.freemusicarchive:main',
+            'dotfiles = mr.util.dotfiles:main',
         ],
     },
     include_package_data=True,
