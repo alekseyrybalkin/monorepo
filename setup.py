@@ -42,6 +42,7 @@ setup(
             'ji = mr.packmgr.main:main',
             'browser = mr.util.browser:main',
             'chroot-enter = mr.util.chroot:main',
+            'intel-bl = mr.util.intel_backlight:main',
         ],
     },
     include_package_data=True,
