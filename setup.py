@@ -45,6 +45,7 @@ setup(
             'intel-bl = mr.util.intel_backlight:main',
             'fma = mr.util.freemusicarchive:main',
             'dotfiles = mr.util.dotfiles:main',
+            'userinit = mr.util.userinit:main',
         ],
     },
     include_package_data=True,
