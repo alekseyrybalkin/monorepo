@@ -46,6 +46,7 @@ setup(
             'fma = mr.util.freemusicarchive:main',
             'dotfiles = mr.util.dotfiles:main',
             'userinit = mr.util.userinit:main',
+            'userdestroy = mr.util.userdestroy:main',
         ],
     },
     include_package_data=True,
