@@ -43,6 +43,7 @@ setup(
             'browser = mr.util.browser:main',
             'chroot-enter = mr.util.chroot:main',
             'intel-bl = mr.util.intel_backlight:main',
+            'fma = mr.util.freemusicarchive:main',
         ],
     },
     include_package_data=True,
