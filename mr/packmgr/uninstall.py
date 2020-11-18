@@ -26,7 +26,7 @@ def uninstall(pm, query):
         )
 
     for item in queries.db_list_files(pm, package['name']):
-        if os.path.exists(item):
+        if os.path.lexists(item):
             os.remove(item)
 
     dirs = queries.db_list_dirs(pm, package['name'])
