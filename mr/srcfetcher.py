@@ -214,7 +214,7 @@ class SourceFetcher:
 
         for project, path in self.list_projects():
             existing_project = self.find_project(project)
-            if existing_project['path'] is None:
+            if existing_project is None:
                 self.insert_project(project, path)
             elif existing_project['path'] != path:
                 self.db.execute('update project set path=? where id=?', (path, existing_project['id']))
