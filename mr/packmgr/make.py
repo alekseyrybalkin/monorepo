@@ -63,8 +63,10 @@ def make_worker(pm):
 
     builddir = os.path.join(
         shell.home(user=pm.config['users']['worker']['name']),
-        'build.{}.{}'.format(pkgbuild['pkgname'], time.time()),
+        'build.{}.0.0'.format(pkgbuild['pkgname']),
     )
+    if os.path.exists(builddir):
+        shutil.move(builddir, builddir.replace('0.0', str(time.time())))
     shutil.rmtree(builddir, ignore_errors=True)
     os.makedirs(builddir)
     for item in glob.iglob('*'):
