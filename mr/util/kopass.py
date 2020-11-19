@@ -63,7 +63,6 @@ class Kopass:
             cut = known_service.length
 
         if len(sys.argv) == 1:
-            # chromium needs 4 loops for some reason
             subprocess.run(
                 ['xclip', '-selection', 'clipboard', '-loops', '4'],
                 input=encoded[:cut].decode("UTF-8"),
