@@ -44,7 +44,7 @@ def source_pkgbuild(pm, pkgbuild=None):
     result['pkgdir'] = os.path.join(result['location'], '{}-dest'.format(pm.config['exe']))
 
     if not result['srcdir']:
-        result['srcdir'] = os.path.join(result['location'], '{}-{}'.format(result['pkgname'], result['pkgver']))
+        result['srcdir'] = os.path.join(result['location'], result['pkgname'])
 
     return result
 
