@@ -40,7 +40,6 @@ setup(
             'spameater = mr.spameater:local_main',
             'packmgr = mr.packmgr.main:main',
             'ji = mr.packmgr.main:main',
-            'browser = mr.util.browser:main',
             'chroot-enter = mr.util.chroot:main',
             'intel-bl = mr.util.intel_backlight:main',
             'fma = mr.util.freemusicarchive:main',
