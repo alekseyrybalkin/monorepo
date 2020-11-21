@@ -191,7 +191,7 @@ class SourceFetcher:
 
     def parse_args(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('project', type=str, default='', nargs='?')
+        parser.add_argument('projects', type=str, nargs='*')
         parser.add_argument('--quiet', action='store_true')
         return parser.parse_args()
 
@@ -223,8 +223,9 @@ class SourceFetcher:
         for project in db_projects:
             self.delete_project(project)
 
-        if self.args.project:
-            self.fetch(self.args.project)
+        if self.args.projects:
+            for project in self.args.projects:
+                self.fetch(project)
         else:
             projects = self.get_oldest_expired(self.config['projects_per_run'])
             for project in projects:
