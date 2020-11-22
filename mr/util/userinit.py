@@ -20,14 +20,14 @@ class UserInit:
         with open('/etc/passwd', 'tr') as passwd:
             for line in passwd:
                 uid = int(line.split(':')[2])
-                if uid > max_uid:
+                if uid > max_uid and uid < 2000:
                     max_uid = uid
 
         max_gid = 0
         with open('/etc/group', 'tr') as group:
             for line in group:
                 gid = int(line.split(':')[2])
-                if gid > max_gid:
+                if gid > max_gid and git < 2000:
                     max_gid = gid
 
         new_id = max(max_uid, max_gid) + 1
