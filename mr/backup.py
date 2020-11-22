@@ -24,35 +24,31 @@ class Backuper:
         shell.run(command)
 
     def sync_as_tarball(self, src, destdir):
-        old_cwd = os.getcwd()
-        os.chdir(os.path.dirname(src))
-        tarfile = os.path.join(destdir, os.path.basename(src) + '.tar')
-        shell.run('tar cf {} {}'.format(
-            tarfile,
-            os.path.basename(src),
-        ))
-        os.chdir(old_cwd)
+        with shell.popd(os.path.dirname(src)):
+            tarfile = os.path.join(destdir, os.path.basename(src) + '.tar')
+            shell.run('tar cf {} {}'.format(
+                tarfile,
+                os.path.basename(src),
+            ))
 
     def rsync_encrypted(self, src, destdir, keyfile, exclude=None, compress=False):
         """ makes an encrypted backup of src dir or file into destdir/`basename src`.tar[.gz].gpg """
         with tempfile.TemporaryDirectory() as tmpdir:
             self.rsync(src, tmpdir, exclude)
             with tempfile.TemporaryDirectory() as tmpdir2:
-                old_cwd = os.getcwd()
-                os.chdir(tmpdir)
-                if compress:
-                    tarfile = os.path.join(tmpdir2, os.path.basename(src) + '.tar.gz')
-                    shell.run('tar cfa {} {}'.format(
-                        tarfile,
-                        os.path.join(os.path.basename(src)),
-                    ))
-                else:
-                    tarfile = os.path.join(tmpdir2, os.path.basename(src) + '.tar')
-                    shell.run('tar cf {} {}'.format(
-                        tarfile,
-                        os.path.join(os.path.basename(src)),
-                    ))
-                os.chdir(old_cwd)
+                with shell.popd(tmpdir):
+                    if compress:
+                        tarfile = os.path.join(tmpdir2, os.path.basename(src) + '.tar.gz')
+                        shell.run('tar cfa {} {}'.format(
+                            tarfile,
+                            os.path.join(os.path.basename(src)),
+                        ))
+                    else:
+                        tarfile = os.path.join(tmpdir2, os.path.basename(src) + '.tar')
+                        shell.run('tar cf {} {}'.format(
+                            tarfile,
+                            os.path.join(os.path.basename(src)),
+                        ))
                 with open(keyfile, 'br') as kf:
                     shell.run_with_input(
                         'gpg --batch -c --passphrase-fd 0 {}'.format(tarfile),

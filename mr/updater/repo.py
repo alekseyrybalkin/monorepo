@@ -146,38 +146,30 @@ def get_repo_dir(dirname):
 
 
 def guess_vcs(repo_dir):
-    old_cwd = os.getcwd()
-    os.chdir(repo_dir)
-
-    vcs = None
-    git_dir = shell.output('git rev-parse --git-dir')
-    if git_dir == '.' or git_dir == '.git':
-        vcs = 'git'
-    elif os.path.isdir('.hg'):
-        vcs = 'mercurial'
-    elif os.path.isfile('.fslckout'):
-        vcs = 'fossil'
-
-    os.chdir(old_cwd)
-    return vcs
+    with shell.popd(repo_dir):
+        vcs = None
+        git_dir = shell.output('git rev-parse --git-dir')
+        if git_dir == '.' or git_dir == '.git':
+            vcs = 'git'
+        elif os.path.isdir('.hg'):
+            vcs = 'mercurial'
+        elif os.path.isfile('.fslckout'):
+            vcs = 'fossil'
+        return vcs
 
 
 def get_raw_tags(repo_dir, vcs):
-    old_cwd = os.getcwd()
-    os.chdir(repo_dir)
-
-    if vcs == 'git':
-        command = ['git', 'tag']
-    elif vcs == 'mercurial':
-        command = ['hg', 'tags', '-q']
-    elif vcs == 'fossil':
-        command = ['fossil', 'tag', 'list']
-    else:
-        raise RuntimeError('unknown vcs {}'.format(vcs))
-    raw_tags = shell.output(command).split('\n')
-
-    os.chdir(old_cwd)
-    return raw_tags
+    with shell.popd(repo_dir):
+        if vcs == 'git':
+            command = ['git', 'tag']
+        elif vcs == 'mercurial':
+            command = ['hg', 'tags', '-q']
+        elif vcs == 'fossil':
+            command = ['fossil', 'tag', 'list']
+        else:
+            raise RuntimeError('unknown vcs {}'.format(vcs))
+        raw_tags = shell.output(command).split('\n')
+        return raw_tags
 
 
 def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
@@ -188,7 +180,6 @@ def get_repo_version(pkgname, dirname, vcs, rules, ignores, series, verbose):
     repo_dir = get_repo_dir(dirname)
     if not repo_dir:
         return None
-    os.chdir(repo_dir)
 
     if not vcs:
         vcs = guess_vcs(repo_dir)

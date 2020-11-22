@@ -45,12 +45,12 @@ def prepare(pm):
 def make(pm, package_name=None):
     if package_name:
         os.chdir(common.get_repo_dir(pm, package_name))
-    old_cwd = os.getcwd()
+    cur_cwd = os.getcwd()
 
     pm.prepare()
     tar_path = pm.make_worker()
 
-    new_tar_path = os.path.join(old_cwd, os.path.basename(tar_path))
+    new_tar_path = os.path.join(cur_cwd, os.path.basename(tar_path))
     shutil.move(tar_path, new_tar_path)
     shutil.chown(new_tar_path, pm.config['users']['manager']['uid'], pm.config['users']['manager']['gid'])
     shutil.rmtree(os.path.dirname(tar_path))

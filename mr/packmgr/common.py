@@ -76,11 +76,7 @@ def find_vcs_repo_dir(pm, vcs_repo):
 
 
 def recreate_info_dir():
-    old_cwd = os.getcwd()
-    os.chdir('/usr/share/info')
-
-    os.remove('dir')
-    for info_file in os.listdir('.'):
-        shell.run('install-info {} dir'.format(info_file))
-
-    os.chdir(old_cwd)
+    with shell.popd('/usr/share/info'):
+        os.remove('dir')
+        for info_file in os.listdir('.'):
+            shell.run('install-info {} dir'.format(info_file))

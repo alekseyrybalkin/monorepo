@@ -134,3 +134,16 @@ def colorize(text, color=7):
         seq = "\x1b[1;{}m".format(30 + color) + text + "\x1b[0m"
         return seq
     return text
+
+
+class popd:
+    def __init__(self, new_cwd):
+        self.new_cwd = new_cwd
+        self.old_cwd = None
+
+    def __enter__(self):
+        self.old_cwd = os.getcwd()
+        os.chdir(self.new_cwd)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        os.chdir(self.old_cwd)

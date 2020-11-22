@@ -47,14 +47,11 @@ def upgrade(pm, tar):
         tarball.extract_all(tar, tmpdir)
 
         files = [item for item in tarball.list_files(pm, tar)]
-        old_cwd = os.getcwd()
-        os.chdir(tmpdir)
 
-        for item in files:
-            shutil.move(item.name, os.path.join('/', item.name + '.{}'.format(pm.config['exe'])))
-            shutil.move(os.path.join('/', item.name + '.{}'.format(pm.config['exe'])), os.path.join('/', item.name))
-
-        os.chdir(old_cwd)
+        with shell.popd(tmpdir):
+            for item in files:
+                shutil.move(item.name, os.path.join('/', item.name + '.{}'.format(pm.config['exe'])))
+                shutil.move(os.path.join('/', item.name + '.{}'.format(pm.config['exe'])), os.path.join('/', item.name))
 
     old_files = set(queries.db_list_files(pm, package['name']))
     new_files = set(os.path.join('/', item.name) for item in tarball.list_files(pm, tar))

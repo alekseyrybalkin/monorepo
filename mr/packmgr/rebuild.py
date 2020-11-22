@@ -33,14 +33,12 @@ def rebuild_world(pm, start_package=None, end_package=None):
             continue
         print(f'rebuilding {package}')
 
-        old_cwd = os.getcwd()
         repo_dir = common.get_repo_dir(pm, package)
-        os.chdir(repo_dir)
-        make.make(pm)
 
-        os.chdir(repo_dir)
-        glob_pattern = '*{}'.format(tarball.get_tarball_suffix())
-        for tar in glob.iglob(glob_pattern):
-            upgrade.upgrade(pm, tar)
+        with shell.popd(repo_dir):
+            make.make(pm)
 
-        os.chdir(old_cwd)
+            os.chdir(repo_dir)
+            glob_pattern = '*{}'.format(tarball.get_tarball_suffix())
+            for tar in glob.iglob(glob_pattern):
+                upgrade.upgrade(pm, tar)
