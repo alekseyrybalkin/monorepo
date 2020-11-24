@@ -53,11 +53,6 @@ class Updater:
     def process(self, pkgbuild):
         pkg = Package.from_pkgbuild(pkgbuild, self.config['pkgbuild_fields'])
 
-        if not self.special and pkg.pkgname in self.config['special_ones'] and not self.package:
-            return
-        if self.special and pkg.pkgname not in self.config['special_ones'] and not self.package:
-            return
-
         arch_version = None
         if pkg.pkgname not in self.config['arch_skips']:
             if not self.config['arch_names'].get(pkg.pkgname):
@@ -249,13 +244,12 @@ class Updater:
         parser.add_argument('-p', type=str, default=None, help='package')
         parser.add_argument('-i', action='store_true', help='update versions in-place')
         parser.add_argument('-v', action='store_true', help='be verbose')
-        parser.add_argument('-s', action='store_true', help='only special packages')
         args = parser.parse_args()
 
-        return args.p, args.i, args.v, args.s
+        return args.p, args.i, args.v
 
     def main(self):
-        self.package, self.in_place, self.verbose, self.special = self.parse_args()
+        self.package, self.in_place, self.verbose = self.parse_args()
         self.check_all()
 
 
