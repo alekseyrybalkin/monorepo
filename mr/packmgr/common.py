@@ -26,6 +26,7 @@ def source_pkgbuild(pm, pkgbuild=None):
         'updater_rules',
         'generated_files',
         'disable_stripping',
+        'keep_la_files',
     ]
 
     result = {}

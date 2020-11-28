@@ -222,11 +222,12 @@ def make_fakeroot(pm, location):
                 if ' ' in item:
                     raise RuntimeError('spaces in file/dir "{}" are not allowed'.format(item))
 
-    if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
-        for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
-            for item in files:
-                if item.endswith('.la'):
-                    os.remove(os.path.join(root, item))
+    if not pkgbuild['keep_la_files']:
+        if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
+            for root, dirs, files in os.walk(os.path.join(pkgbuild['pkgdir'], 'usr/lib')):
+                for item in files:
+                    if item.endswith('.la'):
+                        os.remove(os.path.join(root, item))
 
     if os.path.exists(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
         for item in os.listdir(os.path.join(pkgbuild['pkgdir'], 'usr/share/locale')):
