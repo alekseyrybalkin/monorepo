@@ -15,10 +15,6 @@ def run(command, shell=False, silent=False, user=None, group=None, tee=None):
         'user': user,
         'group': group,
     }
-    # FIXME remove after Arch upgrades python to 3.9
-    if sys.version_info.minor < 9:
-        del options['user']
-        del options['group']
 
     if tee:
         tee_log = open(tee, 'tw')
@@ -62,10 +58,6 @@ def output(command, shell=False, strip=True, silent=True, user=None, group=None)
         'user': user,
         'group': group,
     }
-    # FIXME remove after Arch upgrades python to 3.9
-    if sys.version_info.minor < 9:
-        del options['user']
-        del options['group']
 
     with subprocess.Popen(command, **options) as proc:
         output = ''
