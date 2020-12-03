@@ -70,17 +70,20 @@ def run_as(user):
             old_egid = os.getegid()
             old_euid = os.geteuid()
             old_home = os.environ['HOME']
+            old_logname = os.environ['LOGNAME']
             old_user = os.environ['USER']
 
             os.setegid(config['users'][user]['gid'])
             os.seteuid(config['users'][user]['uid'])
             old_umask = os.umask(config['users'][user]['umask'])
             os.environ['HOME'] = shell.home(user=config['users'][user]['name'])
+            os.environ['LOGNAME'] = config['users'][user]['name']
             os.environ['USER'] = config['users'][user]['name']
 
             result = func(*args, **kwargs)
 
             os.environ['USER'] = old_user
+            os.environ['LOGNAME'] = old_logname
             os.environ['HOME'] = old_home
             os.umask(old_umask)
             os.seteuid(old_euid)
