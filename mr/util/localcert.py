@@ -29,7 +29,6 @@ class LocalCertificateManager:
         return parser.parse_args()
 
     def genroot(self):
-        shell.run('sudo true')
         with tempfile.TemporaryDirectory() as tmpdir:
             with shell.popd(tmpdir):
                 org = self.config['organization']
@@ -44,24 +43,18 @@ class LocalCertificateManager:
                         f'{org}.crt.pem',
                         os.path.join(
                             self.common_config['configs-path'],
+                            'base',
                             self.config['local-cert-location'],
                             f'{org}.crt.pem',
                         ),
                     )
-                    with shell.popd(self.common_config['configs-path']):
-                        shell.run('bash update.bash')
-                    shell.run('sudo packmgr u nss')
-
-                nginx_running = 'SubState=running' in shell.output('systemctl show nginx')
-                if nginx_running:
-                    shell.run('sudo systemctl restart nginx')
 
                 secret_dir = os.path.join(self.common_config['secrets-path'], org)
                 os.makedirs(secret_dir, exist_ok=True)
                 shutil.move(f'{org}.key', os.path.join(secret_dir, f'{org}.key'))
+        print('now update configs, update nss and restart nginx')
 
     def gendomain(self):
-        shell.run('sudo true')
         with tempfile.TemporaryDirectory() as tmpdir:
             with shell.popd(tmpdir):
                 org = self.config['organization']
@@ -101,7 +94,7 @@ class LocalCertificateManager:
                 ])
 
                 keys_dir = os.path.join(
-                    self.common_config['configs-path'],
+                    self.common_config['sandbox-path'],
                     self.config['nginx-keys-path'],
                 )
                 os.makedirs(keys_dir, exist_ok=True)
@@ -111,13 +104,7 @@ class LocalCertificateManager:
                 secret_dir = os.path.join(self.common_config['secrets-path'], org)
                 os.makedirs(secret_dir, exist_ok=True)
                 shutil.move(f'{domain}.csr', os.path.join(secret_dir, f'{domain}.csr'))
-
-                with shell.popd(self.common_config['configs-path']):
-                    shell.run('bash update.bash')
-
-                nginx_running = 'SubState=running' in shell.output('systemctl show nginx')
-                if nginx_running:
-                    shell.run('sudo systemctl restart nginx')
+        print('new certificates are in a sandbox')
 
     def trust(self):
         for cert in glob.iglob(os.path.join('/', self.config['local-cert-location'], '*.pem')):
