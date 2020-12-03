@@ -44,7 +44,7 @@ class UserInit:
 
         if not os.path.exists(os.path.join(shell.home(user=name), '.xinitrc')):
             tmpdir = os.path.join(shell.home(user=name), 'tmp')
-            shell.run('sudo -u {} git clone git://rybalkin.org/configs/dotfiles {}'.format(
+            shell.run('sudo -u {} git clone git://rybalkin.org/linux/dotfiles {}'.format(
                 name,
                 tmpdir,
             ))
