@@ -11,6 +11,13 @@ import mr.shell as shell
 
 
 def prepare(pm):
+    for command in pm.config.get('before_make', []):
+        shell.run(
+            command,
+            user=pm.config['users']['manager']['uid'],
+            group=pm.config['users']['manager']['gid'],
+        )
+
     pkgbuild = common.source_pkgbuild(pm)
 
     if pkgbuild['vcs']:
