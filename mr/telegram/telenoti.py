@@ -15,7 +15,7 @@ import mr.shell as shell
 def run():
     logging.basicConfig(level=logging.INFO)
 
-    config = mr.config.Config('telenoti', private=False).read()
+    config = mr.config.Config('telenoti').read()
 
     proxy = None
     if config['proxy']['enabled']:
