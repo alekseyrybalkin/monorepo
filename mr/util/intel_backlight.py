@@ -17,7 +17,7 @@ class IntelBacklight:
         if self.args.brightness < 1 or self.args.brightness > 100:
             raise ValueError('brightness should be between 1 and 100')
 
-        if not self.args.sudo and shell.user() != 'root':
+        if not self.args.sudo and shell.username() != 'root':
             shell.run('sudo python -m mr.util.intel_backlight {} --sudo'.format(self.args.brightness))
             return
 

@@ -25,7 +25,7 @@ class ChrootManager:
     def main(self):
         mounts = ['/dev', '/dev/pts', '/dev/shm', '/proc', '/sys', '/run']
 
-        if shell.user() != 'root':
+        if shell.username() != 'root':
             raise RuntimeError('should be run as root')
 
         command = sys.argv[1:]

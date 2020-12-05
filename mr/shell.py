@@ -107,13 +107,13 @@ def copy_to_clipboard(value):
     )
 
 
-def user():
+def username():
     return getpass.getuser()
 
 
 def home(user=None):
     if user is None:
-        user = getpass.getuser()
+        user = username()
     home_with_expansion = '~{}'.format(user)
     home = os.path.expanduser(home_with_expansion)
     if home == home_with_expansion:
