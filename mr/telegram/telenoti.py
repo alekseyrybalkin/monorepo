@@ -45,7 +45,7 @@ def run():
 
     @client.on(telethon.events.NewMessage(incoming=True))
     async def handle_new_message(event):
-        if str(event.sender_id) in sender_blacklist or str(event.chat_id) in chats_blacklist:
+        if event.sender_id in sender_blacklist or event.chat_id in chats_blacklist:
             logging.info('ignoring message from sender {} in chat {}'.format(event.sender_id, event.chat_id))
             return
 
