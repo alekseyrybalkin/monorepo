@@ -16,7 +16,7 @@ class TaxesCalculator:
             sum_pfr_fixed += math.floor(tax_data['pfr_fixed_payments'][year][str(q)])
         sum_ffoms_fixed = 0
         for q in range(1, quarter + 1):
-            sum_ffoms_fixed += math.floor(tax_data['ffoms_fixed_payments'][year][str(q)])
+            sum_ffoms_fixed += tax_data['ffoms_fixed_payments'][year][str(q)]
         return sum_pfr_fixed + sum_ffoms_fixed
 
     def main(self):
@@ -46,6 +46,9 @@ class TaxesCalculator:
                 pfr_1_percent = max((received - 300000), 0) * 0.01
                 if int(year) > int(sorted(tax_data['incoming'].keys())[-2]) and quarter == 1:
                     pfr_1_percent += (prev_pfr_1_percent - tax_data['pfr_1_percent_payments'][year])
+                next_year = str(int(year) + 1)
+                if next_year in tax_data['pfr_1_percent_payments']:
+                    pfr_1_percent -= tax_data['pfr_1_percent_payments'][next_year]
                 prev_pfr_1_percent = pfr_1_percent
 
                 pfr_fixed = self.config['tax_data']['fixed_fees'][year] - pfr_payed_fixed
