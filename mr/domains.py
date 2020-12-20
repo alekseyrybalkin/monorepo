@@ -49,6 +49,8 @@ def cloud_main():
         print('no local doamins.json found, skipping domains update')
         return
     domains = list(itertools.chain(*config['blacklist'].values()))
+    if not config['firewall_enabled']:
+        domains = []
 
     write_etc_hosts('/etc/hosts', domains)
     write_tinyproxy_conf('/etc/tinyproxy/tinyproxy.conf', domains)
@@ -63,6 +65,8 @@ def local_main():
     firewall_manager = mr.util.hostconf.HostConf().get_option('firewall_manager')
     config = mr.config.Config('domains', user=firewall_manager).read()
     domains = list(itertools.chain(*config['blacklist'].values()))
+    if not config['firewall_enabled']:
+        domains = []
 
     with tempfile.TemporaryDirectory() as tmpdir:
         hosts_file = os.path.join(tmpdir, 'hosts')
