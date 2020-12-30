@@ -20,7 +20,6 @@ class ExpensesCalculator:
         print('|    Expense         |  Monthly   |   Yearly   |')
 
         monthly_expenses = self.config['expenses_data']
-        mandatory_taxes = self.config['tax_data']['fixed_fees'][str(year)] / 12
 
         print('-' * 48)
         total = 0
@@ -40,20 +39,10 @@ class ExpensesCalculator:
             ), color=6))
             print()
 
-        print(shell.colorize(' {:>17} ==> {:>10,.2f} | {:>10,.2f} |'.format(
-            'TAXES',
-            mandatory_taxes,
-            mandatory_taxes * 12,
-        ), color=6))
-
         print('-' * 48)
         print(shell.colorize('    usd exchange rate:  {:,.2f}'.format(usd)))
         print()
-        print(shell.colorize('|   without taxes:      {:,.2f}   {:,.2f} |'.format(total, total * 12)))
-        print(shell.colorize('|   WITH TAXES:         {:,.2f}   {:,.2f} |'.format(
-            total + mandatory_taxes,
-            (total + mandatory_taxes) * 12,
-        ), color=6))
+        print(shell.colorize('|   overall:            {:,.2f}   {:,.2f} |'.format(total, total * 12)))
         print('-' * 48)
 
 
