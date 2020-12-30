@@ -27,7 +27,6 @@ setup(
             'kopass = mr.util.kopass:main',
             'things = mr.util.things:main',
             'networth = mr.networth.networth:main',
-            'taxes = mr.networth.taxes:main',
             'utilities = mr.networth.utilities:main',
             'expenses = mr.networth.expenses:main',
             'mpw = mr.util.mpw:main',
