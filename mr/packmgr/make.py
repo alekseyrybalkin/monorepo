@@ -65,6 +65,7 @@ def make(pm, package_name=None):
 
 def make_worker(pm):
     os.environ['PATH'] = '{}:{}'.format('/usr/lib/ccache/bin', os.environ['PATH'])
+    os.environ['XDG_CACHE_HOME'] = os.path.join(shell.home(), '.data', 'tmp', 'xdg_cache')
 
     pkgbuild = common.source_pkgbuild(pm)
 
