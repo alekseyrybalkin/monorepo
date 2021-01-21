@@ -47,6 +47,7 @@ class RSSReader:
 
     def main(self):
         if self.args.action == 'read':
+            os.environ['TERM'] = 'screen'
             for article in self.db.select_many('select * from article where read = 0 order by feed_id, pub_date'):
                 os.system('clear')
                 print(article['pub_date'])
