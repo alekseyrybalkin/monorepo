@@ -45,7 +45,6 @@ setup(
             'dotfiles = mr.util.dotfiles:main',
             'userinit = mr.util.userinit:main',
             'userdestroy = mr.util.userdestroy:main',
-            'vids = mr.videos:main',
         ],
     },
     include_package_data=True,
