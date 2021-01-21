@@ -2,7 +2,7 @@ import argparse
 import datetime
 import os
 import urllib.request
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 
 import mr.config
 import mr.db
