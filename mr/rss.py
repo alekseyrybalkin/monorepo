@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import os
+import urllib.parse
 import urllib.request
 import defusedxml.ElementTree as ET
 
@@ -51,7 +52,9 @@ class RSSReader:
             for article in self.db.select_many('select * from article where read = 0 order by feed_id, pub_date'):
                 os.system('clear')
                 print(article['pub_date'])
-                print(article['link'])
+                parsed = urllib.parse.urlparse(article['link'])
+                link = urllib.parse.urlunparse((parsed[0], parsed[1], parsed[2], '', '', ''))
+                print(link)
                 print()
                 print('  ' + shell.colorize(article['title'], color=2))
                 print()
