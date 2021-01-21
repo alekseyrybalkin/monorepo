@@ -142,12 +142,6 @@ class Inspector:
             if undone_tasks:
                 print('undone tasks: {}'.format(undone_tasks))
 
-        allowed_domains = self.config['allowed_domains']
-        domains_config = mr.config.Config('domains').read()
-        domain_count = len(list(itertools.chain(*domains_config['whitelist'].values())))
-        if domain_count > allowed_domains:
-            print('extra whitelisted domains: {}'.format(domain_count - allowed_domains))
-
         if shell.output('systemctl show --property=SystemState') != 'SystemState=running':
             shell.run('systemctl --failed')
 
