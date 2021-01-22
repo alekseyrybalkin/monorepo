@@ -52,8 +52,14 @@ class RSSReader:
             for article in self.db.select_many('select * from article where read = 0 order by feed_id, pub_date'):
                 os.system('clear')
                 print(article['pub_date'])
-                parsed = urllib.parse.urlparse(article['link'])
-                link = urllib.parse.urlunparse((parsed[0], parsed[1], parsed[2], '', '', ''))
+                link = article['link']
+                db_feed = self.db.select_one('select * from feed where id = ?', (article['feed_id'],))
+                for feed in self.config['feeds']:
+                    if feed['name'] == db_feed['id']:
+                        if feed['strip_query_params']:
+                            parsed = urllib.parse.urlparse(link)
+                            link = urllib.parse.urlunparse((parsed[0], parsed[1], parsed[2], '', '', ''))
+                        break
                 print(link)
                 print()
                 print('  ' + shell.colorize(article['title'], color=2))
