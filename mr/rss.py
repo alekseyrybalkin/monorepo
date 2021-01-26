@@ -49,9 +49,12 @@ class RSSReader:
     def main(self):
         if self.args.action == 'read':
             os.environ['TERM'] = 'screen'
-            for article in self.db.select_many('select * from article where read = 0 order by feed_id, pub_date'):
+
+            cnt = self.db.select_one('select count(*) as cnt from article where read = 0')['cnt']
+            articles = self.db.select_many('select * from article where read = 0 order by feed_id, pub_date')
+            for num, article in enumerate(articles):
                 os.system('clear')
-                print(article['pub_date'])
+                print('{}/{}  {}'.format(num + 1, cnt, article['pub_date']))
                 link = article['link']
                 db_feed = self.db.select_one('select * from feed where id = ?', (article['feed_id'],))
                 for feed in self.config['feeds']:
