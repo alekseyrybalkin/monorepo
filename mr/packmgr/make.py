@@ -151,7 +151,7 @@ def make_worker(pm):
     )
 
     shell.run(
-        'fakeroot-ng {} make-fakeroot {}'.format(
+        'fakeroot {} make-fakeroot {}'.format(
             pm.config['exe'],
             pkgbuild['location'],
         ),
