@@ -58,7 +58,8 @@ class ChrootManager:
                 except subprocess.CalledProcessError:
                     pass
             for mount in mounts[::-1] + extra_mount:
-                shell.run('umount {}{}'.format(chroot_dir, mount))
+                if mount:
+                    shell.run('umount {}{}'.format(chroot_dir, mount))
 
             for item in os.listdir('{}/tmp'.format(chroot_dir)):
                 shutil.rmtree(os.path.join('{}/tmp'.format(chroot_dir), item), ignore_errors=True)
