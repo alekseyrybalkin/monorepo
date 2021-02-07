@@ -38,7 +38,8 @@ class ChrootManager:
 
         if not self.is_mounted(chroot_dir):
             for mount in extra_mount + mounts:
-                shell.run('mount {}{}'.format(chroot_dir, mount))
+                if mount:
+                    shell.run('mount {}{}'.format(chroot_dir, mount))
 
         tmp_devnull = '{}/tmp/devnull'.format(chroot_dir)
         os.makedirs(tmp_devnull, exist_ok=True)
