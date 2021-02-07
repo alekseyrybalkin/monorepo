@@ -81,9 +81,9 @@ def local_main():
         write_tinyproxy_conf(tp_file, domains)
         write_tinyproxy_conf(tp_tor_file, domains)
 
-        shell.run('sudo mv {} /etc/hosts'.format(hosts_file))
-        shell.run('sudo mv {} /etc/tinyproxy/tinyproxy.conf'.format(tp_file))
-        shell.run('sudo mv {} /etc/tinyproxy/tinyproxy-tor.conf'.format(tp_tor_file))
+        shell.run('sudo cp {} /etc/hosts'.format(hosts_file))
+        shell.run('sudo cp {} /etc/tinyproxy/tinyproxy.conf'.format(tp_file))
+        shell.run('sudo cp {} /etc/tinyproxy/tinyproxy-tor.conf'.format(tp_tor_file))
 
         tinyproxy_state = shell.output('systemctl show tinyproxy --property=ActiveState', strip=True)
         if tinyproxy_state == 'ActiveState=active':
