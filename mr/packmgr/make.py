@@ -300,4 +300,8 @@ def make_fakeroot(pm, location):
         pkgbuild['location'],
         tarball.get_tarball_name(pkgbuild['pkgname'], pkgbuild['pkgver']),
     )
-    tarball.create(pkgbuild['pkgdir'], tar)
+    tarball.create(
+        pkgbuild['pkgdir'],
+        tar,
+        force_root_ownership=pm.config.get('force_root_ownership', False),
+    )

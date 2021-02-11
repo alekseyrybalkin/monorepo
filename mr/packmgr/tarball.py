@@ -85,8 +85,17 @@ def check_conflicts(pm, tar):
     return conflicts
 
 
-def create(subject_dir, tar_path):
+def _set_root_as_owner(tarinfo):
+    tarinfo.uid = tarinfo.gid = 0
+    tarinfo.uname = tarinfo.gname = "root"
+    return tarinfo
+
+
+def create(subject_dir, tar_path, force_root_ownership=False):
     with tarfile.open(tar_path, 'w:gz') as tar:
         os.chdir(subject_dir)
         for item in os.listdir('.'):
-            tar.add(item)
+            if force_root_ownership:
+                tar.add(item, filter=_set_root_as_owner)
+            else:
+                tar.add(item)
