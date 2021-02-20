@@ -43,15 +43,14 @@ def upgrade(pm, tar):
             raise RuntimeError('{} already exists and is not a dir'.format(dir_path))
 
     tarball.extract_dirs(tar, '/')
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=pm.config.get('temp_dir_for_upgrades')) as tmpdir:
         tarball.extract_all(tar, tmpdir)
 
         files = [item for item in tarball.list_files(pm, tar)]
 
         with shell.popd(tmpdir):
             for item in files:
-                shutil.move(item.name, os.path.join('/', item.name + '.{}'.format(pm.config['exe'])))
-                shutil.move(os.path.join('/', item.name + '.{}'.format(pm.config['exe'])), os.path.join('/', item.name))
+                os.replace(item.name, os.path.join('/', item.name))
 
     old_files = set(queries.db_list_files(pm, package['name']))
     new_files = set(os.path.join('/', item.name) for item in tarball.list_files(pm, tar))
