@@ -4,6 +4,7 @@ import os
 import re
 import shutil
 import signal
+import sqlite3
 import subprocess
 
 import mr.config
@@ -78,6 +79,22 @@ class Inspector:
                         if v != volume or s != status:
                             print(current_mixer, channel, volume, status)
 
+    def check_ublock_rules(self):
+        conn = sqlite3.connect(self.config['ublock']['db_path'])
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("select value from settings where name = 'hostnameSwitchesString'")
+        row = cursor.fetchone()
+
+        allowed_rules = set(self.config['ublock']['allowed_rules'])
+        for rule in row['value'].strip('"').split('\\n'):
+            if rule not in allowed_rules:
+                print('ublock: {}'.format(rule))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
     def main(self):
         signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
@@ -144,6 +161,9 @@ class Inspector:
 
         if shell.output('systemctl show --property=SystemState') != 'SystemState=running':
             shell.run('systemctl --failed')
+
+        if self.config.get('ublock'):
+            self.check_ublock_rules()
 
 
 def main():
