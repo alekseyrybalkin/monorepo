@@ -54,7 +54,10 @@ def upgrade(pm, tar):
                     os.replace(item.name, os.path.join('/', item.name))
                 except OSError:
                     shutil.move(item.name, os.path.join('/', item.name + '.{}'.format(pm.config['exe'])))
-                    os.replace(os.path.join('/', item.name + '.{}'.format(pm.config['exe'])), os.path.join('/', item.name))
+                    os.replace(
+                        os.path.join('/', item.name + '.{}'.format(pm.config['exe'])),
+                        os.path.join('/', item.name),
+                    )
 
     old_files = set(queries.db_list_files(pm, package['name']))
     new_files = set(os.path.join('/', item.name) for item in tarball.list_files(pm, tar))
