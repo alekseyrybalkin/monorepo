@@ -45,6 +45,7 @@ setup(
             'dotfiles = mr.util.dotfiles:main',
             'userinit = mr.util.userinit:main',
             'userdestroy = mr.util.userdestroy:main',
+            'termcolors = mr.util.termcolors:main',
         ],
     },
     include_package_data=True,
