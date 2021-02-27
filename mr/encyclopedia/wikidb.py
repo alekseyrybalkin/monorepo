@@ -92,7 +92,7 @@ class WikiDB:
                 pass
 
             for template in parsed.ifilter_templates():
-                if str(template.name).lower().strip().startswith('infobox '):
+                if str(template.name).lower().strip().startswith('infobox'):
                     replacement = '''
                         <div style="display: inline; float: right; padding: 6px; width: 400px; margin-left: 10px;
                                 margin-bottom: 10px;">
