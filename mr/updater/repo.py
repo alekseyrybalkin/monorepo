@@ -42,6 +42,12 @@ def alphanum_split(part):
 
 class Tag:
     def __init__(self, tag, pkgname=None, dirname=None, is_handmade=None):
+        if is_handmade is not None:
+            self.handmade = is_handmade
+        else:
+            self.handmade = tag.startswith('handmade-')
+        tag = re.sub('^handmade-', '', tag)
+
         tag = re.sub('^release-', '', tag)
         tag = re.sub('^release_', '', tag)
         tag = re.sub('^release\\.', '', tag)
@@ -56,12 +62,6 @@ class Tag:
         tag = re.sub('^tag-', '', tag)
         tag = re.sub('^v', '', tag)
         tag = re.sub('^v_', '', tag)
-
-        if is_handmade is not None:
-            self.handmade = is_handmade
-        else:
-            self.handmade = tag.startswith('handmade-')
-        tag = re.sub('^handmade-', '', tag)
 
         if pkgname and '+' not in pkgname:
             pkgname_variants = [pkgname.replace(a, b) for a in ['~', '_', '-', '.'] for b in ['~', '_', '-', '.']]
