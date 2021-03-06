@@ -67,7 +67,7 @@ class WikiDB:
             for tag in parsed.ifilter_tags():
                 try:
                     if tag.tag == 'ref':
-                        parsed.replace(tag, '<span>⚓</span>', recursive=True)
+                        parsed.replace(tag, '<span>*</span>', recursive=True)
                         continue
 
                     if tag.tag in ['b', 'blockquote']:
