@@ -21,7 +21,6 @@ setup(
             'cloud-gentimers = mr.cloud.timers:main',
             'cloud-gendomains = mr.domains:cloud_main',
             'backup = mr.backup:main',
-            'regen-reader-index = mr.reader.reader:main',
             'which = mr.util.which:main',
             'genvcf = mr.util.genvcf:main',
             'kopass = mr.util.kopass:main',
