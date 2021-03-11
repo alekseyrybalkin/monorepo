@@ -25,6 +25,27 @@ def write_etc_hosts(conf_file_name, domains):
             conf_file.write('127.0.0.1        www.{}\n'.format(domain))
 
 
+def write_iptables_config(conf_file_name, firewall_config):
+    header = ''
+    with open(conf_file_name, 'tr') as conf_file:
+        for line in conf_file:
+            if not line.startswith('-A OUTPUT') and not line.strip() == 'COMMIT':
+                header += line
+
+    with open(conf_file_name, 'tw') as conf_file:
+        conf_file.write(header)
+
+        for uid in firewall_config['no_network_users']:
+            conf_file.write('-A OUTPUT -m owner --uid-owner {} -j DROP\n'.format(uid))
+
+        for uid in firewall_config['only_lan_users']:
+            conf_file.write('-A OUTPUT -o lo -m owner --uid-owner {} -j ACCEPT\n'.format(uid))
+            conf_file.write('-A OUTPUT -d 127.0.0.0/24 -m owner --uid-owner {} -j ACCEPT\n'.format(uid))
+            conf_file.write('-A OUTPUT -o + -m owner --uid-owner {} -j DROP\n'.format(uid))
+
+        conf_file.write('COMMIT\n')
+
+
 def write_tinyproxy_conf(conf_file_name, domains):
     header = ''
     with open(conf_file_name, 'tr') as conf_file:
@@ -44,7 +65,7 @@ def write_tinyproxy_conf(conf_file_name, domains):
 
 def cloud_main():
     try:
-        config = mr.cloud.util.local_read_json('domains')
+        config = mr.cloud.util.local_read_json('firewall')
     except FileNotFoundError:
         print('no local doamins.json found, skipping domains update')
         return
@@ -63,7 +84,7 @@ def local_main():
     args = parser.parse_args()
 
     firewall_manager = mr.util.hostconf.HostConf().get_option('firewall_manager')
-    config = mr.config.Config('domains', user=firewall_manager).read()
+    config = mr.config.Config('firewall', user=firewall_manager).read()
     domains = list(itertools.chain(*config['blacklist'].values()))
     if config.get('firewall_disabled', False):
         domains = []
@@ -94,8 +115,15 @@ def local_main():
             shell.run('sudo systemctl restart tinyproxy-tor')
 
     if not args.no_remote:
-        mr.cloud.util.remote_upload_json('domains', config)
+        mr.cloud.util.remote_upload_json('firewall', config)
         mr.cloud.util.remote_run('sudo cloud-gendomains')
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        iptables_config = os.path.join(tmpdir, 'iptables.rules')
+        shutil.copyfile('/etc/iptables/iptables.rules', iptables_config)
+        write_iptables_config(iptables_config, config)
+        shell.run('sudo cp {} /etc/iptables/iptables.rules'.format(iptables_config))
+        shell.run('sudo systemctl restart iptables')
 
 
 if __name__ == '__main__':
