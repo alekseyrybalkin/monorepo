@@ -67,7 +67,7 @@ def cloud_main():
     try:
         config = mr.cloud.util.local_read_json('firewall')
     except FileNotFoundError:
-        print('no local doamins.json found, skipping domains update')
+        print('no config found, skipping firewall update')
         return
     domains = list(itertools.chain(*config['blacklist'].values()))
     if config.get('firewall_disabled', False):
@@ -116,7 +116,7 @@ def local_main():
 
     if not args.no_remote:
         mr.cloud.util.remote_upload_json('firewall', config)
-        mr.cloud.util.remote_run('sudo cloud-gendomains')
+        mr.cloud.util.remote_run('sudo cloud-genfirewall')
 
     with tempfile.TemporaryDirectory() as tmpdir:
         iptables_config = os.path.join(tmpdir, 'iptables.rules')
